@@ -3,3 +3,4 @@ examples/build*/.*
 fastinverse/prebuilt/*
 *.pyc
 */*.pyc
+build/

@@ -2,6 +2,12 @@
 
 # For wrapping fornberg.f90
 
+cimport numpy as cnp
+import numpy as np
+
+from newton_interval cimport get_interval, get_interval_from_guess
+
+
 cdef extern void apply_fd(int * nin, int * maxorder, double * xdata, double * ydata, double * xtgt, double * out)
 
 cdef extern void populate_weights(double * z, double * x, int * nd,

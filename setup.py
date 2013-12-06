@@ -10,7 +10,8 @@ from pycompilation import pyx2obj, src2obj, link_py_so
 from pycompilation.util import copy
 
 wrapper_src_path = '_finitediff.pyx'
-srcs = ['fornberg.f90']
+srcs = ['fornberg.f90', 'newton_interval/src/newton_interval.c']
+inc_dirs=['newton_interval/include']
 
 package_dir = 'finitediff'
 DEBUG=True
@@ -29,7 +30,8 @@ class my_build_ext(build_ext.build_ext):
             pyx_obj = pyx2obj(wrapper_src_path, abs_build_dir,
                               metadir=abs_build_dir, cwd=package_dir)
             src_objs = compile_sources(srcs, abs_build_dir,
-                                       metadir=abs_build_dir, cwd=package_dir)
+                                       metadir=abs_build_dir, cwd=package_dir,
+                                       inc_dirs=inc_dirs)
             abs_so_path = link_py_so(src_objs+[pyx_obj], cwd=build_dir, fort=True)
             if self.inplace:
                 copy(abs_so_path, abs_package_dir)
