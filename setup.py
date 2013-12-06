@@ -6,7 +6,7 @@ import os
 from distutils.core import setup
 from distutils.command import build_ext
 
-from pycompilation import pyx2obj, src2obj, link_py_so
+from pycompilation import pyx2obj, compile_sources, link_py_so
 from pycompilation.util import copy
 
 DEBUG=True
@@ -26,8 +26,10 @@ class my_build_ext(build_ext.build_ext):
             if not os.path.exists(build_dir): os.mkdir(build_dir)
             abs_build_dir = os.path.abspath(build_dir)
             pyx_obj = pyx2obj(wrapper_src_path, abs_build_dir,
-                              metadir=abs_build_dir, cwd=package_dir)
-            src_objs = compile_sources(srcs, abs_build_dir,
+                              metadir=abs_build_dir, cwd=package_dir,
+                              inc_dirs=inc_dirs)
+            src_objs = compile_sources(srcs, destdir=abs_build_dir,
+                                       options=['pic', 'warn', 'fast'],
                                        metadir=abs_build_dir, cwd=package_dir,
                                        inc_dirs=inc_dirs)
             abs_so_path = link_py_so(src_objs+[pyx_obj], cwd=build_dir, fort=True)
