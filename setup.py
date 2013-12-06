@@ -9,15 +9,13 @@ from distutils.command import build_ext
 from pycompilation import pyx2obj, src2obj, link_py_so
 from pycompilation.util import copy
 
+DEBUG=True
+package_dir = 'finitediff'
+abs_package_dir=os.path.join(os.path.abspath(os.path.dirname(__file__)), package_dir)
 wrapper_src_path = '_finitediff.pyx'
 srcs = ['fornberg.f90', 'newton_interval/src/newton_interval.c']
-inc_dirs=['newton_interval/include']
+inc_dirs=[os.path.join(abs_package_dir, 'newton_interval/include')]
 
-package_dir = 'finitediff'
-DEBUG=True
-
-abs_package_dir = os.path.join(os.path.abspath(
-    os.path.dirname(__file__)), package_dir)
 
 class my_build_ext(build_ext.build_ext):
     def run(self):
@@ -40,12 +38,12 @@ class my_build_ext(build_ext.build_ext):
                 raise NotImplementedError
 
 setup(
-    name='fastinverse',
+    name='finitediff',
     version='0.0.1',
-    description='Python package using SymPy for generating fast C code solving inverse problems.',
+    description='Python extension for optimized inter-/extrapolation of data series for up to N-th order derivative.',
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
-    url='https://github.com/bjodah/fastinverse',
-    packages=['fastinverse'],
+    url='https://github.com/bjodah/finitediff',
+    packages=['finitediff'],
     cmdclass = {'build_ext': my_build_ext},
 )
