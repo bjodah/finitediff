@@ -4,7 +4,7 @@ from __future__ import print_function, division, absolute_import, unicode_litera
 
 import numpy as np
 
-from cInterpol import interpolate_by_finite_diff, derivatives_at_point_by_finite_diff
+from finitediff import interpolate_by_finite_diff, derivatives_at_point_by_finite_diff
 
 def test_derivatives_at_point_by_finite_diff():
     out = derivatives_at_point_by_finite_diff(
