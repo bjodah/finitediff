@@ -13,7 +13,7 @@ cdef extern void apply_fd(int * nin, int * maxorder, double * xdata, double * yd
 cdef extern void populate_weights(double * z, double * x, int * nd,
                                   int * m, double * c)
 
-cdef get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
+def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.zeros((n, maxorder+1), order='F')
     cdef int nm1 = n-1 # n minus 1

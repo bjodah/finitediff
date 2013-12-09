@@ -12,8 +12,7 @@ from pycompilation.util import copy
 DEBUG=True
 package_dir = 'finitediff'
 abs_package_dir=os.path.join(os.path.abspath(os.path.dirname(__file__)), package_dir)
-wrapper_src_path = '_finitediff.pyx'
-srcs = ['fornberg.f90', 'newton_interval/src/newton_interval.c']
+srcs = ['fornberg.f90', 'newton_interval/src/newton_interval.c', '_finitediff.pyx']
 inc_dirs=[os.path.join(abs_package_dir, 'newton_interval/include')]
 
 
@@ -25,14 +24,13 @@ class my_build_ext(build_ext.build_ext):
                 'build')
             if not os.path.exists(build_dir): os.mkdir(build_dir)
             abs_build_dir = os.path.abspath(build_dir)
-            pyx_obj = pyx2obj(wrapper_src_path, abs_build_dir,
-                              metadir=abs_build_dir, cwd=package_dir,
-                              inc_dirs=inc_dirs)
-            src_objs = compile_sources(srcs, destdir=abs_build_dir,
-                                       options=['pic', 'warn', 'fast'],
-                                       metadir=abs_build_dir, cwd=package_dir,
-                                       inc_dirs=inc_dirs)
-            abs_so_path = link_py_so(src_objs+[pyx_obj], cwd=build_dir, fort=True)
+            for f in srcs:
+                copy(f, abs_build_dir, cwd=package_dir)
+            src_objs = compile_sources(
+                map(os.path.basename, srcs),
+                options=['pic', 'warn', 'fast'],
+                cwd=abs_build_dir, inc_dirs=inc_dirs)
+            abs_so_path = link_py_so(src_objs, cwd=build_dir, fort=True)
             if self.inplace:
                 copy(abs_so_path, abs_package_dir)
             else:
@@ -41,7 +39,7 @@ class my_build_ext(build_ext.build_ext):
 
 setup(
     name='finitediff',
-    version='0.0.1',
+    version='0.1',
     description='Python extension for optimized inter-/extrapolation of data series for up to N-th order derivative.',
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
