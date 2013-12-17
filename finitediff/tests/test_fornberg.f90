@@ -1,9 +1,11 @@
 module test_fornberg
 
-  use types, only: dp
   use fornberg, only: populate_weights
 
   implicit none
+
+  integer, parameter :: dp=kind(0.d0) ! double precision
+
   private
   public test_weights
 

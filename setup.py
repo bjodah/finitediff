@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
 from distutils.core import setup
-
-from pycompilation import compile_sources, link_py_so
-from pycompilation.util import copy, get_abspath
 from pycompilation.dist import clever_build_ext, CleverExtension
 
 
 setup(
     name='finitediff',
-    version='0.1',
+    version='0.1.1',
     description='Python extension for optimized inter-/extrapolation of data series for up to N-th order derivative.',
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
