@@ -8,29 +8,25 @@ from distutils.core import setup
 version_ = '0.1.2'
 name_ = 'finitediff'
 
-if any([x in sys.argv for x in ('build', 'build_ext', 'install')]):
-    # e.g. egg_info must not import from dependencies (pycompilation)
-    from pycompilation.dist import clever_build_ext as build_ext
-    from pycompilation.dist import CleverExtension as Extension
+if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
+    cmdclass_ = {}
+    ext_modules_ = []
 else:
-    from distutils.command import build_ext
-    from distutils.extension import Extension
+    # e.g. egg_info must not import from dependencies (pycompilation)
+    from pycompilation.dist import clever_build_ext
+    from pycompilation.dist import CleverExtension
 
-
-cmdclass_ = {}
-ext_modules_ = []
-
-cmdclass_ = {'build_ext': build_ext}, 
-ext_modules_ = [
-    Extension(
-        "finitediff._finitediff",
-        sources=[
-            'finitediff/fornberg.f90',
-            'finitediff/newton_interval/src/newton_interval.c',
-            'finitediff/_finitediff.pyx'
-        ],
-        include_dirs=['finitediff/newton_interval/include'])
-]
+    cmdclass_ = {'build_ext': clever_build_ext},
+    ext_modules_ = [
+        CleverExtension(
+            "finitediff._finitediff",
+            sources=[
+                'finitediff/fornberg.f90',
+                'finitediff/newton_interval/src/newton_interval.c',
+                'finitediff/_finitediff.pyx'
+            ],
+            include_dirs=['finitediff/newton_interval/include'])
+    ]
 
 setup(
     name=name_,
