@@ -1,31 +1,27 @@
 #include <math.h>    /* sqrt() */
 #include "newton_interval.h"
 
-#define BOOL int // fastest way
-
-inline static int ceil_away0(double d);
-
 inline static int ceil_away0(double d){
     return (d>0.0) ? ceil(d) : floor(d);
 }
 
-int get_interval_from_guess(const double * const arr, const int N, 
-			    const double t, int i){
+int get_interval_from_guess(const double * const arr, const NI_SIZE_T N, 
+			    const double t, NI_SIZE_T i){
     /*
     Version of get_interval which takes an index guess as last arg
         get_interval locates the index `i` for which  is
         t > arr[i] and arr[i+1] > t
     */
     // Delta i for estimated derivative 
-    int sqrt_nt = (int)sqrt((double)N)+1; 
-    int h; /* step in num der */
-    int di; /* Delta i (update step in root finding) */
+    NI_SIZE_T sqrt_nt = (NI_SIZE_T)sqrt((double)N)+1; 
+    NI_SIZE_T h; /* step in num der */
+    NI_SIZE_T di; /* Delta i (update step in root finding) */
     double dtdi;
-    int lower_bound = -1; // excluded
-    int upper_bound = N; // excluded
-    BOOL gteq_ti;    // t >= t[i] 
-    BOOL lt_tip1;    // t < t[i+1] 
-    BOOL eq_tip1;    // t == t[i+1] 
+    NI_SIZE_T lower_bound = -1; // excluded
+    NI_SIZE_T upper_bound = N; // excluded
+    int gteq_ti;    // t >= t[i] 
+    int lt_tip1;    // t < t[i+1] 
+    int eq_tip1;    // t == t[i+1] 
 
     if (N <= 2)
 	return 0;
@@ -86,25 +82,25 @@ int get_interval_from_guess(const double * const arr, const int N,
     return i;
 }
 
-int get_interval(const double * const arr, const int N, const double t){
+int get_interval(const double * const arr, const NI_SIZE_T N, const double t){
     double t0 = arr[0];
     double tend = arr[N-1];
-    int i = ((t - t0)/(tend - t0) * N);
+    NI_SIZE_T i = ((t - t0)/(tend - t0) * N);
     return get_interval_from_guess(arr, N, t, i);
 }
 
-int check_nan(const double * const arr, int n){
+int check_nan(const double * const arr, NI_SIZE_T n){
     // from math.h (link with -lm)
-    for (int i=0; i<n; ++i)
+    for (NI_SIZE_T i=0; i<n; ++i)
 	if (isnan(arr[i]))
 	    return i;
     return -1; // if no NaN is encountered, -1 is returned
 }
 
-int check_strict_monotonicity(const double * const arr, int n){
+int check_strict_monotonicity(const double * const arr, NI_SIZE_T n){
     double x, old_x;
     old_x = arr[0];
-    for (int i=1; i<n; ++i){
+    for (NI_SIZE_T i=1; i<n; ++i){
         x = arr[i];
 	if (x <= old_x)
             return 0;
