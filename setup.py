@@ -16,7 +16,7 @@ else:
     from pycompilation.dist import clever_build_ext
     from pycompilation.dist import CleverExtension
 
-    cmdclass_ = {'build_ext': clever_build_ext},
+    cmdclass_ = {'build_ext': clever_build_ext}
     ext_modules_ = [
         CleverExtension(
             "finitediff._finitediff",
