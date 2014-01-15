@@ -92,10 +92,18 @@ See requirements.txt for detailed information of versions tested for.
 .. _pycompilation: https://github.com/bjodah/pycompilation
 
 
+Notes
+=====
+There is a git subtree under cInterpol, update through:
+``git subtree --prefix cInterpol/newton_interval pull newton_interval master``
+where the repo "newton_interval" is https://github.com/bjodah/newton_interval.git
+First time you need to add it:
+``git remote add newton_interval https://github.com/bjodah/newton_interval.git``
+
 License
 =======
 Open Soucrce. Released under the very permissive "simplified
-(2-clause) BSD license". See LICENCE.txt for further details.
+(2-clause) BSD license". See LICENSE.txt for further details.
 
 
 Author
