@@ -5,7 +5,7 @@ import sys
 
 from distutils.core import setup
 
-version_ = '0.1.3'
+version_ = '0.1.4'
 name_ = 'finitediff'
 
 if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
