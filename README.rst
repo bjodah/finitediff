@@ -16,31 +16,33 @@ References
 The algortihm is a Fortran 90 rewrite of:
 
 http://dx.doi.org/10.1137/S0036144596322507
-@article{fornberg_classroom_1998,
-  title={Classroom note: Calculation of weights in finite difference formulas},
-  author={Fornberg, Bengt},
-  journal={SIAM review},
-  volume={40},
-  number={3},
-  pages={685--691},
-  year={1998},
-  publisher={SIAM}
-  doi={10.1137/S0036144596322507}
-}
+
+    @article{fornberg_classroom_1998,
+      title={Classroom note: Calculation of weights in finite difference formulas},
+      author={Fornberg, Bengt},
+      journal={SIAM review},
+      volume={40},
+      number={3},
+      pages={685--691},
+      year={1998},
+      publisher={SIAM}
+      doi={10.1137/S0036144596322507}
+    }
+    
 
 Which is based on an article of the same author:
 
 http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
-@article{fornberg_generation_1988,
-  title={Generation of finite difference formulas on arbitrarily spaced grids},
-  author={Fornberg, Bengt},
-  journal={Mathematics of computation},
-  volume={51},
-  number={184},
-  pages={699--706},
-  year={1988}
-  doi={10.1090/S0025-5718-1988-0935077-0}
-}
+    @article{fornberg_generation_1988,
+      title={Generation of finite difference formulas on arbitrarily spaced grids},
+      author={Fornberg, Bengt},
+      journal={Mathematics of computation},
+      volume={51},
+      number={184},
+      pages={699--706},
+      year={1988}
+      doi={10.1090/S0025-5718-1988-0935077-0}
+    }
 
 
 Capabilities
