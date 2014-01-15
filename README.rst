@@ -100,6 +100,8 @@ where the repo "newton_interval" is https://github.com/bjodah/newton_interval.gi
 First time you need to add it:
 ``git remote add newton_interval https://github.com/bjodah/newton_interval.git``
 
+(Users of Ubuntu 12.04 who want to use git subtree, see http://stackoverflow.com/questions/17797328)
+
 License
 =======
 Open Soucrce. Released under the very permissive "simplified
