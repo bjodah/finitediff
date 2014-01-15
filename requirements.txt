@@ -1,3 +1,4 @@
+argh>=0.23.1
 numpy>=1.6.1
 cython>=0.19.1
 https://github.com/bjodah/pycompilation/archive/v0.2.10.tar.gz
