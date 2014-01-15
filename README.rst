@@ -95,10 +95,10 @@ See requirements.txt for detailed information of versions tested for.
 Notes
 =====
 There is a git subtree under cInterpol, update through:
-``git subtree --prefix cInterpol/newton_interval pull newton_interval master``
+``git subtree pull --prefix finitediff/newton_interval newton_interval master --squash``
 where the repo "newton_interval" is https://github.com/bjodah/newton_interval.git
 First time you need to add it:
-``git remote add newton_interval https://github.com/bjodah/newton_interval.git``
+``git remote add -f newton_interval https://github.com/bjodah/newton_interval.git``
 
 (Users of Ubuntu 12.04 who want to use git subtree, see http://stackoverflow.com/questions/17797328)
 
