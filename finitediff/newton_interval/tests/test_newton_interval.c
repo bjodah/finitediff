@@ -51,7 +51,6 @@ int test5(){
   return (i==49);
 }
 
-
 #define NTESTS 5
 static const TestCase t1 = {test1, "test1"};
 static const TestCase t2 = {test2, "test2"};

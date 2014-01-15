@@ -8,3 +8,5 @@ TAGS
 */.#*
 */#*#
 tests/test_newton_interval
+tests/test_check_nan
+tests/test_check_strict_monotonicity
