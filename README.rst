@@ -17,6 +17,8 @@ The algortihm is a Fortran 90 rewrite of:
 
 http://dx.doi.org/10.1137/S0036144596322507
 
+::
+
     @article{fornberg_classroom_1998,
       title={Classroom note: Calculation of weights in finite difference formulas},
       author={Fornberg, Bengt},
@@ -33,6 +35,9 @@ http://dx.doi.org/10.1137/S0036144596322507
 Which is based on an article of the same author:
 
 http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
+
+::
+
     @article{fornberg_generation_1988,
       title={Generation of finite difference formulas on arbitrarily spaced grids},
       author={Fornberg, Bengt},
