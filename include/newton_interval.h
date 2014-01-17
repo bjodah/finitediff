@@ -5,7 +5,9 @@
    int is usually sufficient (so far for me)
    to override use e.g. `gcc -DNI_SIZE_T size_t ...` 
  */
+#ifndef NI_SIZE_T
 #define NI_SIZE_T int
+#endif
 
 #ifdef __cplusplus
 extern "C" {
