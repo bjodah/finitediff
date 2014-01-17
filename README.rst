@@ -1,8 +1,7 @@
 ===============
 newton_interval
 ===============
-
-[![Build Status](https://travis-ci.org/bjodah/newton_interval.png?branch=master)](https://travis-ci.org/bjodah/newton_interval)
+.. image:: https://travis-ci.org/bjodah/newton_interval.png?branch=master   :target: https://travis-ci.org/bjodah/newton_interval
 
 newton_interval_ is a small C routine for fast interval lookup in strictly
 monotonic arrays of doubles.
