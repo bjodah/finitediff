@@ -3,8 +3,14 @@ python:
   - "2.7"
 #later: - "3.3"
 # command to install dependencies
-install:
+before_install:
   - "pip install -r requirements.txt"
+  - "sudo apt-get install -qq python-numpy python-numpy-dev"
   - "sudo apt-get install -qq gfortran"
+install:
+  - "python setup.py build_ext --inplace"
+  - "export PYTHONPATH=.:$PYTHONPATH"
 # command to run tests
 script: py.test
+notifications:
+  email: false
