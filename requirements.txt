@@ -1,5 +1,5 @@
 argh>=0.23.1
 numpy>=1.6.1
 cython>=0.19.1
-py.test>=2.2.3
+pytest>=2.2.3
 https://github.com/bjodah/pycompilation/archive/v0.2.13.tar.gz
