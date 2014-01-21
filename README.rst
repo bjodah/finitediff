@@ -1,6 +1,8 @@
 ===========
 finitediff
 ===========
+.. image:: https://travis-ci.org/bjodah/finitediff.png?branch=master
+   :target: https://travis-ci.org/bjodah/finitediff
 
 finitediff_ is a python extension for optimized inter-/extrapolation of
 data series for up to N-th order derivative.
@@ -75,7 +77,11 @@ Note that the behaviour of ``setup(...)`` is modified slightly through the use o
 
 Tests
 =====
-TODO: improve tests.
+Run ``py.test``
+
+TODO
+====
+add more tests. Write documentation.
 
 
 Dependencies
