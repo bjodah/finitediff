@@ -13,6 +13,7 @@ if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'cl
     ext_modules_ = []
 else:
     # e.g. egg_info must not import from dependencies (pycompilation)
+    import numpy
     from pycompilation.dist import clever_build_ext
     from pycompilation.dist import CleverExtension
     from pycompilation.util import ArbitraryDepthGlob
@@ -31,7 +32,7 @@ else:
                     ArbitraryDepthGlob('*.c'): {'std': 'c99'}
                 }
             },
-            include_dirs=['./finitediff/newton_interval/include'])
+            include_dirs=['./finitediff/newton_interval/include', numpy.get_include()])
     ]
 
 setup(

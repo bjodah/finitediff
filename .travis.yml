@@ -4,8 +4,8 @@ python:
 #later: - "3.3"
 # command to install dependencies
 before_install:
+#  - "sudo apt-get install -qq python-numpy"
   - "pip install -r requirements.txt"
-  - "sudo apt-get install -qq python-numpy python-numpy-dev"
   - "sudo apt-get install -qq gfortran"
 install:
   - "python setup.py build_ext --inplace"
