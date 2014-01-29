@@ -62,7 +62,7 @@ Installation
 Example using pip (modify to your own needs):
 
     1. ``pip install --user --upgrade -r https://raw.github.com/bjodah/finitediff/master/requirements.txt``
-    2. ``pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.5.tar.gz``
+    2. ``pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.7.tar.gz``
 
 Manual installation:
     1. Clone repository ``git clone https://github.com/bjodah/finitediff.git``
