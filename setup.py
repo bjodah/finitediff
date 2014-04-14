@@ -23,6 +23,7 @@ else:
         CleverExtension(
             "finitediff._finitediff",
             sources=[
+                './finitediff/c_fornberg.f90',
                 './finitediff/fornberg.f90',
                 './finitediff/newton_interval/src/newton_interval.c',
                 './finitediff/_finitediff.pyx'

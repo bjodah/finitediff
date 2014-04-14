@@ -8,16 +8,18 @@ import numpy as np
 from newton_interval cimport get_interval, get_interval_from_guess
 
 
-cdef extern void apply_fd(int * nin, int * maxorder, double * xdata, double * ydata, double * xtgt, double * out)
+cdef extern void fornberg_apply_fd(int nin, int maxorder,
+    const double * const xdata, const double * const ydata,
+    double xtgt, double * const out)
 
-cdef extern void populate_weights(double * z, double * x, int * nd,
-                                  int * m, double * c)
+cdef extern void fornberg_populate_weights(double z, const double * const x,
+    int nd, int m, double * const c)
 
 def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.zeros((n, maxorder+1), order='F')
     cdef int nm1 = n-1 # n minus 1
-    populate_weights(&xtgt, &xarr[0], &nm1, &maxorder, &c[0,0])
+    fornberg_populate_weights(xtgt, &xarr[0], nm1, maxorder, &c[0,0])
     return c
 
 
@@ -46,8 +48,7 @@ def derivatives_at_point_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(maxorder+1)
     assert xdata.size == ydata.size
     assert xdata.size >= maxorder+1
-    cdef int nin = xdata.size
-    apply_fd(&nin, &maxorder, &xdata[0], &ydata[0], &xout, &yout[0])
+    fornberg_apply_fd(xdata.size, maxorder, &xdata[0], &ydata[0], xout, &yout[0])
     return yout
 
 
@@ -72,22 +73,21 @@ def interpolate_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=2] yout = \
         np.zeros((nout, maxorder+1), order='C')
     cdef int i,j # i,j are counters
-    cdef double xtgt
 
     assert xdata.shape[0] >= ntail+nhead
     assert xdata.shape[0] == ydata.shape[0]
     assert nhead+ntail >= maxorder+1
 
     for i in range(nout):
-        xtgt=xout[i]
         j = max(0, get_interval_from_guess(
-            &xdata[0],xdata.shape[0], xtgt, j))
+            &xdata[0], xdata.shape[0], xout[i], j))
         j = min(j, xdata.shape[0]-nin)
-        apply_fd(&nin,
-                 &maxorder,
-                 &xdata[j],
-                 &ydata[j],
-                 &xtgt,
-                 &out[0])
+        fornberg_apply_fd(
+            nin,
+            maxorder,
+            &xdata[j],
+            &ydata[j],
+            xout[i],
+            &out[0])
         yout[i,:] = out
     return yout

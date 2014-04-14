@@ -12,5 +12,7 @@ TAGS
 finitediff/*.so
 finitediff/*.mod
 finitediff/tests/*.mod
+finitediff/tests/*.o
 finitediff/tests/test_fornberg
+finitediff/tests/test_c_fornberg
 build/

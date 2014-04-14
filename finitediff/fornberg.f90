@@ -1,7 +1,5 @@
 module fornberg
 
-  use iso_c_binding, only: c_double, c_int
-
   implicit none
 
   integer, parameter :: dp=kind(0.d0)  ! double precision
@@ -11,10 +9,10 @@ module fornberg
 
 contains
 
-  subroutine apply_fd(nin, maxorder, xdata, ydata, xtgt, out) bind(c, name="apply_fd")
-    integer(c_int), intent(in)    :: nin, maxorder
-    real(c_double), intent(in)    :: xdata(0:nin-1), ydata(0:nin-1), xtgt
-    real(c_double), intent(inout) :: out(0:maxorder)
+  subroutine apply_fd(nin, maxorder, xdata, ydata, xtgt, out)
+    integer, intent(in)    :: nin, maxorder
+    real(dp), intent(in)    :: xdata(0:nin-1), ydata(0:nin-1), xtgt
+    real(dp), intent(inout) :: out(0:maxorder)
 
     integer :: j,k
     real(dp), allocatable :: c(:,:)
@@ -32,7 +30,7 @@ contains
   end subroutine
 
 
-  subroutine populate_weights (z, x, nd, m, c) bind(c, name="populate_weights")
+  subroutine populate_weights (z, x, nd, m, c)
     ! 
     !  Input Parameters
     !    z            -  location where approximations are to be
@@ -45,17 +43,17 @@ contains
     !
     !  Output Parameter
     !    c(0:nd,0:m)  -  weights at grid locations x(0:n) for
-    !                    derivatives of order 0:m, found in c(0:n,0:m)
+    !                    derivatives of order 0:m, found in c(0:nd,0:m)
     !
     !  Reference:
     !      Generation of Finite Difference Formulas on Arbitrarily
     !          Spaced Grids, Bengt Fornberg,
     !          Mathematics of compuation, 51, 184, 1988, 699-706
 
-    real(c_double), intent(in)    :: z
-    integer(c_int), intent(in)    :: nd, m
-    real(c_double), intent(in)    :: x(0:nd)
-    real(c_double), intent(inout) :: c(0:nd, 0:m)
+    real(dp), intent(in)    :: z
+    integer, intent(in)    :: nd, m
+    real(dp), intent(in)    :: x(0:nd)
+    real(dp), intent(inout) :: c(0:nd, 0:m)
     
     real(dp) :: c1, c2, c3, c4, c5
     integer :: i, j, k, mn, n
@@ -87,4 +85,5 @@ contains
     end do
     return
   end subroutine
+
 end module
