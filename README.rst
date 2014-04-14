@@ -59,10 +59,12 @@ finitediff currently provides callbacks for evaluation at single point and over 
 
 Installation
 ============
+See dependencies and make sure that manual dependencies are satisfied.
+
 Example using pip (modify to your own needs):
 
     1. ``pip install --user --upgrade -r https://raw.github.com/bjodah/finitediff/master/requirements.txt``
-    2. ``pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.7.tar.gz``
+    2. ``pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.8.tar.gz``
 
 Manual installation:
     1. Clone repository ``git clone https://github.com/bjodah/finitediff.git``
@@ -77,7 +79,8 @@ Note that the behaviour of ``setup(...)`` is modified slightly through the use o
 
 Tests
 =====
-Run ``py.test``
+1. ``python setup.py build_ext --inplace``
+2. ``py.test``
 
 TODO
 ====
@@ -86,11 +89,19 @@ add more tests. Write documentation.
 
 Dependencies
 ============
+Manual dependencies:
+* Python header files (sudo apt-get install python-dev)
+* Fortran compiler (sudo apt-get install gfortran)
+
 See requirements.txt for detailed information of versions tested for.
 * Python_ (tested with 2.7)
 * NumPy_ 
 * Cython_
 * pycompilation_ (optional: enables use from python)
+
+Optional requirements:
+* py.test (sudo apt-get install python-pytest)
+* matplotlib (sudo apt-get install python-matplotlib)
 
 .. _Python: http://www.python.org
 .. _NumPy: http://www.numpy.org/
