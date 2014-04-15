@@ -28,7 +28,6 @@ Installation
 See dependencies and make sure that manual dependencies are satisfied.
 
 Example using pip (modify to your own needs):
-
     1. ``pip install --user --upgrade -r https://raw.github.com/bjodah/finitediff/master/requirements.txt``
     2. ``pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.9.tar.gz``
 
@@ -57,19 +56,24 @@ add more tests. Write documentation.
 Dependencies
 ============
 Manual dependencies:
+
 - Python header files (sudo apt-get install python-dev)
 - Fortran compiler (sudo apt-get install gfortran)
 
 
 See requirements.txt for detailed information of versions tested for.
+
 - Python_ (tested with 2.7)
 - NumPy_ 
 - Cython_
 - pycompilation_ (optional: enables use from python)
 
+
 Optional requirements:
+
 - pytest_ (sudo apt-get install python-pytest)
 - matplotlib_ (sudo apt-get install python-matplotlib)
+
 
 .. _Python: http://www.python.org
 .. _NumPy: http://www.numpy.org/
