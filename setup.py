@@ -33,7 +33,12 @@ else:
                     ArbitraryDepthGlob('*.c'): {'std': 'c99'}
                 }
             },
-            include_dirs=['./finitediff/newton_interval/include', numpy.get_include()])
+            include_dirs=[
+                './finitediff',
+                './finitediff/newton_interval/include',
+                numpy.get_include()
+            ]
+        )
     ]
 
 setup(

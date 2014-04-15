@@ -18,7 +18,7 @@ def test_interpolate_by_finite_diff():
     yarr = np.exp(xarr)
     xtest = np.linspace(-1.4, 1.6, 57)
     y = interpolate_by_finite_diff(xarr, yarr, xtest,
-                                   maxorder=4, ntail=5,
+                                   order=4, ntail=5,
                                    nhead=5)
     yexact = np.exp(xtest)
     for ci in range(y.shape[1]):

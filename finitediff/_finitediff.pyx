@@ -6,8 +6,7 @@ cimport numpy as cnp
 import numpy as np
 
 from newton_interval cimport get_interval, get_interval_from_guess
-
-from c_fornberg import fornberg_apply_fd, fornberg_populate_weights
+from c_fornberg cimport fornberg_apply_fd, fornberg_populate_weights
 
 def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
     """
