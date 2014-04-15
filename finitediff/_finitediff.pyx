@@ -7,15 +7,24 @@ import numpy as np
 
 from newton_interval cimport get_interval, get_interval_from_guess
 
-
-cdef extern void fornberg_apply_fd(int nin, int maxorder,
-    const double * const xdata, const double * const ydata,
-    double xtgt, double * const out)
-
-cdef extern void fornberg_populate_weights(double z, const double * const x,
-    int nd, int m, double * const c)
+from c_fornberg import fornberg_apply_fd, fornberg_populate_weights
 
 def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
+    """
+    Generates finite differnece weights.
+
+    Parameters
+    ----------
+    xarr: array_like
+    xtgt: float
+    n: int
+    maxorder: int
+
+    Returns
+    -------
+    array_like
+         weights
+    """
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.zeros((n, maxorder+1), order='F')
     fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
@@ -24,6 +33,16 @@ def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
 
 cdef bint is_equidistant(double [:] x, double abstol=1e-9,
                          double reltol=1e-9):
+    """
+    Parameters
+    ----------
+    x : array_like
+         array to determine whether equidistantly spaced.
+    abstol : float
+         Absolute tolerance.
+    reltol : float
+         Relative tolerance.
+    """
     cdef int i
     cdef double dx
     cdef double rdx = x[1]-x[0] # ref dx
@@ -38,44 +57,112 @@ cdef bint is_equidistant(double [:] x, double abstol=1e-9,
 
 def derivatives_at_point_by_finite_diff(
         double [::1] xdata, double [::1] ydata, double xout,
-        int maxorder):
+        int order):
     """
+    Estimates derivatives/function values of requested order
+    at multiple points (xout) based on finite difference using
+    provided xdata and ydata.
+
+    Parameters
+    ==========
+    xdata : array_like
+        values of the independent variable
+
+    ydata : array_like
+        values of the dependent variable
+
+    xout : float
+        value of the independent variable where the
+        the finite difference scheme should be applied.
+
+    order : int, optional
+        what order of derivatives to estimate.
+        The default is 0 (interpolation)
+
+
+    Returns
+    -------
+    float
+        Estimate from applying the finite difference scheme.
+
+    Examples
+    --------
     >>> derivatives_at_point_by_finite_diff(np.array([.0, .5, 1.]),
             np.array([.0, .25, 1.]), .5, 2) # y=x**2
     array([.25, 1.0, 2.0]) # (x**2, 2x, 2)
+
+    References
+    ----------
+    The underlying algorithm is from:
+    Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
+    Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(maxorder+1)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(order+1)
     assert xdata.size == ydata.size
-    assert xdata.size >= maxorder+1
-    fornberg_apply_fd(xdata.size, maxorder, &xdata[0], &ydata[0], xout, &yout[0])
+    assert xdata.size >= order+1
+    fornberg_apply_fd(xdata.size, order, &xdata[0], &ydata[0], xout, &yout[0])
     return yout
 
 
 def interpolate_by_finite_diff(
         double [::1] xdata, double [::1] ydata, double [::1] xout,
-        int maxorder=0, int ntail=2, int nhead=2):
+        int order=0, int ntail=2, int nhead=2):
     """
-    Interpolates function value (or its derivative - `order`)
-    at xout based on finite difference using provided xdata and
-    ydata. Algortithm assumes non-regularly spaced xdata. If
+    Estimates derivatives/function values of requested order
+    at multiple points (xout) based on finite difference using
+    provided xdata and ydata.
+
+    Parameters
+    ==========
+    xdata : array_like
+        values of the independent variable
+
+    ydata : array_like
+        values of the dependent variable
+
+    xout : array_like
+        values of the independent variable where the
+        the finite difference scheme should be applied.
+
+    order : int, optional
+        what order of derivatives to estimate.
+        The default is 0 (interpolation)
+
+    ntail : int, optional
+        how many points in xdata before xout to inclued (default = 2).
+
+    nhead : int, optional
+        how many points in xdata after xout to include (default = 2).
+
+
+    Returns
+    -------
+    array_like
+        Estimates from applying the finite difference scheme
+
+    Notes
+    -----
+    It is required that: order >= ntail + nhead
+    Algortithm assumes non-regularly spaced xdata. If
     xdata is regularly spaced this algortihm is not the optimal
     to use with respect to performance.
 
+    References
+    ----------
     The underlying algorithm is from:
-    Generation of Finite Difference Formulas on Arbitrarily
-        Spaced Grids, Bengt Fornberg
-    Mathematics of compuation, 51, 184, 1988, 699-706
+    Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
+    Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
     cdef int nin = ntail+nhead
     cdef int nout = xout.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.zeros(maxorder+1)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.zeros(order+1)
     cdef cnp.ndarray[cnp.float64_t, ndim=2] yout = \
-        np.zeros((nout, maxorder+1), order='C')
+        np.zeros((nout, order+1), order='C')
     cdef int i,j # i,j are counters
 
     assert xdata.shape[0] >= ntail+nhead
     assert xdata.shape[0] == ydata.shape[0]
-    assert nhead+ntail >= maxorder+1
+    assert nhead+ntail >= order+1
 
     for i in range(nout):
         j = max(0, get_interval_from_guess(
@@ -83,7 +170,7 @@ def interpolate_by_finite_diff(
         j = min(j, xdata.shape[0]-nin)
         fornberg_apply_fd(
             nin,
-            maxorder,
+            order,
             &xdata[j],
             &ydata[j],
             xout[i],
