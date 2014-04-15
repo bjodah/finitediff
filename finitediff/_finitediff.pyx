@@ -8,7 +8,7 @@ import numpy as np
 from newton_interval cimport get_interval, get_interval_from_guess
 from c_fornberg cimport fornberg_apply_fd, fornberg_populate_weights
 
-def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
+def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
     """
     Generates finite differnece weights.
 
@@ -16,16 +16,22 @@ def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
     ----------
     xarr: array_like
     xtgt: float
-    n: int
-    maxorder: int
+    n: int, optional
+        default: -1 (means use length of xarr)
+    maxorder: int, optional
+        default: 0 (means interpolation)
 
     Returns
     -------
     array_like
-         weights
+         2 dimensional array with shape==(n, maxorder) with
+         Fortran order (contiguous along columns)
+         with weights for 0:th order in first column.
     """
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.zeros((n, maxorder+1), order='F')
+    if n == -1:
+        n = xarr.size
     fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
     return c
 
