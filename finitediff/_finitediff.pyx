@@ -18,8 +18,7 @@ cdef extern void fornberg_populate_weights(double z, const double * const x,
 def get_weights(double [::1] xarr, double xtgt, int n, int maxorder=0):
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.zeros((n, maxorder+1), order='F')
-    cdef int nm1 = n-1 # n minus 1
-    fornberg_populate_weights(xtgt, &xarr[0], nm1, maxorder, &c[0,0])
+    fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
     return c
 
 
