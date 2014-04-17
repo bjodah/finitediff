@@ -140,6 +140,6 @@ Open Source. Released under the very permissive "simplified
 (2-clause) BSD license". See LICENSE.txt for further details.
 
 
-Author
-======
-Björn Dahlgren, contact (gmail adress): bjodah
+Authors
+=======
+See file AUTHOR in root
