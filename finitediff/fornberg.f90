@@ -12,12 +12,11 @@ contains
   subroutine apply_fd(nin, maxorder, xdata, ydata, xtgt, out)
     integer, intent(in)    :: nin, maxorder
     real(dp), intent(in)    :: xdata(0:), ydata(0:), xtgt
-    real(dp), intent(inout) :: out(0:)
+    real(dp), intent(out) :: out(0:)
 
     integer :: j
     real(dp) :: c(0:nin-1, 0:maxorder)
 
-    c = 0
     call populate_weights(xtgt, xdata, nin-1, maxorder, c)
     forall(j=0:maxorder) out(j) = sum(c(:, j)*ydata)
   end subroutine
@@ -46,7 +45,7 @@ contains
     real(dp), intent(in)    :: z
     integer, intent(in)     :: nd, m
     real(dp), intent(in)    :: x(0:nd)
-    real(dp), intent(inout) :: c(0:nd, 0:m)
+    real(dp), intent(out) :: c(0:nd, 0:m)
 
     real(dp) :: c1, c2, c3, c4, c5
     integer :: i, j, k, mn, n
@@ -54,6 +53,7 @@ contains
     n = nd
     c1 = 1
     c4 = x(0)-z
+    c = 0
     c(0,0) = 1
     do i=1,n
       mn = min(i, m)
