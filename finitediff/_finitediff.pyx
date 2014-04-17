@@ -29,7 +29,7 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
          with weights for 0:th order in first column.
     """
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
-        np.zeros((n, maxorder+1), order='F')
+        np.empty((n, maxorder+1), order='F')
     if n == -1:
         n = xarr.size
     fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
@@ -102,7 +102,7 @@ def derivatives_at_point_by_finite_diff(
     Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
     Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(order+1)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty(order+1)
     assert xdata.size == ydata.size
     assert xdata.size >= order+1
     fornberg_apply_fd(xdata.size, order, &xdata[0], &ydata[0], xout, &yout[0])
@@ -160,7 +160,7 @@ def interpolate_by_finite_diff(
     """
     cdef int nin = ntail+nhead
     cdef int nout = xout.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.zeros(order+1)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.empty(order+1)
     cdef cnp.ndarray[cnp.float64_t, ndim=2] yout = \
         np.zeros((nout, order+1), order='C')
     cdef int i,j # i,j are counters
