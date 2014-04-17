@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import, unicode_literals
 
 import numpy as np
@@ -29,3 +29,4 @@ def test_interpolate_by_finite_diff():
 
 if __name__ == '__main__':
     test_interpolate_by_finite_diff()
+    test_derivatives_at_point_by_finite_diff()
