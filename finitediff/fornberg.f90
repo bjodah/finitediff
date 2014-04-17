@@ -11,27 +11,20 @@ contains
 
   subroutine apply_fd(nin, maxorder, xdata, ydata, xtgt, out)
     integer, intent(in)    :: nin, maxorder
-    real(dp), intent(in)    :: xdata(0:nin-1), ydata(0:nin-1), xtgt
-    real(dp), intent(inout) :: out(0:maxorder)
+    real(dp), intent(in)    :: xdata(0:), ydata(0:), xtgt
+    real(dp), intent(inout) :: out(0:)
 
-    integer :: j,k
-    real(dp), allocatable :: c(:,:)
+    integer :: j
+    real(dp) :: c(0:nin-1, 0:maxorder)
 
-    allocate(c(0:nin-1, 0:maxorder))
-    do k=0,maxorder
-      do j=0,nin-1
-        c(j,k) = 0.0_dp
-      end do
-    end do
+    c = 0
     call populate_weights(xtgt, xdata, nin-1, maxorder, c)
-    do j=0,maxorder
-      out(j) = sum(c(:, j)*ydata(:))
-    end do
+    forall(j=0:maxorder) out(j) = sum(c(:, j)*ydata)
   end subroutine
 
 
   subroutine populate_weights (z, x, nd, m, c)
-    ! 
+    !
     !  Input Parameters
     !    z            -  location where approximations are to be
     !                    accurate,
@@ -54,17 +47,17 @@ contains
     integer, intent(in)     :: nd, m
     real(dp), intent(in)    :: x(0:nd)
     real(dp), intent(inout) :: c(0:nd, 0:m)
-    
+
     real(dp) :: c1, c2, c3, c4, c5
     integer :: i, j, k, mn, n
 
     n = nd
-    c1 = 1.0_dp
+    c1 = 1
     c4 = x(0)-z
-    c(0,0) = 1.0_dp
+    c(0,0) = 1
     do i=1,n
       mn = min(i, m)
-      c2 = 1.0_dp
+      c2 = 1
       c5 = c4
       c4 = x(i)-z
       do j=0,i-1
@@ -83,7 +76,6 @@ contains
       end do
       c1 = c2
     end do
-    return
   end subroutine
 
 end module
