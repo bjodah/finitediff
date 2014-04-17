@@ -13,18 +13,13 @@ contains
 
   subroutine test_weights()
     real(dp) :: z
-    integer :: j, k, m, nd
+    integer :: m, nd
     real(dp), allocatable :: c(:,:)
     real(dp), parameter :: x(0:2) = [-1.0_dp, 0.0_dp, 1.0_dp]
     nd = size(x)-1
     m = 2
     z = 0.0_dp
     allocate(c(0:nd, 0:m))
-    do k=0,m
-      do j=0,nd
-        c(j,k) = 0.0_dp
-      end do
-    end do
     call populate_weights(z, x, nd, m, c)
     print *, c
   end subroutine
