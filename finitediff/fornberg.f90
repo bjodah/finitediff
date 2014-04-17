@@ -11,22 +11,15 @@ contains
 
   subroutine apply_fd(nin, maxorder, xdata, ydata, xtgt, out)
     integer, intent(in)    :: nin, maxorder
-    real(dp), intent(in)    :: xdata(0:nin-1), ydata(0:nin-1), xtgt
-    real(dp), intent(inout) :: out(0:maxorder)
+    real(dp), intent(in)    :: xdata(0:), ydata(0:), xtgt
+    real(dp), intent(inout) :: out(0:)
 
-    integer :: j,k
-    real(dp), allocatable :: c(:,:)
+    integer :: j
+    real(dp) :: c(0:nin-1, 0:maxorder)
 
-    allocate(c(0:nin-1, 0:maxorder))
-    do k=0,maxorder
-      do j=0,nin-1
-        c(j,k) = 0.0_dp
-      end do
-    end do
+    c = 0
     call populate_weights(xtgt, xdata, nin-1, maxorder, c)
-    do j=0,maxorder
-      out(j) = sum(c(:, j)*ydata(:))
-    end do
+    forall(j=0:maxorder) out(j) = sum(c(:, j)*ydata)
   end subroutine
 
 
