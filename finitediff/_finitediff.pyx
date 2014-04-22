@@ -28,36 +28,12 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
          Fortran order (contiguous along columns)
          with weights for 0:th order in first column.
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
-        np.empty((n, maxorder+1), order='F')
     if n == -1:
         n = xarr.size
+    cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
+        np.empty((n, maxorder+1), order='F')
     fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
     return c
-
-
-cdef bint is_equidistant(double [:] x, double abstol=1e-9,
-                         double reltol=1e-9):
-    """
-    Parameters
-    ----------
-    x : array_like
-         array to determine whether equidistantly spaced.
-    abstol : float
-         Absolute tolerance.
-    reltol : float
-         Relative tolerance.
-    """
-    cdef int i
-    cdef double dx
-    cdef double rdx = x[1]-x[0] # ref dx
-    if rdx == 0.0:
-        return False
-    for i in range(2,x.shape[0]):
-        dx = x[i]-x[i-1]
-        if abs(rdx-dx) > abstol or abs(dx/rdx-1.0) > reltol:
-            return False
-    return True
 
 
 def derivatives_at_point_by_finite_diff(

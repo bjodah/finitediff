@@ -5,7 +5,7 @@ import sys
 
 from distutils.core import setup
 
-version_ = '0.1.9'
+version_ = '0.1.10-dev'
 name_ = 'finitediff'
 
 if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
@@ -46,7 +46,7 @@ setup(
     version=version_,
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
-    description='Python extension for optimized inter-/extrapolation of data series for up to N-th order derivative.',
+    description='Finite difference weights for any derivative order on arbitrarily spaced grids.',
     license = "BSD",
     url='https://github.com/bjodah/'+name_,
     download_url='https://github.com/bjodah/'+name_+'/archive/v'+version_+'.tar.gz',
