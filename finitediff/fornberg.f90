@@ -48,14 +48,13 @@ contains
     real(dp), intent(out) :: c(0:nd, 0:m)
 
     real(dp) :: c1, c2, c3, c4, c5
-    integer :: i, j, k, mn, n
+    integer :: i, j, k, mn
 
-    n = nd
     c1 = 1
     c4 = x(0)-z
     c = 0
     c(0,0) = 1
-    do i=1,n
+    do i=1,nd
       mn = min(i, m)
       c2 = 1
       c5 = c4
