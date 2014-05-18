@@ -5,6 +5,14 @@ import sys
 
 from distutils.core import setup
 
+use_fortran = False
+
+if use_fortran:
+    interface = 'fort'
+else:
+    interface = 'templated'
+
+
 version_ = '0.1.10-dev'
 name_ = 'finitediff'
 
@@ -21,12 +29,12 @@ else:
     cmdclass_ = {'build_ext': clever_build_ext}
     ext_modules_ = [
         CleverExtension(
-            "finitediff._finitediff",
+            'finitediff._finitediff_'+interface,
             sources=[
-                './finitediff/fornberg.f90',
-                './finitediff/c_fornberg.f90',
-                './finitediff/newton_interval/src/newton_interval.c',
-                './finitediff/_finitediff.pyx'
+                './src/finitediff_fort.f90',
+                './src/c_finitediff_fort.f90',
+                './external/newton_interval/src/newton_interval.c',
+                './finitediff/_finitediff_'+interface+'.pyx'
             ],
             pycompilation_compile_kwargs={
                 'per_file_kwargs': {
@@ -34,8 +42,8 @@ else:
                 }
             },
             include_dirs=[
-                './finitediff',
-                './finitediff/newton_interval/include',
+                './src',
+                './external/newton_interval/include',
                 numpy.get_include()
             ]
         )

@@ -10,9 +10,9 @@ TAGS
 *.pyc
 */*.pyc
 finitediff/*.so
-finitediff/*.mod
-finitediff/tests/*.mod
-finitediff/tests/*.o
-finitediff/tests/test_fornberg
-finitediff/tests/test_c_fornberg
+src/*.mod
+src/tests/*.mod
+src/tests/*.o
+src/tests/test_finitediff_fort
+src/tests/test_finitediff
 build/

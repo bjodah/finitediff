@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+# distutils: language = c++
 
-# For wrapping fornberg.f90
+# For wrapping finitediff_templated.h
 
 cimport numpy as cnp
 import numpy as np
 
 from newton_interval cimport get_interval, get_interval_from_guess
-from c_fornberg cimport fornberg_apply_fd, fornberg_populate_weights
+from finitediff_templated cimport apply_fd, populate_weights
 
 def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
     """
@@ -30,9 +31,9 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
     """
     if n == -1:
         n = xarr.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
-        np.empty((n, maxorder+1), order='F')
-    fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
+    cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='c'] c = \
+        np.empty((n, maxorder+1), order='C')
+    populate_weights[double](xtgt, &xarr[0], n-1, maxorder, &c[0,0])
     return c
 
 
@@ -81,7 +82,7 @@ def derivatives_at_point_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty(order+1)
     assert xdata.size == ydata.size
     assert xdata.size >= order+1
-    fornberg_apply_fd(xdata.size, order, &xdata[0], &ydata[0], xout, &yout[0])
+    apply_fd[double](xdata.size, order, &xdata[0], &ydata[0], xout, &yout[0])
     return yout
 
 
@@ -149,7 +150,7 @@ def interpolate_by_finite_diff(
         j = max(0, get_interval_from_guess(
             &xdata[0], xdata.shape[0], xout[i], j))
         j = min(j, xdata.shape[0]-nin)
-        fornberg_apply_fd(
+        apply_fd[double](
             nin,
             order,
             &xdata[j],
