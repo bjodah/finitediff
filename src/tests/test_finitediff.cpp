@@ -25,25 +25,31 @@ int test_apply_fd(apply_fd_ptr cb){
     return 0;
 }
 
-int test_populate_weights(populate_weights_ptr cb){
+int test_populate_weights(populate_weights_ptr cb, bool colmaj){
     vector<double> xdata {-1, 0, 1};
     double c[6];
     int maxorder = 1;
+    int rs, cs;
+    if (colmaj){
+        rs=1; cs=3;
+    }else{
+        rs=3; cs=1;
+    }
     (*cb)(0, &xdata[0], xdata.size()-1, maxorder, &c[0]);
-    if (fabs(c[0] - 0.0) > 1e-10) {return 4;}
-    if (fabs(c[1] - 1.0) > 1e-10) {return 4;}
-    if (fabs(c[2] - 0.0) > 1e-10) {return 4;}
-    if (fabs(c[3] + 0.5) > 1e-10) {return 4;}
-    if (fabs(c[4] - 0.0) > 1e-10) {return 4;}
-    if (fabs(c[5] - 0.5) > 1e-10) {return 4;}
+    if (fabs(c[0*rs + 0*cs] - 0.0) > 1e-10) {return 4;}
+    if (fabs(c[1*rs + 0*cs] - 1.0) > 1e-10) {return 4;}
+    if (fabs(c[2*rs + 0*cs] - 0.0) > 1e-10) {return 4;}
+    if (fabs(c[0*rs + 1*cs] + 0.5) > 1e-10) {return 4;}
+    if (fabs(c[1*rs + 1*cs] - 0.0) > 1e-10) {return 4;}
+    if (fabs(c[2*rs + 1*cs] - 0.5) > 1e-10) {return 4;}
     return 0;
 }
 
 int main(){
     int result = 0;
     result += test_apply_fd(&fornberg_apply_fd);
-    result += test_populate_weights(&fornberg_populate_weights);
+    result += test_populate_weights(&fornberg_populate_weights, true);
     result += 2*test_apply_fd(&apply_fd<double>);
-    result += 2*test_populate_weights(&populate_weights<double>);
+    result += 2*test_populate_weights(&populate_weights<double>, false);
     return result;
 }

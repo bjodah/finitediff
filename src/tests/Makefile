@@ -15,5 +15,5 @@ test_finitediff_fort: ../finitediff_fort.f90 test_finitediff_fort.f90
 %.o: ../%.f90
 	$(FC) $(FLAGS) $(FFLAGS) -o $@ -c $^
 
-test_finitediff: c_finitediff_fort.o finitediff_fort.o test_finitediff.cpp
+test_finitediff: c_finitediff_fort.o finitediff_fort.o test_finitediff.cpp ../finitediff_templated.h
 	$(CXX) $(FLAGS) $(CXXFLAGS) -I.. -o $@ $^ -lgfortranbegin -lgfortran -lm

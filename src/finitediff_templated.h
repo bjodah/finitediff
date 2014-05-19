@@ -62,7 +62,7 @@ void apply_fd(const int nin, const int maxorder,
     for (int j=0; j<nin; ++j){
         out[j] = 0;
         for (int i=0; i<maxorder+1; ++i)
-            out[j] += c[j*nin + i]*ydata[j];
+            out[j] += c[i*nin + j]*ydata[i];
     }
     delete []c;
 }
