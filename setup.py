@@ -7,16 +7,26 @@ from distutils.core import setup
 
 use_fortran = False
 
+
 if use_fortran:
     interface = 'fort'
+    sources = [
+        './src/finitediff_fort.f90',
+        './src/c_finitediff_fort.f90',
+    ]
 else:
     interface = 'templated'
+    sources = []
 
+sources += [
+    './external/newton_interval/src/newton_interval.c',
+    './finitediff/_finitediff_'+interface+'.pyx'
+]
 
 version_ = '0.1.10-dev'
 name_ = 'finitediff'
 
-if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
+if '--help' in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
     cmdclass_ = {}
     ext_modules_ = []
 else:
@@ -30,12 +40,7 @@ else:
     ext_modules_ = [
         CleverExtension(
             'finitediff._finitediff_'+interface,
-            sources=[
-                './src/finitediff_fort.f90',
-                './src/c_finitediff_fort.f90',
-                './external/newton_interval/src/newton_interval.c',
-                './finitediff/_finitediff_'+interface+'.pyx'
-            ],
+            sources=sources,
             pycompilation_compile_kwargs={
                 'per_file_kwargs': {
                     ArbitraryDepthGlob('*.c'): {'std': 'c99'}
@@ -45,7 +50,9 @@ else:
                 './src',
                 './external/newton_interval/include',
                 numpy.get_include()
-            ]
+            ],
+            language='c++' if not use_fortran else None,
+            logger=True
         )
     ]
 
