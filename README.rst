@@ -45,7 +45,7 @@ See distutils documentation_ for more options.
 
 .. _documentation: http://docs.python.org/2/library/distutils.html
 
-Note that the behaviour of ``setup(...)`` is modified slightly through the use of "CleverExtension" from pycompilation_.
+Note that the behaviour of ``setup(...)`` is modified slightly through the use of "PCEExtension" from pycodeexport_.
 
 
 Tests
@@ -69,6 +69,7 @@ Optional dependencies (for Python bindings):
 - NumPy_ 
 - Cython_
 - pycompilation_ (optional: enables use from python)
+- pycodeexport_ (optional: enables use from python)
 - pytest_ (sudo apt-get install python-pytest)
 - matplotlib_ (sudo apt-get install python-matplotlib)
 
@@ -82,6 +83,7 @@ pip install --upgrade -r https://raw.github.com/bjodah/finitediff/v0.1.9/require
 
 .. _NumPy: http://www.numpy.org/
 .. _pycompilation: https://github.com/bjodah/pycompilation
+.. _pycodeexport: https://github.com/bjodah/pycodeexport
 .. _pytest: http://pytest.org/
 .. _matplotlib: http://matplotlib.org/
 

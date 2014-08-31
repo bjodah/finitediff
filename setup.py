@@ -5,7 +5,7 @@ import sys
 
 from distutils.core import setup
 
-version_ = '0.1.10-dev'
+version_ = '0.1.10'
 name_ = 'finitediff'
 
 if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
@@ -14,13 +14,12 @@ if '--help'in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'cl
 else:
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
-    from pycompilation.dist import clever_build_ext
-    from pycompilation.dist import CleverExtension
+    from pycodeexport import pce_build_ext, PCEExtension
     from pycompilation.util import ArbitraryDepthGlob
 
-    cmdclass_ = {'build_ext': clever_build_ext}
+    cmdclass_ = {'build_ext': pce_build_ext}
     ext_modules_ = [
-        CleverExtension(
+        PCEExtension(
             "finitediff._finitediff",
             sources=[
                 './finitediff/fornberg.f90',
@@ -30,7 +29,7 @@ else:
             ],
             pycompilation_compile_kwargs={
                 'per_file_kwargs': {
-                    ArbitraryDepthGlob('*.c'): {'std': 'c99'}
+                    ArbitraryDepthGlob(b'*.c'): {'std': 'c99'}
                 }
             },
             include_dirs=[
