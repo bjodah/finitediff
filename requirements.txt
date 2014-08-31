@@ -2,5 +2,6 @@ argh>=0.23.1
 numpy>=1.6.1
 cython>=0.19.1
 pytest>=2.2.3
+future>=0.12.3
 https://github.com/bjodah/pycompilation/archive/v0.3.0.tar.gz
 https://github.com/bjodah/pycodeexport/archive/v0.0.2.tar.gz
