@@ -16,12 +16,15 @@ contains
     integer :: m, nd
     real(dp), allocatable :: c(:,:)
     real(dp), parameter :: x(0:2) = [-1.0_dp, 0.0_dp, 1.0_dp]
+    real(dp), parameter :: c_ref(3,2) = reshape([0.0_dp, 1.0_dp, 0.0_dp, -0.5_dp, 0.0_dp, 0.5_dp, 1.0_dp, -2.0_dp, 1.0_dp], [3,2])
     nd = size(x)-1
     m = 2
     z = 0.0_dp
     allocate(c(0:nd, 0:m))
     call populate_weights(z, x, nd, m, c)
-    print *, c
+    if (sum(abs(c - c_ref)) > 1e-10) then
+       stop "c not equal to c_ref"
+    end if
   end subroutine
 
 end module test_fornberg
