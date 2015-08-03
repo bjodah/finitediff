@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.1.10-dev'
+from .release import __version__
 
 try:
     from finitediff._finitediff_fort import (

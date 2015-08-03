@@ -133,18 +133,22 @@ def interpolate_by_finite_diff(
     ----------
     The underlying algorithm is from:
     Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
-    Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
+    Bengt Fornberg, Mathematics of computation, 51, 184, 1988, 699-706
     """
     cdef int nin = ntail+nhead
     cdef int nout = xout.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.empty(order+1)
-    cdef cnp.ndarray[cnp.float64_t, ndim=2] yout = \
-        np.zeros((nout, order+1), order='C')
-    cdef int i,j # i,j are counters
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.empty(
+        order+1, dtype=np.float64)
+    cdef cnp.ndarray[cnp.float64_t, ndim=2] yout =np.zeros(
+        (nout, order+1), order='C', dtype=np.float64)
+    cdef int i, j # i,j are counters
 
-    assert xdata.shape[0] >= ntail+nhead
-    assert xdata.shape[0] == ydata.shape[0]
-    assert nhead+ntail >= order+1
+    if xdata.shape[0] < ntail+nhead:
+        raise ValueError("ntail + nhead < xdata.shape[0]")
+    if xdata.shape[0] != ydata.shape[0]:
+        raise ValueError("xdata.shape[0] != ydata.shape[0]")
+    if nhead+ntail < order+1:
+        raise ValueError("nhead+ntail < order+1")
 
     for i in range(nout):
         j = max(0, get_interval_from_guess(

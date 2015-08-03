@@ -1,16 +1,17 @@
 language: python
 python:
   - "2.7"
-#later: - "3.3"
-# command to install dependencies
 before_install:
-#  - "sudo apt-get install -qq python-numpy"
-  - "pip install -r requirements.txt"
-  - "sudo apt-get install -qq gfortran"
+  - pip install -r requirements.txt
+  - sudo apt-get install -qq gfortran g++
 install:
-  - "python setup.py build_ext --inplace"
-  - "export PYTHONPATH=.:$PYTHONPATH"
+  - python setup.py build_ext --inplace
+  - export PYTHONPATH=.:$PYTHONPATH
 # command to run tests
-script: py.test
+script: 
+  - py.test
+  - USE_FORTRAN=1 python setup.py build_ext --inplace
+  - rm finitediff/*templated*.so
+  - py.test
 notifications:
   email: false

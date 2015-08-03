@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import sys
 
 from distutils.core import setup
 
-use_fortran = False
+USE_FORTRAN = os.environ.get('USE_FORTRAN', '0').lower() in ('1', 'true')
 
-
-if use_fortran:
+if USE_FORTRAN:
     interface = 'fort'
     sources = [
         './src/finitediff_fort.f90',
@@ -23,8 +23,9 @@ sources += [
     './finitediff/_finitediff_'+interface+'.pyx'
 ]
 
-version_ = '0.1.10-dev'
-name_ = 'finitediff'
+pkg_name = 'finitediff'
+release_py_path = os.path.join(pkg_name, 'release.py')
+exec(open(release_py_path).read())  # sets __version__
 
 if '--help' in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'clean', '--version'):
     cmdclass_ = {}
@@ -32,13 +33,13 @@ if '--help' in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'c
 else:
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
-    from pycompilation.dist import clever_build_ext
-    from pycompilation.dist import CleverExtension
+    from pycompilation.dist import pc_build_ext
+    from pycompilation.dist import PCExtension
     from pycompilation.util import ArbitraryDepthGlob
 
-    cmdclass_ = {'build_ext': clever_build_ext}
+    cmdclass_ = {'build_ext': pc_build_ext}
     ext_modules_ = [
-        CleverExtension(
+        PCExtension(
             'finitediff._finitediff_'+interface,
             sources=sources,
             pycompilation_compile_kwargs={
@@ -47,25 +48,25 @@ else:
                 }
             },
             include_dirs=[
-                './src',
+                './include',
                 './external/newton_interval/include',
                 numpy.get_include()
             ],
-            language='c++' if not use_fortran else None,
+            language=None if USE_FORTRAN else 'c++',
             logger=True
         )
     ]
 
 setup(
-    name=name_,
-    version=version_,
+    name=pkg_name,
+    version=__version__,
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
     description='Finite difference weights for any derivative order on arbitrarily spaced grids.',
-    license = "BSD",
-    url='https://github.com/bjodah/'+name_,
-    download_url='https://github.com/bjodah/'+name_+'/archive/v'+version_+'.tar.gz',
-    packages=[name_],
-    cmdclass = cmdclass_,
-    ext_modules = ext_modules_
+    license="BSD",
+    url='https://github.com/bjodah/'+pkg_name,
+    download_url='https://github.com/bjodah/'+pkg_name+'/archive/v'+__version__+'.tar.gz',
+    packages=[pkg_name],
+    cmdclass=cmdclass_,
+    ext_modules=ext_modules_
 )
