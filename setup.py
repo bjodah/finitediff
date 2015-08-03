@@ -33,7 +33,7 @@ if '--help' in sys.argv[1:] or sys.argv[1] in ('--help-commands', 'egg_info', 'c
 else:
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
-    from pycodeexport import pce_build_ext, PCEExtension
+    from pycompilation.dist import pc_build_ext, PCExtension
     from pycompilation.util import ArbitraryDepthGlob
 
     cmdclass_ = {'build_ext': pc_build_ext}

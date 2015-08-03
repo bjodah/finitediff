@@ -9,9 +9,9 @@ install:
   - export PYTHONPATH=.:$PYTHONPATH
 # command to run tests
 script: 
-  - py.test
+  - PYTHONPATH=$(pwd) py.test
   - USE_FORTRAN=1 python setup.py build_ext --inplace
   - rm finitediff/*templated*.so
-  - py.test
+  - PYTHONPATH=$(pwd) py.test
 notifications:
   email: false
