@@ -9,6 +9,7 @@ TAGS
 */#*#
 *.pyc
 */*.pyc
+.cache/
 finitediff/*.so
 src/*.mod
 src/tests/*.mod
