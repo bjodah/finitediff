@@ -18,6 +18,23 @@ def test_derivatives_at_point_by_finite_diff():
         np.array([.0, .25, 1.]), .5, 2)  # y=x**2
     assert np.allclose(np.array([.25, 1.0, 2.0]), out)
 
+    x = np.array([.0, .5, 1., 1.5, 2.0])
+
+    def f(x):
+        return 3 + x - x**3
+
+    pnt = 1.25
+    out = derivatives_at_point_by_finite_diff(
+        x, f(x), pnt, 2)
+
+    def Df(x):
+        return 1 - 3*x**2
+
+    def D2f(x):
+        return -6*x
+
+    assert np.allclose([f(pnt), Df(pnt), D2f(pnt)], out)
+
 
 def test_interpolate_by_finite_diff():
     order = 0
@@ -27,6 +44,11 @@ def test_interpolate_by_finite_diff():
     y = interpolate_by_finite_diff(xarr, yarr, xtest,
                                    order=4, ntail=5,
                                    nhead=5)
+    if __name__ == '__main__':
+        import matplotlib.pyplot as plt
+        for ci in range(y.shape[1]):
+            plt.plot(xtest, y[:, ci]-np.exp(xtest))
+        plt.show()
     yexact = np.exp(xtest)
     for ci in range(y.shape[1]):
         tol = 10**-(13-ci*2)
@@ -48,7 +70,8 @@ def test_get_weights():
                      maxorder={0: 0, 1: 2, 2: 4, 3: 4, 4: 4}[i])
          for i in range(5)]
 
-    S = lambda x: 1.0*x
+    def S(x):
+        return 1.0*x
 
     def test_d(d, i, o, r):
         print(d[i])

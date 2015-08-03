@@ -68,7 +68,7 @@ namespace finitediff {
         for (int j=0; j <= maxorder; ++j){
             out[j] = 0;
             for (int i=0; i<nin; ++i)
-                out[j] += c[i + j*(maxorder+1)]*ydata[i];
+                out[j] += c[i + j*nin] * ydata[i];
         }
         delete []c;
     }

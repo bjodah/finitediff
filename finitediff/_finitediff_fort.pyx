@@ -32,7 +32,7 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
         n = xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.empty((n, maxorder+1), order='F')
-    fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0,0])
+    fornberg_populate_weights(xtgt, &xarr[0], n-1, maxorder, &c[0, 0])
     return c
 
 
@@ -70,7 +70,7 @@ def derivatives_at_point_by_finite_diff(
     --------
     >>> derivatives_at_point_by_finite_diff(np.array([.0, .5, 1.]),
             np.array([.0, .25, 1.]), .5, 2) # y=x**2
-    array([.25, 1.0, 2.0]) # (x**2, 2x, 2)
+    array([.25, 1.0, 2.0])  # (x**2, 2x, 2)
 
     References
     ----------

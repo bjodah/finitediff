@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 #include "c_finitediff_fort.h"
-#include "finitediff_templated.h"
+#include "finitediff_templated.hpp"
 
 // C++11 source calling into Fortran 2003 c_fornberg using ISO_C_BINDING
 // see Makefile for example of how to compile and link.
@@ -49,7 +49,7 @@ int main(){
     int result = 0;
     result += test_apply_fd(&fornberg_apply_fd);
     result += test_populate_weights(&fornberg_populate_weights, true);
-    result += 2*test_apply_fd(&apply_fd<double>);
-    result += 2*test_populate_weights(&populate_weights<double>, false);
+    result += 2*test_apply_fd(&finitediff::apply_fd<double>);
+    result += 2*test_populate_weights(&finitediff::populate_weights<double>, true);
     return result;
 }

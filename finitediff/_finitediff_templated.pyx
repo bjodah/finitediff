@@ -31,9 +31,9 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
     """
     if n == -1:
         n = xarr.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='c'] c = \
-        np.empty((n, maxorder+1), order='C')
-    populate_weights[double](xtgt, &xarr[0], n-1, maxorder, &c[0,0])
+    cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
+        np.empty((n, maxorder+1), order='F')
+    populate_weights[double](xtgt, &xarr[0], n-1, maxorder, &c[0, 0])
     return c
 
 
@@ -70,8 +70,8 @@ def derivatives_at_point_by_finite_diff(
     Examples
     --------
     >>> derivatives_at_point_by_finite_diff(np.array([.0, .5, 1.]),
-            np.array([.0, .25, 1.]), .5, 2) # y=x**2
-    array([.25, 1.0, 2.0]) # (x**2, 2x, 2)
+            np.array([.0, .25, 1.]), .5, 2)  # y=x**2
+    array([.25, 1.0, 2.0])  # (x**2, 2x, 2)
 
     References
     ----------
@@ -80,8 +80,10 @@ def derivatives_at_point_by_finite_diff(
     Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty(order+1)
-    assert xdata.size == ydata.size
-    assert xdata.size >= order+1
+    if xdata.size != ydata.size:
+        raise ValueError("xdata and ydata shapes incompatible")
+    if xdata.size < order+1:
+        raise ValueError("xdata too short for requested derivative order")
     apply_fd[double](xdata.size, order, &xdata[0], &ydata[0], xout, &yout[0])
     return yout
 
@@ -161,5 +163,5 @@ def interpolate_by_finite_diff(
             &ydata[j],
             xout[i],
             &out[0])
-        yout[i,:] = out
+        yout[i, :] = out
     return yout
