@@ -4,9 +4,8 @@ finitediff
 .. image:: https://travis-ci.org/bjodah/finitediff.png?branch=master
    :target: https://travis-ci.org/bjodah/finitediff
 
-``finitediff`` containts two implementations ([Fortran
-90](src/finitediff_fort.f90) and
-[C++](include/finitediff_templated.hpp)) version of Begnt Fornberg's
+``finitediff`` containts two implementations (`Fortran 90
+<src/finitediff_fort.f90>`_ and `C++ <include/finitediff_templated.hpp>`_) version of Begnt Fornberg's
 formulae for generation of finite difference weights on aribtrarily
 spaced one dimensional grids. The finite difference weights can be
 used for optimized inter-/extrapolation data series for up to
@@ -77,7 +76,7 @@ Optional dependencies (for Python bindings):
 - pytest_ (``sudo apt-get install python-pytest``)
 - matplotlib_ (``sudo apt-get install python-matplotlib``)
 
-See [requirements.txt](requirements.txt) for detailed information of versions tested for.
+See `requirements.txt <requirements.txt>`_ for detailed information of versions tested for.
 
 For all dependencies the following command may be issued on a debian
 based system:
@@ -154,4 +153,4 @@ Open Source. Released under the very permissive "simplified
 
 Authors
 =======
-See file [AUTHORS](AUTHORS) in root
+See file `AUTHORS <AUTHORS>`_ in root.
