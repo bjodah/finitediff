@@ -4,28 +4,26 @@ finitediff
 .. image:: https://travis-ci.org/bjodah/finitediff.png?branch=master
    :target: https://travis-ci.org/bjodah/finitediff
 
-"finitediff" is a Fortran 90 version of Begnt Fornberg's formulae for generation
-of finite difference weights on aribtrarily spaced one dimensional
-grids. The finite difference weights can be used for optimized
-inter-/extrapolation data series for up to arbitrary derivative order.
-Native C/C++ (`using ISO_C_BINDING`_) and Python_ (+ Cython_) bindings are included..
+``finitediff`` containts two implementations ([Fortran
+90](src/finitediff_fort.f90) and
+[C++](include/finitediff_templated.hpp)) version of Begnt Fornberg's
+formulae for generation of finite difference weights on aribtrarily
+spaced one dimensional grids. The finite difference weights can be
+used for optimized inter-/extrapolation data series for up to
+arbitrary derivative order. Python_ bindings are provided.
 
-Feel free to enhance modify and make pull request at github to the finitediff_ repository.
-
-.. _using ISO_C_BINDING: http://www.fortran90.org/src/best-practices.html#interfacing-with-c
 .. _Python: https://www.python.org
-.. _Cython: http://cython.org
 .. _finitediff: https://github.com/bjodah/finitediff
 
 
 Capabilities
 ============
-finitediff currently provides callbacks for esimtation of derivatives
-or interpolation either at a single point (see ``apply_fd`` in
-fornberg.f90) and over an array (available from the Python bindings). 
+finitediff currently provides callbacks for estimation of derivatives
+or interpolation either at a single point or over an array (available 
+from the Python bindings). 
 
 The user may also manually generate the corresponding weights. (see
-``populate_weights`` in fornberg.f90) 
+``populate_weights``) 
 
 
 Installation
@@ -33,57 +31,66 @@ Installation
 See dependencies and make sure that manual dependencies are satisfied.
 
 Example using pip (modify to your own needs):
-    1. ``pip install --user --upgrade -r https://raw.github.com/bjodah/finitediff/v0.1.9/requirements.txt``
-    2. ``pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.9.tar.gz``
+
+::
+
+    $ pip install --user --upgrade -r https://raw.github.com/bjodah/finitediff/v0.1.10/requirements.txt
+    $ pip install --user --upgrade https://github.com/bjodah/finitediff/archive/v0.1.10.tar.gz
 
 Manual installation:
-    1. Clone repository ``git clone https://github.com/bjodah/finitediff.git``
-    2. Install dependencies ``cd finitediff; pip install --user --upgrade -r requirements.txt``
-    3. To install run ``python setup.py install --user`` or ``sudo python setup.py install``.
+
+
+1. Clone repository ``$ git clone https://github.com/bjodah/finitediff.git``
+2. Install dependencies ``$ cd finitediff; pip install --user --upgrade -r requirements.txt``
+3. To install run ``$ python setup.py install --user`` or ``$ sudo python setup.py install``.
 
 See distutils documentation_ for more options.
 
 .. _documentation: http://docs.python.org/2/library/distutils.html
 
-Note that the behaviour of ``setup(...)`` is modified slightly through the use of "PCEExtension" from pycodeexport_.
+Note that the behaviour of ``setup(...)`` is modified slightly through the use of "PCExtension" from pycompilation_.
 
 
 Tests
 =====
 To run the full test suite, you need to build the python
 bindings. (see Dependencies)
-1. ``python setup.py build_ext --inplace``
-2. ``py.test``
+::
+
+    $ python setup.py build_ext --inplace
+    $ py.test
 
 
 Dependencies
 ============
-You need a fortran compiler supporting Fortran 90
-(and 2003 for the bindings). On a debian based linux system
-you can install it easily by typing: ``sudo apt-get install gfortran``
+You need either a C++ or a Fortran 90 compiler. On a debian based
+linux system you can install it easily by typing: 
+``$ sudo apt-get install gfortran g++`` 
 
 Optional dependencies (for Python bindings):
 
-- Python header files (sudo apt-get install python-dev)
+- Python header files (``sudo apt-get install python-dev``)
 - Python_ (tested with 2.7)
 - NumPy_ 
 - Cython_
 - pycompilation_ (optional: enables use from python)
-- pycodeexport_ (optional: enables use from python)
-- pytest_ (sudo apt-get install python-pytest)
-- matplotlib_ (sudo apt-get install python-matplotlib)
+- pytest_ (``sudo apt-get install python-pytest``)
+- matplotlib_ (``sudo apt-get install python-matplotlib``)
 
-See requirements.txt for detailed information of versions tested for.
+See [requirements.txt](requirements.txt) for detailed information of versions tested for.
 
 For all dependencies the following command may be issued on a debian
 based system:
-``sudo apt-get install gfortran python2.7 libpython2.7-dev
-python-numpy cython python-pip python-pytest python-matplotlib; sudo
-pip install --upgrade -r https://raw.github.com/bjodah/finitediff/v0.1.9/requirements.txt``
+
+::
+
+    $ sudo apt-get install gfortran g++ python2.7 libpython2.7-dev
+    python-numpy cython python-pip python-pytest python-matplotlib; sudo
+    pip install --upgrade -r https://raw.github.com/bjodah/finitediff/v0.1.10/requirements.txt``
+
 
 .. _NumPy: http://www.numpy.org/
 .. _pycompilation: https://github.com/bjodah/pycompilation
-.. _pycodeexport: https://github.com/bjodah/pycodeexport
 .. _pytest: http://pytest.org/
 .. _matplotlib: http://matplotlib.org/
 
@@ -147,8 +154,4 @@ Open Source. Released under the very permissive "simplified
 
 Authors
 =======
-See file AUTHOR in root
-
-TODO
-====
-Write proper documentation.
+See file [AUTHORS](AUTHORS) in root
