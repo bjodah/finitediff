@@ -1,0 +1,11 @@
+image: bjodah/dockerfile-bjodah-scicomp:14.04a
+git:
+    path: github.com/bjodah/finitediff
+script:
+  - if [[ "$DRONE_BRANCH" =~ ^v[0-9]+.[0-9]?* ]]; then export FINITEDIFF_RELEASE_VERSION=$DRONE_BRANCH; echo ${FINITEDIFF_RELEASE_VERSION} | tail -c +2 > __conda_version__.txt; fi
+  - python2 setup.py build_ext --inplace
+  - python3 setup.py build_ext --inplace
+  - PYTHONPATH=$(pwd) python2 -m pytest
+  - PYTHONPATH=$(pwd) python3 -m pytest
+  - python2 setup.py sdist
+  - scp dist/* finitediff@hera.physchem.kth.se:~/

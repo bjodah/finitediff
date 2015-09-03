@@ -18,3 +18,4 @@ src/tests/test_finitediff_fort
 src/tests/test_finitediff
 build/
 .cache/
+cython_debug/

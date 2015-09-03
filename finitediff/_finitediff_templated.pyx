@@ -9,6 +9,7 @@ import numpy as np
 from newton_interval cimport get_interval, get_interval_from_guess
 from finitediff_templated cimport apply_fd, populate_weights
 
+
 def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
     """
     Generates finite differnece weights.

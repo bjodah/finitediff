@@ -1,6 +1,8 @@
 ===============
 newton_interval
 ===============
+.. image:: https://travis-ci.org/bjodah/newton_interval.png?branch=master
+   :target: https://travis-ci.org/bjodah/newton_interval
 
 newton_interval_ is a small C routine for fast interval lookup in strictly
 monotonic arrays of doubles.
@@ -13,12 +15,16 @@ __ newton_interval_
 
 Tests
 =====
-Change into tests/ and run ``make``
+Change into ``tests/`` and run ``make``
+
+Versions (tagged)
+=================
+* 0.1 - Current stable, no known bugs
 
 License
 =======
 Open Source. Released under the very permissive "simplified
-(2-clause) BSD license". See LICENCE.txt for further details.
+(2-clause) BSD license". See LICENCE for further details.
 
 Author
 ======

@@ -1,7 +1,7 @@
 SRCDIR=../src
 INCDIR=../include
 LIBS=-lm
-CFLAGS=-std=c99 -g
+CFLAGS=-Wall -Werror -g
 NEWTON_SRCS=$(INCDIR)/newton_interval.h $(SRCDIR)/newton_interval.c
 UNIT_SRCS=unittest.c unittest.h
 .PHONY: tests

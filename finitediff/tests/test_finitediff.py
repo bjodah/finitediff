@@ -37,7 +37,6 @@ def test_derivatives_at_point_by_finite_diff():
 
 
 def test_interpolate_by_finite_diff():
-    order = 0
     xarr = np.linspace(-1.5, 1.7, 53)
     yarr = np.exp(xarr)
     xtest = np.linspace(-1.4, 1.6, 57)
