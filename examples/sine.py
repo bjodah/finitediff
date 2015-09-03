@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function # Python 3 behaviour in Python 2
+from __future__ import division, print_function  # Python 3 behaviour in Py2
 
 import numpy as np
 
@@ -27,12 +27,10 @@ def demo_usage(n_data=50, n_fit=537, nhead=5, ntail=5, plot=False, alt=0):
     """
 
     x0, xend = 0, 5
-    x_data = np.linspace(x0,xend,n_data) + \
-             np.random.rand(n_data)*(xend-x0)/n_data/1.5 # shaky linspace
-    y_data = np.sin(x_data) * (1.0+0.1*(np.random.rand(n_data)-0.5)) # -5% to +5% noise
-
-    if n_data < n_fit:
-        m = 5 # points used behind and in front of interpolation
+    # shaky linspace -5% to +5% noise
+    x_data = (np.linspace(x0, xend, n_data) +
+              np.random.rand(n_data)*(xend-x0)/n_data/1.5)
+    y_data = np.sin(x_data) * (1.0+0.1*(np.random.rand(n_data)-0.5))
 
     x_fit = np.linspace(x0, xend, n_fit)
 
@@ -55,7 +53,8 @@ def demo_usage(n_data=50, n_fit=537, nhead=5, ntail=5, plot=False, alt=0):
                 x_data[lower_bound:upper_bound],
                 y_data[lower_bound:upper_bound], xf, 1)[1]
     else:
-        interp = interpolate_by_finite_diff(x_data, y_data, x_fit, 1, nhead, ntail)
+        interp = interpolate_by_finite_diff(x_data, y_data, x_fit,
+                                            1, nhead, ntail)
         y_fit = interp[:, 0]
         dydx_fit = interp[:, 1]
 
@@ -63,22 +62,22 @@ def demo_usage(n_data=50, n_fit=537, nhead=5, ntail=5, plot=False, alt=0):
         import matplotlib.pyplot as plt
 
         plt.subplot(221)
-        plt.plot(x_data,y_data,'x',label='Data points (sin)')
-        plt.plot(x_fit,y_fit,'-',label='Fitted curve (order=0)')
-        plt.plot(x_data,np.sin(x_data),'-',label='Analytic sin(x)')
+        plt.plot(x_data, y_data, 'x', label='Data points (sin)')
+        plt.plot(x_fit, y_fit, '-', label='Fitted curve (order=0)')
+        plt.plot(x_data, np.sin(x_data), '-', label='Analytic sin(x)')
         plt.legend()
 
         plt.subplot(222)
-        plt.plot(x_fit,y_fit-np.sin(x_fit), label='Error in order=0')
+        plt.plot(x_fit, y_fit-np.sin(x_fit), label='Error in order=0')
         plt.legend()
 
         plt.subplot(223)
-        plt.plot(x_fit,dydx_fit,'-',label='Fitted derivative (order=1)')
-        plt.plot(x_data,np.cos(x_data),'-',label='Analytic cos(x)')
+        plt.plot(x_fit, dydx_fit, '-', label='Fitted derivative (order=1)')
+        plt.plot(x_data, np.cos(x_data), '-', label='Analytic cos(x)')
         plt.legend()
 
         plt.subplot(224)
-        plt.plot(x_fit,dydx_fit-np.cos(x_fit), label='Error in order=1')
+        plt.plot(x_fit, dydx_fit-np.cos(x_fit), label='Error in order=1')
         plt.legend()
 
         plt.show()

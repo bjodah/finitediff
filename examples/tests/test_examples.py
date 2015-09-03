@@ -19,7 +19,6 @@ tests = glob.glob(os.path.join(os.path.dirname(__file__), '../*.py'))
 
 @pytest.mark.parametrize('pypath', tests)
 def test_examples(pypath):
-    p = subprocess.Popen(
-        ['python3' if sys.version_info.major == 3 else 'python', pypath],
-        cwd=os.path.join(os.path.dirname(__file__), '..'))
+    py_exe = 'python3' if sys.version_info.major == 3 else 'python'
+    p = subprocess.Popen([py_exe, pypath])
     assert p.wait() == 0  # SUCCESS==0

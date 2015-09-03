@@ -3,6 +3,7 @@
 
 import os
 import sys
+import shutil
 
 from distutils.core import setup
 
@@ -87,7 +88,8 @@ if CONDA_BUILD:
 
 release_py_path = os.path.join(pkg_name, 'release.py')
 
-if len(FINITEDIFF_RELEASE_VERSION) > 1 and FINITEDIFF_RELEASE_VERSION[0] == 'v':
+if len(FINITEDIFF_RELEASE_VERSION) > 1 and \
+   FINITEDIFF_RELEASE_VERSION[0] == 'v':
     TAGGED_RELEASE = True
     __version__ = FINITEDIFF_RELEASE_VERSION[1:]
 else:
@@ -96,7 +98,7 @@ else:
     exec(open(release_py_path).read())
 
 classifiers = [
-    "Development Status :: 2 - Beta",
+    "Development Status :: 4 - Beta",
     'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Topic :: Scientific/Engineering',
@@ -104,16 +106,17 @@ classifiers = [
 ]
 
 
-
 setup_kwargs = dict(
     name=pkg_name,
     version=__version__,  # from release_py_path
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
-    description='Finite difference weights for any derivative order on arbitrarily spaced grids.',
+    description=('Finite difference weights for any derivative '
+                 'order on arbitrarily spaced grids.'),
     classifiers=classifiers,
     url='https://github.com/bjodah/'+pkg_name,
-    download_url='https://github.com/bjodah/'+pkg_name+'/archive/v'+__version__+'.tar.gz',
+    download_url=('https://github.com/bjodah/' + pkg_name +
+                  '/archive/v'+__version__+'.tar.gz'),
     packages=[pkg_name],
     cmdclass=cmdclass,
     ext_modules=ext_modules
