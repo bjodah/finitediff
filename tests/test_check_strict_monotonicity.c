@@ -7,28 +7,28 @@ int test1(){
     double arr[] = {0.0, 1.0, 2.0};
     int i, n = 3;
     i = check_strict_monotonicity(arr, n);
-    return (i == 1);
+    return (i == -1);
 }
 
 int test2(){
     double arr[] = {0.0, 1.0};
     int i, n = 2;
     i = check_strict_monotonicity(arr, n);
-    return (i == 1);
+    return (i == -1);
 }
 
 int test3(){
     double arr[] = {0.0};
     int i, n = 1;
     i = check_strict_monotonicity(arr, n);
-    return (i == 1);
+    return (i == -1);
 }
 
 int test4(){
     double arr[] = {0.0, 1.0, 0.5};
     int i, n = 3;
     i = check_strict_monotonicity(arr, n);
-    return (i == 0);
+    return (i == 2);
 }
 
 
