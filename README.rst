@@ -18,7 +18,7 @@ Change into tests/ and run ``make``
 License
 =======
 Open Source. Released under the very permissive "simplified
-(2-clause) BSD license". See LICENCE.txt for further details.
+(2-clause) BSD license". See LICENCE for further details.
 
 Author
 ======
