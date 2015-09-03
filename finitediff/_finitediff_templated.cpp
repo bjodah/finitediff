@@ -1412,8 +1412,8 @@ static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, char *, char *, int *); /*proto*/
 
 /* Module declarations from 'newton_interval' */
-__PYX_EXTERN_C DL_IMPORT(int) get_interval(double const *const , size_t const , double const ); /*proto*/
-__PYX_EXTERN_C DL_IMPORT(int) get_interval_from_guess(double const *const , size_t const , double const , int); /*proto*/
+__PYX_EXTERN_C DL_IMPORT(int) get_interval(double const *const , int, double const ); /*proto*/
+__PYX_EXTERN_C DL_IMPORT(int) get_interval_from_guess(double const *const , int, double, int); /*proto*/
 
 /* Module declarations from 'finitediff_templated' */
 

@@ -1,0 +1,26 @@
+package:
+    name: finitediff
+    version: 0.2.0.git
+
+source:
+    path: ../
+
+build:
+    number: 0
+
+requirements:
+    build:
+        - python
+        - numpy
+        - cython
+    run:
+        - numpy
+        - python
+
+test:
+    imports:
+        - finitediff
+
+about:
+    home: https://github.com/bjodah/finitediff
+    license: Simplified BSD license

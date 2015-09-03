@@ -43,7 +43,8 @@ int test5(){
   const int nt = 50;
   double t[nt];
   double treq = 10.0;
-  for(int j = 0; j<nt; ++j)
+  int j;
+  for(j = 0; j<nt; ++j)
     t[j] = j*treq/(nt-1);
   int i = -2;
   int ti = nt-2;
@@ -60,6 +61,5 @@ static const TestCase t5 = {test5, "test5"};
 static const TestCase* test_cases[NTESTS] = {&t1, &t2, &t3, &t4, &t5};
 
 int main(int argc, char ** argv){
-  int result, i, exit_status = 0;
   return run_tests(NTESTS, test_cases, argv[0]);
 }
