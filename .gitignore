@@ -19,3 +19,5 @@ src/tests/test_finitediff
 build/
 .cache/
 cython_debug/
+MANIFEST
+dist/
