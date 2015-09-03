@@ -1,8 +1,9 @@
 ==========
 finitediff
 ==========
-.. image:: https://travis-ci.org/bjodah/finitediff.png?branch=master
-   :target: https://travis-ci.org/bjodah/finitediff
+.. image:: http://hera.physchem.kth.se:8080/github.com/bjodah/finitediff/status.svg?branch=master
+   :target: http://hera.physchem.kth.se:8080/github.com/bjodah/finitediff
+   :alt: Build status
 
 ``finitediff`` containts two implementations (`Fortran 90
 <src/finitediff_fort.f90>`_ and `C++ <include/finitediff_templated.hpp>`_) version of Begnt Fornberg's
