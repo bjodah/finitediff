@@ -83,5 +83,9 @@ def demo_usage(n_data=50, n_fit=537, nhead=5, ntail=5, plot=False, alt=0):
         plt.show()
 
 if __name__ == '__main__':
-    import argh
-    argh.dispatch_command(demo_usage)
+    try:
+        from argh import dispatch_command
+    except ImportError:
+        def dispatch_command(cb):
+            return cb()
+    dispatch_command(demo_usage)
