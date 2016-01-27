@@ -21,3 +21,4 @@ build/
 cython_debug/
 MANIFEST
 dist/
+doc/
