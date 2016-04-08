@@ -74,7 +74,10 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         ]
     else:
         # default path (no external dependencies):
-        from distutils.extension import Extension
+        try:
+            from setuptools.extension import Extension
+        except ImportError:
+            from distutils.extension import Extension
         modname = '_finitediff_'+interface
         ext_modules = [
             Extension('finitediff.'+modname,

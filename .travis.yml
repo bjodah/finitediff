@@ -1,8 +1,8 @@
-language: python
-python:
-  - "2.7"
+sudo: required
+dist: trusty
+language: generic
 before_install:
-  - sudo apt-get install -qq gfortran g++
+  - sudo apt-get install -qq gfortran g++ cython python-pip python-numpy python-argh python-pytest
 install:
   - python setup.py build_ext --inplace
   - export PYTHONPATH=.:$PYTHONPATH
