@@ -5,29 +5,41 @@ import os
 import sys
 import shutil
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+pkg_name = 'finitediff'
+
 
 USE_FORTRAN = os.environ.get('USE_FORTRAN', '0').lower() in ('1', 'true')
+
+
+def _path_under_setup(*args):
+    return os.path.join(os.path.dirname(__file__), *args)
+
 
 if USE_FORTRAN:
     interface = 'fort'
     sources = [
-        './src/finitediff_fort.f90',
-        './src/c_finitediff_fort.f90',
+        _path_under_setup('src', 'finitediff_fort.f90'),
+        _path_under_setup('src', 'c_finitediff_fort.f90'),
     ]
 else:
     interface = 'templated'
     sources = []
 
 
-USE_CYTHON = os.path.exists('finitediff/_finitediff_templated.pyx')
+USE_CYTHON = os.path.exists(_path_under_setup(
+    'finitediff', '_finitediff_templated.pyx'))
 ext = '.pyx' if USE_CYTHON else '.cpp'
 sources += [
-    './external/newton_interval/src/newton_interval.c',
-    './finitediff/_finitediff_' + interface + ext
+    _path_under_setup('external', 'newton_interval', 'src',
+                      'newton_interval.c'),
+    _path_under_setup('finitediff', '_finitediff_' + interface + ext)
 ]
 
-pkg_name = 'finitediff'
 
 cmdclass = {}
 ext_modules = []
@@ -36,8 +48,8 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
-        './include',
-        './external/newton_interval/include',
+        _path_under_setup('include'),
+        _path_under_setup('external', 'newton_interval', 'include'),
         numpy.get_include()
     ]
 
@@ -62,7 +74,10 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         ]
     else:
         # default path (no external dependencies):
-        from distutils.extension import Extension
+        try:
+            from setuptools.extension import Extension
+        except ImportError:
+            from distutils.extension import Extension
         modname = '_finitediff_'+interface
         ext_modules = [
             Extension('finitediff.'+modname,
@@ -86,7 +101,7 @@ if CONDA_BUILD:
     except IOError:
         pass
 
-release_py_path = os.path.join(pkg_name, 'release.py')
+release_py_path = _path_under_setup(pkg_name, '_release.py')
 
 if len(FINITEDIFF_RELEASE_VERSION) > 1 and \
    FINITEDIFF_RELEASE_VERSION[0] == 'v':
@@ -105,6 +120,10 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Mathematics',
 ]
 
+tests = [
+    pkg_name + '.tests',
+]
+
 
 setup_kwargs = dict(
     name=pkg_name,
@@ -117,9 +136,12 @@ setup_kwargs = dict(
     url='https://github.com/bjodah/'+pkg_name,
     download_url=('https://github.com/bjodah/' + pkg_name +
                   '/archive/v'+__version__+'.tar.gz'),
-    packages=[pkg_name],
+    packages=[pkg_name] + tests,
     cmdclass=cmdclass,
-    ext_modules=ext_modules
+    ext_modules=ext_modules,
+    setup_requires=['cython'] if USE_CYTHON else [],
+    install_requires=['numpy'],
+    extras_requires={'all': ['pytest']}
 )
 
 if __name__ == '__main__':

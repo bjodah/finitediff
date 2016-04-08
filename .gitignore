@@ -22,3 +22,4 @@ cython_debug/
 MANIFEST
 dist/
 doc/
+finitediff/_finitediff_templated.cpp

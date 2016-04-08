@@ -1,6 +1,8 @@
 #!/bin/bash -e
-cd $(dirname $0)/..
-python2 setup.py build_ext -i
-python2 -m pytest --pep8 --flakes --ignore build/
-python3 setup.py build_ext -i
-python3 -m pytest
+# Usage
+#   $ ./scripts/run_tests.sh
+# or
+#   $ ./scripts/run_tests.sh --cov pycvodes --cov-report html
+${PYTHON:-python} setup.py build_ext -i
+${PYTHON:-python} -m pytest --doctest-modules --pep8 --flakes $@
+${PYTHON:-python} -m doctest README.rst

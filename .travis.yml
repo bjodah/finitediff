@@ -1,9 +1,10 @@
-language: python
-python:
-  - "2.7"
+sudo: required
+dist: trusty
+language: generic
 before_install:
-  - pip install -r requirements.txt
-  - sudo apt-get install -qq gfortran g++
+  - sudo apt-get install -qq gfortran g++ python-pip python-numpy python-argh python-pytest python-pip python-dev
+  - sudo pip install pycompilation
+  - sudo pip install Cython --install-option="--no-cython-compile"
 install:
   - python setup.py build_ext --inplace
   - export PYTHONPATH=.:$PYTHONPATH
