@@ -70,47 +70,34 @@ tests you need ``pytest`` too:
 
 Dependencies
 ============
-You need either a C++ or a Fortran 90 compiler. On a debian based
-linux system you can install it easily by typing: 
-``$ sudo apt-get install gfortran g++`` 
+You need either a C++ or a Fortran 90 compiler. On a debian based linux system you can install it easily by typing::
+
+    $ sudo apt-get install gfortran g++
 
 Optional dependencies (for Python bindings):
 
 - Python header files (``sudo apt-get install python-dev``)
-- Python_ (tested with 2.7)
-- NumPy_ 
-- Cython_
-- pycompilation_ (optional: enables use from python)
-- pytest_ (``sudo apt-get install python-pytest``)
-- matplotlib_ (``sudo apt-get install python-matplotlib``)
+- Python
+- NumPy
+- Cython
+- pycompilation
+- pytest
 
-See `requirements.txt <requirements.txt>`_ for detailed information of versions tested for.
-
-For all dependencies the following command may be issued on a debian
-based system:
-
-::
-
-    $ sudo apt-get install gfortran g++ python2.7 libpython2.7-dev
-    python-numpy cython python-pip python-pytest python-matplotlib; sudo
-    pip install --upgrade -r https://raw.github.com/bjodah/finitediff/v0.1.10/requirements.txt``
-
-
-.. _NumPy: http://www.numpy.org/
-.. _pycompilation: https://github.com/bjodah/pycompilation
-.. _pytest: http://pytest.org/
-.. _matplotlib: http://matplotlib.org/
+see CI scripts for examples.
 
 Notes
 =====
-There is a git subtree under finitediff, update through:
+There is a git subtree under finitediff, update through::
 
-``git subtree pull --prefix finitediff/newton_interval newton_interval master --squash``
+    git subtree pull --prefix finitediff/newton_interval newton_interval master --squash
+
 
 where the repo "newton_interval" is https://github.com/bjodah/newton_interval.git
 
-First time you need to add it:
-``git remote add -f newton_interval https://github.com/bjodah/newton_interval.git``
+First time you need to add it::
+
+    git subtree add --prefix finitediff/newton_interval git://github.com/bjodah/newton_interval master
+
 
 (Users of Ubuntu 12.04 who want to use git subtree, see http://stackoverflow.com/questions/17797328)
 
