@@ -2,7 +2,6 @@ language: python
 python:
   - "2.7"
 before_install:
-  - pip install -r requirements.txt
   - sudo apt-get install -qq gfortran g++
 install:
   - python setup.py build_ext --inplace
