@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import io
 import os
 import sys
 import shutil
@@ -124,15 +125,24 @@ tests = [
     pkg_name + '.tests',
 ]
 
+with io.open(_path_under_setup(pkg_name, '__init__.py'), 'rt',
+             encoding='utf-8') as f:
+    short_description = f.read().split('"""')[1].split('\n')[1]
+assert 10 < len(short_description) < 255
+long_description = io.open(_path_under_setup('README.rst'),
+                           encoding='utf-8').read()
+assert len(long_description) > 100
+
 
 setup_kwargs = dict(
     name=pkg_name,
     version=__version__,  # from release_py_path
     author='Björn Dahlgren',
     author_email='bjodah@DELETEMEgmail.com',
-    description=('Finite difference weights for any derivative '
-                 'order on arbitrarily spaced grids.'),
+    description=short_description,
+    long_description=long_description,
     classifiers=classifiers,
+    license='bsd',
     url='https://github.com/bjodah/'+pkg_name,
     download_url=('https://github.com/bjodah/' + pkg_name +
                   '/archive/v'+__version__+'.tar.gz'),
