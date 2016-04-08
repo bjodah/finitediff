@@ -9,7 +9,7 @@ deploy:
 
   rsync:
     host: hera.physchem.kth.se
-    user: chempy
+    user: finitediff
     port: 22
     source: deploy/
     target: ~

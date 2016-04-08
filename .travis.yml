@@ -2,7 +2,8 @@ sudo: required
 dist: trusty
 language: generic
 before_install:
-  - sudo apt-get install -qq gfortran g++ cython python-pip python-numpy python-argh python-pytest
+  - sudo apt-get install -qq gfortran g++ cython python-pip python-numpy python-argh python-pytest python-pip
+  - sudo pip install pycompilation
 install:
   - python setup.py build_ext --inplace
   - export PYTHONPATH=.:$PYTHONPATH
