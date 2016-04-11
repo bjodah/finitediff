@@ -83,7 +83,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         ext_modules = [
             Extension('finitediff.'+modname,
                       sources,
-                      language='c++', extra_compile_args=['-std=c++11'],
+                      language='c++',
                       include_dirs=include_dirs)
         ]
         if USE_CYTHON:
