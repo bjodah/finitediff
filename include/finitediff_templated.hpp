@@ -9,9 +9,8 @@ namespace finitediff {
         // Parameters
         // ----------
         // z: location where approximations are to be accurate
-        // x(0:nd): grid point locations, found in x(0:n)
-        // nd: dimension of x- and c-arrays:
-        // x(0:nd): grid locations
+        // x(0:nd): grid point locations
+        // nd: dimension of x- and c-arrays (len(x) - 1)
         // c(0:nd, 0:m) derivatives weights of order 0:m (column major order)
         // m: highest derivative.
         //
@@ -58,7 +57,7 @@ namespace finitediff {
     }
 
     template <typename Real_t>
-    void apply_fd(const int nin, const int maxorder, 
+    void apply_fd(const int nin, const int maxorder,
                   const Real_t * const __restrict__ xdata,
                   const Real_t * const __restrict__ ydata,
                   const Real_t xtgt,
