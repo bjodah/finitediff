@@ -142,7 +142,7 @@ setup_kwargs = dict(
     description=short_description,
     long_description=long_description,
     classifiers=classifiers,
-    license='bsd',
+    license='BSD',
     url='https://github.com/bjodah/'+pkg_name,
     download_url=('https://github.com/bjodah/' + pkg_name +
                   '/archive/v'+__version__+'.tar.gz'),

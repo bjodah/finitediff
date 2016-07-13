@@ -1,4 +1,4 @@
-recursive-include include *.hpp
+recursive-include include *.hpp *.h *.pxd
 recursive-include external *.c *.h
 include AUTHORS
 include CHANGES.rst
