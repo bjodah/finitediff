@@ -34,8 +34,13 @@ env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION ./scripts/generate_docs.sh
 git tag -a v$VERSION -m v$VERSION
 git push
 git push --tags
-env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION python setup.py upload_sphinx
 twine upload dist/${PKG}-$VERSION.tar.gz
 
-echo "Make a release on github with the new tag and manually attach the new .tar.gz file from ./dist/"
-echo "Then run ./scripts/post_release.sh ... "
+set +x
+echo ""
+echo "    Make a github release of the tag \"v$VERSION\" and name "
+echo "    it \"${PKG}-${VERSION}\", manually attach the new .tar.gz"
+echo "    file from the ./dist/ directory. Then run:"
+echo ""
+echo "        $ ./scripts/post_release.sh $1 MYSERVER MYGITHUBUSERNAME"
+echo ""
