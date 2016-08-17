@@ -24,3 +24,4 @@ dist/
 doc/
 finitediff/_finitediff_templated.cpp
 *.egg-info
+tests/test_finitediff_templated
