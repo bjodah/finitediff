@@ -6,6 +6,9 @@ CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../include -fn
 test: test_finitediff_templated
 	./test_finitediff_templated
 
-test_finitediff_templated: test_finitediff_templated.cpp ../include/finitediff_templated.hpp
+catch.hpp: catch.hpp.bz2
+	bunzip2 -k -f $<
+
+test_finitediff_templated: test_finitediff_templated.cpp ../include/finitediff_templated.hpp catch.hpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
