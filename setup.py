@@ -6,10 +6,7 @@ import os
 import sys
 import shutil
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 pkg_name = 'finitediff'
 
@@ -75,10 +72,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         ]
     else:
         # default path (no external dependencies):
-        try:
-            from setuptools.extension import Extension
-        except ImportError:
-            from distutils.extension import Extension
+        from setuptools.extension import Extension
         modname = '_finitediff_'+interface
         ext_modules = [
             Extension('finitediff.'+modname,
@@ -147,6 +141,7 @@ setup_kwargs = dict(
     download_url=('https://github.com/bjodah/' + pkg_name +
                   '/archive/v'+__version__+'.tar.gz'),
     packages=[pkg_name] + tests,
+    package_data={pkg_name: ['include/*.*']},
     cmdclass=cmdclass,
     ext_modules=ext_modules,
     setup_requires=['cython'] if USE_CYTHON else [],
