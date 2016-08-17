@@ -1,6 +1,11 @@
 #ifndef FINITEDIFF_TEMPLATED_HPP_IWIDN4CP6RGFHFVKSWG4HICEZE
 #define FINITEDIFF_TEMPLATED_HPP_IWIDN4CP6RGFHFVKSWG4HICEZE
 
+// Pre-processor macro __cplusplus == 201103L in ISO C++11 compliant compilers. (e.g. GCC >= 4.7.0)
+#if __cplusplus > 199711L
+#include <stdexcept>
+#endif
+
 namespace finitediff {
 
     template <typename Real_t>
@@ -19,10 +24,7 @@ namespace finitediff {
         // Generation of Finite Difference Formulas on Arbitrarily
         // Spaced Grids, Bengt Fornberg,
         // Mathematics of compuation, 51, 184, 1988, 699-706
-        //
-        // Notes
-        // -----
-        // If c is to be used repeatedly, consider transposing.
+
         Real_t c1, c2, c3, c4, c5;
         c1 = 1;
         c4 = x[0] - z;
@@ -71,6 +73,20 @@ namespace finitediff {
         }
         delete []c;
     }
+
+
+// Pre-processor macro __cplusplus == 201103L in ISO C++11 compliant compilers. (e.g. GCC >= 4.7.0)
+#if __cplusplus > 199711L
+    template<typename Real_t, template<typename, typename...> class Cont, typename... Args>
+    Cont<Real_t, Args...> generate_weights(const Real_t z, const Cont<Real_t, Args...>& x, const unsigned maxorder){
+        Cont<Real_t, Args...> coeffs(x.size()*(maxorder+1));
+        if (x.size() < maxorder + 1){
+            throw std::logic_error("size of x insufficient");
+        }
+        populate_weights<Real_t>(z, &x[0], x.size() - 1, maxorder, &coeffs[0]);
+        return coeffs;
+    }
+#endif
 }
 
 
