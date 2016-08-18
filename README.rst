@@ -50,26 +50,34 @@ Generating finite difference weights is simple using C++11:
 
 .. code:: C++
 
-  #include "finitediff_templated.hpp"
-  #include <vector>
-  #include <iostream>
-
-  int main(){
-    std::vector<double> x {-1, 0, 1};
-    auto coeffs = finitediff::generate_weights(0.0, x3, 2);
-    std::cout << "Zeroth order: " << coeffs[0] << " " << coeffs[1] << " " << coeffs[2] << std::endl;
-    std::cout << "First order: "  << coeffs[3] << " " << coeffs[4] << " " << coeffs[5] << std::endl;
-    std::cout << "Second order: " << coeffs[6] << " " << coeffs[7] << " " << coeffs[8] << std::endl;
-  }
-
+   #include "finitediff_templated.hpp"
+   #include <vector>
+   #include <string>
+   #include <iostream>
+   
+   int main(){
+       const unsigned maxorder = 2;
+       std::vector<std::string> labels {"Zeroth order", "First order", "Second order"};
+       std::vector<double> x {0, 1, -1, 2, -2};  // Fourth order of accuracy
+       auto coeffs = finitediff::generate_weights(0.0, x, maxorder);
+       for (unsigned order = 0; order <= maxorder; order++){
+           std::cout << labels[order] << ": ";
+           for (unsigned idx = 0; idx < x.size(); idx++){
+               std::cout << coeffs[order*x.size() + idx] << " ";
+           }
+           std::cout << std::endl;
+       }
+   }
+   
 ::
 
    $ cd examples/
    $ g++ -std=c++11 demo.cpp -I../include
    $ ./a.out
-   Zeroth order: 0 1 -0
-   First order: -0.5 0 0.5
-   Second order: 1 -2 1
+   Zeroth order: 1 -0 0 0 -0 
+   First order: -0 0.666667 -0.666667 -0.0833333 0.0833333 
+   Second order: -2.5 1.33333 1.33333 -0.0833333 -0.0833333 
+
 
 and of course using the python bindings:
 
