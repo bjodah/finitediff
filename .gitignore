@@ -27,3 +27,4 @@ finitediff/_finitediff_templated.cpp
 tests/test_finitediff_templated
 examples/demo
 tests/catch.hpp
+examples/a.out
