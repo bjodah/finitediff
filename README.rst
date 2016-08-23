@@ -29,12 +29,12 @@ arbitrary derivative order. Python_ bindings are provided.
 
 Capabilities
 ============
-finitediff currently provides callbacks for estimation of derivatives
+``finitediff`` currently provides callbacks for estimation of derivatives
 or interpolation either at a single point or over an array (available
 from the Python bindings).
 
 The user may also manually generate the corresponding weights. (see
-``populate_weights``)
+``calculate_weights``)
 
 
 Documentation
@@ -57,7 +57,7 @@ Generating finite difference weights is simple using C++11:
 
    int main(){
        const unsigned max_deriv = 2;
-       std::vector<std::string> labels {"0th derivative (interpolation)", "1st derivative", "2nd derivative"};
+       std::vector<std::string> labels {"0th derivative", "1st derivative", "2nd derivative"};
        std::vector<double> x {0, 1, -1, 2, -2};  // Fourth order of accuracy
        auto coeffs = finitediff::generate_weights(x, max_deriv);
        for (unsigned deriv_i = 0; deriv_i <= max_deriv; deriv_i++){
