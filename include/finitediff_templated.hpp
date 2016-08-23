@@ -155,9 +155,9 @@ namespace finitediff {
         std::vector<unsigned> index(n_);
         for (unsigned idx=0; idx < n_; ++idx)
             index[idx] = idx;
-        sort(index.begin(), index.end(),
+        std::sort(index.begin(), index.end(),
              [&](const unsigned& a, const unsigned& b) {
-                 return (abs_(grid[a] < abs_(grid[b])));
+                 return (abs_(grid[a] - around) < abs_(grid[b] - around));
              });
         Cont<Real_t, Args...> reordered_grid(n_);
         for (unsigned idx=0; idx < n_; ++idx){
