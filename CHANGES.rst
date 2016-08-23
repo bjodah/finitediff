@@ -1,3 +1,8 @@
+v0.3.1
+======
+- Introduced ``finitediff::generate_weights_optim`` which is a pre-sorting
+  wrapper around ``finitediff::generate_weights``
+
 v0.3.0
 ======
 - Refactored ``finitediff::generate_weights`` (part of official API from v0.3.0)

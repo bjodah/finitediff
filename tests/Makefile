@@ -1,5 +1,5 @@
 CXX ?= g++
-CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../include -fno-omit-frame-pointer
+CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../include -fno-omit-frame-pointer -D_GLIBCXX_DEBUG
 
 .PHONY: test debug clean
 

@@ -54,3 +54,52 @@ TEST_CASE( "weight correctness", "finitediff::generate_weights") {
     REQUIRE( abs_(coeffs5[14] + 1/12.) < 1e-14 );
 
 }
+
+TEST_CASE( "zero noise", "finitediff::generate_weights_optim") {
+
+    constexpr unsigned n = 5;
+    const unsigned max_deriv = 2;
+    std::vector<std::string> labels {"0th derivative (interpolation)", "1st derivative", "2nd derivative"};
+    std::vector<double> x_refer { 0,  3, -3, 6, -6};
+    std::vector<double> x_naive {-6, -3,  0, 3,  6};
+    std::vector<double> mapping {4, 2, 0, 1, 3};
+    auto c_refer = finitediff::generate_weights(x_refer, max_deriv);
+    auto c_naive = finitediff::generate_weights(x_naive, max_deriv);
+    auto c_optim = finitediff::generate_weights_optim(x_naive, max_deriv);
+    for (unsigned deriv_i = 0; deriv_i <= max_deriv; deriv_i++){
+        for (unsigned idx = 0; idx < n; idx++){
+            const unsigned idx_naive = deriv_i*n + idx;
+            const unsigned idx_refer = deriv_i*n + mapping[idx];
+            const double absdiff_naive = std::abs(c_naive[idx_naive] - c_refer[idx_refer]);
+            const double absdiff_optim = std::abs(c_optim[idx_naive] - c_refer[idx_refer]);
+            REQUIRE( absdiff_naive*1e16 < 1 );
+            REQUIRE( absdiff_optim*1e17 < 1 );
+        }
+    }
+
+}
+
+
+TEST_CASE( "shifted", "finitediff::generate_weights_optim") {
+
+    constexpr unsigned n = 7;
+    std::vector<std::string> labels {"0th derivative (interpolation)", "1st derivative", "2nd derivative"};
+    std::vector<double> x_refer {100,  103, 97, 113, 87, 170, 30};
+    std::vector<double> x_naive {30, 87, 97, 100, 103, 113, 170};
+    std::vector<double> mapping {6, 4, 2, 0, 1, 3, 5};
+    auto c_refer = finitediff::generate_weights(x_refer, -1, 100.0);
+    auto c_naive = finitediff::generate_weights(x_naive, -1, 100.0);
+    auto c_optim = finitediff::generate_weights_optim(x_naive, -1, 100.0);
+    const unsigned ncols = c_refer.size() / n;
+    for (unsigned deriv_i = 0; deriv_i < ncols; deriv_i++){
+        for (unsigned idx = 0; idx < n; idx++){
+            const unsigned idx_naive = deriv_i*n + idx;
+            const unsigned idx_refer = deriv_i*n + mapping[idx];
+            const double absdiff_naive = std::abs(c_naive[idx_naive] - c_refer[idx_refer]);
+            const double absdiff_optim = std::abs(c_optim[idx_naive] - c_refer[idx_refer]);
+            REQUIRE( absdiff_naive*1e15 < 1 );
+            REQUIRE( absdiff_optim*1e16 < 1 );
+        }
+    }
+
+}
