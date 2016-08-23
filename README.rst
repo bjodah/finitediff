@@ -134,6 +134,16 @@ Optional dependencies (for Python bindings):
 
 see CI scripts for examples.
 
+For building documentation, running tests for releasing etc you need:
+
+- sphinx
+- sphinx_rtd_theme
+- numpydoc
+- twine
+- pytest-pep8
+- pytest-flakes
+
+
 Notes
 =====
 There is a git subtree under finitediff, update through::
