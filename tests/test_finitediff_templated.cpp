@@ -9,7 +9,7 @@ T inline abs_(T v) { return v < 0 ? -v : v; }
 TEST_CASE( "weight correctness", "finitediff::generate_weights") {
 
     std::vector<double> x3 {-1, 0, 1};
-    auto coeffs3 = finitediff::generate_weights(0.0, x3, 2);
+    auto coeffs3 = finitediff::generate_weights(x3);
     REQUIRE( coeffs3.size() == 3*3);
 
     // Zeroth order
@@ -29,7 +29,7 @@ TEST_CASE( "weight correctness", "finitediff::generate_weights") {
 
 
     std::vector<double> x5 {-2, -1, 0, 1, 2};
-    auto coeffs5 = finitediff::generate_weights(0.0, x5, 2);
+    auto coeffs5 = finitediff::generate_weights(x5, 2);
     REQUIRE( coeffs5.size() == 5*3);
 
     // Zeroth order

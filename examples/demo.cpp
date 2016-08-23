@@ -4,14 +4,14 @@
 #include <iostream>
 
 int main(){
-    const unsigned maxorder = 2;
-    std::vector<std::string> labels {"Zeroth order", "First order", "Second order"};
+    const unsigned max_deriv = 2;
+    std::vector<std::string> labels {"Zeroth derivative (interpolation)", "First derivative", "Second derivative"};
     std::vector<double> x {0, 1, -1, 2, -2};  // Fourth order of accuracy
-    auto coeffs = finitediff::generate_weights(0.0, x, maxorder);
-    for (unsigned order = 0; order <= maxorder; order++){
-        std::cout << labels[order] << ": ";
+    auto coeffs = finitediff::generate_weights(x, max_deriv);
+    for (unsigned deriv_i = 0; deriv_i <= max_deriv; deriv_i++){
+        std::cout << labels[deriv_i] << ": ";
         for (unsigned idx = 0; idx < x.size(); idx++){
-            std::cout << coeffs[order*x.size() + idx] << " ";
+            std::cout << coeffs[deriv_i*x.size() + idx] << " ";
         }
         std::cout << std::endl;
     }

@@ -30,11 +30,11 @@ arbitrary derivative order. Python_ bindings are provided.
 Capabilities
 ============
 finitediff currently provides callbacks for estimation of derivatives
-or interpolation either at a single point or over an array (available 
-from the Python bindings). 
+or interpolation either at a single point or over an array (available
+from the Python bindings).
 
 The user may also manually generate the corresponding weights. (see
-``populate_weights``) 
+``populate_weights``)
 
 
 Documentation
@@ -54,29 +54,30 @@ Generating finite difference weights is simple using C++11:
    #include <vector>
    #include <string>
    #include <iostream>
-   
+
    int main(){
-       const unsigned maxorder = 2;
-       std::vector<std::string> labels {"Zeroth order", "First order", "Second order"};
+       const unsigned max_deriv = 2;
+       std::vector<std::string> labels {"Zeroth derivative (interpolation)", "First derivative", "Second derivative"};
        std::vector<double> x {0, 1, -1, 2, -2};  // Fourth order of accuracy
-       auto coeffs = finitediff::generate_weights(0.0, x, maxorder);
-       for (unsigned order = 0; order <= maxorder; order++){
-           std::cout << labels[order] << ": ";
+       auto coeffs = finitediff::generate_weights(x, max_deriv);
+       for (unsigned deriv_i = 0; deriv_i <= max_deriv; deriv_i++){
+           std::cout << labels[deriv_i] << ": ";
            for (unsigned idx = 0; idx < x.size(); idx++){
-               std::cout << coeffs[order*x.size() + idx] << " ";
+               std::cout << coeffs[deriv_i*x.size() + idx] << " ";
            }
            std::cout << std::endl;
        }
    }
-   
+
+
 ::
 
    $ cd examples/
    $ g++ -std=c++11 demo.cpp -I../include
    $ ./a.out
-   Zeroth order: 1 -0 0 0 -0 
-   First order: -0 0.666667 -0.666667 -0.0833333 0.0833333 
-   Second order: -2.5 1.33333 1.33333 -0.0833333 -0.0833333 
+   Zeroth derivative (interpolation): 1 -0 0 0 -0
+   First derivative: -0 0.666667 -0.666667 -0.0833333 0.0833333
+   Second derivative: -2.5 1.33333 1.33333 -0.0833333 -0.0833333
 
 
 and of course using the python bindings:
@@ -88,7 +89,7 @@ and of course using the python bindings:
    >>> c = get_weights(np.array([-1., 0, 1]), 0, maxorder=1)
    >>> np.allclose(c[:, 1], [-.5, 0, .5])
    True
-   
+
 
 see the ``examples/`` directory for more examples.
 
@@ -168,7 +169,7 @@ http://dx.doi.org/10.1137/S0036144596322507
       publisher={SIAM}
       doi={10.1137/S0036144596322507}
     }
-    
+
 
 Which is based on an article of the same author:
 
