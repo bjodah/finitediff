@@ -102,4 +102,18 @@ TEST_CASE( "shifted", "finitediff::generate_weights_optim") {
         }
     }
 
+    std::vector<double> calc_naive(n*(n+3)/2);
+    std::vector<double> calc_optim(n*(n+3)/2);
+    finitediff::calculate_weights(&x_naive[0], n, (n+1)/2, &calc_naive[0], 100.0);
+    finitediff::calculate_weights_optim(&x_naive[0], n, (n+1)/2, &calc_optim[0], 100.0);
+    for (unsigned deriv_i = 0; deriv_i < ncols; deriv_i++){
+        for (unsigned idx = 0; idx < n; idx++){
+            const unsigned idx_naive = deriv_i*n + idx;
+            const unsigned idx_refer = deriv_i*n + mapping[idx];
+            const double absdiff_naive = std::abs(calc_naive[idx_naive] - c_refer[idx_refer]);
+            const double absdiff_optim = std::abs(calc_optim[idx_naive] - c_refer[idx_refer]);
+            REQUIRE( absdiff_naive*1e15 < 1 );
+            REQUIRE( absdiff_optim*1e16 < 1 );
+        }
+    }
 }

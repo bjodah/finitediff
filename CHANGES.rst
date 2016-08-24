@@ -1,7 +1,9 @@
 v0.3.1
 ======
 - Introduced ``finitediff::generate_weights_optim`` which is a pre-sorting
-  wrapper around ``finitediff::generate_weights``
+  wrapper around ``finitediff::generate_weights``  (tests indicate approx. 1 extra significant figure)
+- Introduced ``finitediff::calculate_weights_optim`` which is a pre-sorting
+  wrapper around ``finitediff::calculate_weights`` (tests indicate approx. 1 extra significant figure)
 
 v0.3.0
 ======

@@ -5,13 +5,13 @@
 #if __cplusplus > 199711L
 #include <algorithm>
 #include <stdexcept>
+#include <vector>
 #endif
-
 namespace finitediff {
 
     template <typename Real_t>
-    void calculate_weights(const Real_t * const __restrict__ grid, const int len_g,
-                           const int max_deriv, Real_t * const __restrict__ weights, const Real_t around=0) {
+    void calculate_weights(const Real_t * const __restrict__ grid, const unsigned len_g,
+                           const unsigned max_deriv, Real_t * const __restrict__ weights, const Real_t around=0) {
         // Parameters
         // ----------
         // grid[len_g]: array with grid point locations
@@ -61,7 +61,6 @@ namespace finitediff {
             c1 = c2;
         }
     }
-
 
     // populate_weights is deprecated due to counter-intuitive parameter "nd"
     template <typename Real_t>
@@ -147,8 +146,6 @@ namespace finitediff {
         return coeffs;
     }
 
-    template<class T> static inline T abs_(T val) { return (val < 0) ? -val : val; }
-
     template<typename Real_t, template<typename, typename...> class Cont, typename... Args>
     Cont<Real_t, Args...> generate_weights_optim(const Cont<Real_t, Args...>& grid, int maxorder=-1, const Real_t around=0){
         const unsigned n_ = grid.size();
@@ -157,7 +154,7 @@ namespace finitediff {
             index[idx] = idx;
         std::sort(index.begin(), index.end(),
              [&](const unsigned& a, const unsigned& b) {
-                 return (abs_(grid[a] - around) < abs_(grid[b] - around));
+                      return (std::abs(grid[a] - around) < std::abs(grid[b] - around));
              });
         Cont<Real_t, Args...> reordered_grid(n_);
         for (unsigned idx=0; idx < n_; ++idx){
@@ -173,6 +170,33 @@ namespace finitediff {
                 coeffs[order*n_ + index[idx]] += reordered_coeffs[order*n_ + idx];
         }
         return coeffs;
+    }
+
+    template <typename Real_t>
+    void calculate_weights_optim(const Real_t * const __restrict__ grid, const unsigned len_g,
+                                 const unsigned max_deriv, Real_t * const __restrict__ weights, const Real_t around=0) {
+        if (len_g < max_deriv + 1){
+            throw std::logic_error("size of grid insufficient");
+        }
+        std::vector<unsigned> index(len_g);
+        for (unsigned idx=0; idx < len_g; ++idx)
+            index[idx] = idx;
+        std::sort(index.begin(), index.end(),
+             [&](const unsigned& a, const unsigned& b) {
+                      return (std::abs(grid[a] - around) < std::abs(grid[b] - around));
+             });
+        Real_t * const __restrict__ reordered_grid = new Real_t[len_g];
+        for (unsigned idx=0; idx < len_g; ++idx){
+            reordered_grid[idx] = grid[index[idx]];
+        }
+        Real_t * const __restrict__ reordered_weights = new Real_t[len_g*(max_deriv + 1)];
+        calculate_weights(reordered_grid, len_g, max_deriv, reordered_weights, around);
+        for (unsigned order=0; order <= max_deriv; ++order){
+            for (unsigned idx=0; idx < len_g; ++idx)
+                weights[order*len_g + index[idx]] += reordered_weights[order*len_g + idx];
+        }
+        delete []reordered_weights;
+        delete []reordered_grid;
     }
 #endif
 }
