@@ -2,6 +2,7 @@
 #include "catch.hpp"
 #include "finitediff_templated.hpp"
 #include <vector>
+#include <cmath>
 
 template<typename T>
 T inline abs_(T v) { return v < 0 ? -v : v; }
@@ -116,4 +117,39 @@ TEST_CASE( "shifted", "finitediff::generate_weights_optim") {
             REQUIRE( absdiff_optim*1e16 < 1 );
         }
     }
+}
+
+std::pair<std::vector<double>, std::vector<double>> get_ref_out_(std::vector<double> grid,
+                                                                 const double x, const unsigned maxord, bool optim){
+    std::vector<double> values(grid.size());
+    std::vector<double> ref(maxord + 1);
+    std::vector<double> out(maxord + 1);
+
+    for (unsigned idx=0; idx < grid.size(); ++idx){
+        values[idx] = grid[idx]*std::exp(-grid[idx]);
+    }
+    for (unsigned order=0; order <= maxord; ++order){
+        ref[order] = std::pow(-1, order)*(x - order)*std::exp(-x);
+    }
+    if (optim)
+        finitediff::apply_fd_optim(grid.size(), maxord, &grid[0], &values[0], x, &out[0]);
+    else
+        finitediff::apply_fd(grid.size(), maxord, &grid[0], &values[0], x, &out[0]);
+
+    return std::pair<std::vector<double>, std::vector<double>>(ref, out);
+}
+
+void check_x_exp_mx_(const unsigned maxord, const double x, std::vector<double> grid, double lg_atol0, double degrade_factor, bool optim){
+    auto ref_out = get_ref_out_(grid, x, maxord, optim);
+
+    for (unsigned order=0; order <= maxord; ++order){
+        const double atol = std::pow(10.0, lg_atol0 + degrade_factor*order);
+        const double adiff = std::abs(ref_out.first[order] - ref_out.second[order]);
+        REQUIRE( adiff < atol );
+    }
+}
+
+TEST_CASE( "x_exp_mx", "finitediff::apply_fd" ) {
+    check_x_exp_mx_(3, 1.0122333444455555, {0.8, 0.9, 1.0, 1.1, 1.2}, -7.0, 1.8, false);
+    check_x_exp_mx_(5, 1.0122333444455555, {0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3}, -9.0, 1.4, false);
 }
