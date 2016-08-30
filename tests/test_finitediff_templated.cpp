@@ -145,11 +145,22 @@ void check_x_exp_mx_(const unsigned maxord, const double x, std::vector<double> 
     for (unsigned order=0; order <= maxord; ++order){
         const double atol = std::pow(10.0, lg_atol0 + degrade_factor*order);
         const double adiff = std::abs(ref_out.first[order] - ref_out.second[order]);
+        std::cout << "order: " << order << std::endl;
         REQUIRE( adiff < atol );
     }
 }
 
 TEST_CASE( "x_exp_mx", "finitediff::apply_fd" ) {
-    check_x_exp_mx_(3, 1.0122333444455555, {0.8, 0.9, 1.0, 1.1, 1.2}, -7.0, 1.8, false);
-    check_x_exp_mx_(5, 1.0122333444455555, {0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3}, -9.0, 1.4, false);
+    std::vector<bool> tr_false{false, true};
+    const double x = 1.0122333444455555;
+
+    for (auto optim : tr_false){
+        check_x_exp_mx_(2, 0, {-0.1, 0.0, 0.1}, -4.0, 1.8, optim);
+        check_x_exp_mx_(2, 0, {-0.1, 0.0, 0.1}, -4.0, 1.8, optim);
+        check_x_exp_mx_(2, x, {0.9, 1.0, 1.1}, -4.6, 1.8, optim);
+        check_x_exp_mx_(3, x, {0.8, 0.9, 1.0, 1.1, 1.2}, -7.0, 1.8, optim);
+        check_x_exp_mx_(5, x, {0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3}, -9.0, 1.4, optim);
+        check_x_exp_mx_(5, x, {0.5, 0.98, 0.99, 1.0, 1.2, 1.3, 1.4}, -9.3, 1.6, optim);
+        check_x_exp_mx_(5, x, {0.5, 0.0118, 1.0120, 1.0122, 1.2, 1.3, 1.4}, -9.4, 2.3, optim);
+    }
 }
