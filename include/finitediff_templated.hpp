@@ -1,13 +1,12 @@
-#ifndef FINITEDIFF_TEMPLATED_HPP_IWIDN4CP6RGFHFVKSWG4HICEZE
-#define FINITEDIFF_TEMPLATED_HPP_IWIDN4CP6RGFHFVKSWG4HICEZE
-
-// Pre-processor macro __cplusplus == 201103L in ISO C++11 compliant compilers. (e.g. GCC >= 4.7.0)
-#if __cplusplus > 199711L
+#pragma once
 #include <algorithm>
 #include <stdexcept>
 #include <vector>
-#endif
+
 namespace finitediff {
+    // Recommended functions:
+    // calculate_weights (or generate_weights as a convenient wrapper)
+    // The *_optim functions have not been better in practice and there is a potentially expensive sort call involved.
 
     template <typename Real_t>
     void calculate_weights(const Real_t * const __restrict__ grid, const unsigned len_g,
@@ -26,7 +25,9 @@ namespace finitediff {
         // Generation of Finite Difference Formulas on Arbitrarily
         // Spaced Grids, Bengt Fornberg,
         // Mathematics of compuation, 51, 184, 1988, 699-706
-
+        if (len_g < max_deriv + 1){
+            throw std::logic_error("size of grid insufficient");
+        }
         Real_t c1, c4, c5;
         c1 = 1;
         c4 = grid[0] - around;
@@ -34,7 +35,7 @@ namespace finitediff {
         for (unsigned i=1; i < len_g*(max_deriv+1); ++i)
             weights[i] = 0;  // clear weights
         for (unsigned i=1; i < len_g; ++i){
-            const int mn = (i < max_deriv) ? i : max_deriv; // min(i, max_deriv)
+            const int mn = std::min(i, max_deriv);
             Real_t c2 = 1;
             c5 = c4;
             c4 = grid[i] - around;
@@ -83,11 +84,11 @@ namespace finitediff {
         Real_t c1, c4, c5;
         c1 = 1;
         c4 = x[0] - z;
-        for (unsigned i=0; i < (nd+1)*(m+1); ++i)
+        for (unsigned i=0; i < (unsigned)(nd+1)*(m+1); ++i)
             c[i] = 0;
         c[0] = 1;
-        for (unsigned i=1; i <= nd; ++i){
-            const int mn = (i < m) ? i : m; // min(i, m)
+        for (unsigned i=1; i <= (unsigned)nd; ++i){
+            const int mn = std::min(i, (unsigned)m);
             Real_t c2 = 1;
             c5 = c4;
             c4 = x[i] - z;
@@ -121,16 +122,14 @@ namespace finitediff {
                   const Real_t * const __restrict__ ydata,
                   const Real_t xtgt,
                   Real_t * const __restrict__ out){
-        Real_t * const c = new Real_t[nin * (maxorder+1)];
-        calculate_weights<Real_t>(xdata, nin, maxorder, c, xtgt);
+        std::vector<Real_t> c(nin * (maxorder+1));
+        finitediff::calculate_weights<Real_t>(xdata, nin, maxorder, &c[0], xtgt);
         for (int j=0; j <= maxorder; ++j){
             out[j] = 0;
             for (int i=0; i<nin; ++i)
                 out[j] += c[i + j*nin] * ydata[i];
         }
-        delete []c;
     }
-
 
 // Pre-processor macro __cplusplus == 201103L in ISO C++11 compliant compilers. (e.g. GCC >= 4.7.0)
 #if __cplusplus > 199711L
@@ -185,22 +184,34 @@ namespace finitediff {
              [&](const unsigned& a, const unsigned& b) {
                       return (std::abs(grid[a] - around) < std::abs(grid[b] - around));
              });
-        Real_t * const __restrict__ reordered_grid = new Real_t[len_g];
+        std::vector<Real_t> reordered_grid(len_g);
         for (unsigned idx=0; idx < len_g; ++idx){
             reordered_grid[idx] = grid[index[idx]];
         }
-        Real_t * const __restrict__ reordered_weights = new Real_t[len_g*(max_deriv + 1)];
-        calculate_weights(reordered_grid, len_g, max_deriv, reordered_weights, around);
+        std::vector<Real_t> reordered_weights(len_g*(max_deriv + 1), 0);
+        calculate_weights(&reordered_grid[0], len_g, max_deriv, &reordered_weights[0], around);
         for (unsigned order=0; order <= max_deriv; ++order){
             for (unsigned idx=0; idx < len_g; ++idx)
                 weights[order*len_g + index[idx]] += reordered_weights[order*len_g + idx];
         }
-        delete []reordered_weights;
-        delete []reordered_grid;
     }
+
+    template <typename Real_t>
+    void apply_fd_optim(const int nin, const int maxorder,
+                        const Real_t * const __restrict__ xdata,
+                        const Real_t * const __restrict__ ydata,
+                        const Real_t xtgt,
+                        Real_t * const __restrict__ out){
+        std::vector<Real_t> c(nin * (maxorder+1));
+        finitediff::calculate_weights_optim<Real_t>(xdata, nin, maxorder, &c[0], xtgt);
+        for (int j=0; j <= maxorder; ++j){
+            out[j] = 0;
+            for (int i=0; i<nin; ++i)
+                out[j] += c[i + j*nin] * ydata[i];
+        }
+    }
+
+
 #endif
+
 }
-
-
-
-#endif /* FINITEDIFF_TEMPLATED_HPP_IWIDN4CP6RGFHFVKSWG4HICEZE */
