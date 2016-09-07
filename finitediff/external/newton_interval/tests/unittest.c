@@ -11,10 +11,10 @@ int run_tests(int ntests, const TestCase** test_cases, char * suite_name){
       printf("In %s, %s%c%s passed %c%s\n", suite_name,
 	     cur_test.name, 0x1B, "[32;1m",
 	     0x1B, "[30;0m");
-    } 
+    }
     else{
       exit_status = 1;
-      printf("In %s, %s%c%s failed %c%s with result %d\n", suite_name, 
+      printf("In %s, %s%c%s failed %c%s with result %d\n", suite_name,
 	     cur_test.name, 0x1B, "[31;1m",
 	     0x1B, "[30;0m", result);
     }

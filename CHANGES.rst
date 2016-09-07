@@ -1,3 +1,7 @@
+v0.3.2
+======
+- git-archive generated zip now pip-installable
+
 v0.3.1
 ======
 - Introduced ``finitediff::generate_weights_optim`` which is a pre-sorting
