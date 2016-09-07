@@ -33,9 +33,8 @@ USE_CYTHON = os.path.exists(_path_under_setup(
     'finitediff', '_finitediff_templated.pyx'))
 ext = '.pyx' if USE_CYTHON else '.cpp'
 sources += [
-    _path_under_setup('external', 'newton_interval', 'src',
-                      'newton_interval.c'),
-    _path_under_setup('finitediff', '_finitediff_' + interface + ext)
+    'finitediff/external/newton_interval/src/newton_interval.c',
+    'finitediff/_finitediff_' + interface + ext
 ]
 
 
@@ -46,8 +45,8 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
-        _path_under_setup('include'),
-        _path_under_setup('external', 'newton_interval', 'include'),
+        'finitediff/external/newton_interval/include',
+        'finitediff/include',
         numpy.get_include()
     ]
 
@@ -141,12 +140,12 @@ setup_kwargs = dict(
     download_url=('https://github.com/bjodah/' + pkg_name +
                   '/archive/v'+__version__+'.tar.gz'),
     packages=[pkg_name] + tests,
-    package_data={pkg_name: ['include/*.*']},
+    include_package_data=True,
     cmdclass=cmdclass,
     ext_modules=ext_modules,
     setup_requires=['cython'] if USE_CYTHON else [],
     install_requires=['numpy'],
-    extras_requires={'all': ['pytest']}
+    extras_require={'all': ['pytest']}
 )
 
 if __name__ == '__main__':
