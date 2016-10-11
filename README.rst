@@ -17,7 +17,7 @@ finitediff
    :alt: coverage
 
 ``finitediff`` containts two implementations (`Fortran 90
-<src/finitediff_fort.f90>`_ and `C++ <include/finitediff_templated.hpp>`_) version of Begnt Fornberg's
+<src/finitediff_fort.f90>`_ and `C++ <finitediff/include/finitediff_templated.hpp>`_) version of Begnt Fornberg's
 formulae for generation of finite difference weights on aribtrarily
 spaced one dimensional grids. The finite difference weights can be
 used for optimized inter-/extrapolation data series for up to
@@ -95,14 +95,14 @@ see the ``examples/`` directory for more examples.
 
 Installation
 ------------
-Simplest way to install finitediff is to use the
-`Conda package manager <http://conda.pydata.org/docs/>`_:
+The simplest way to install finitediff is to use
+`conda package manager <http://conda.pydata.org/docs/>`_:
 
 ::
 
    $ conda install -c bjodah finitediff pytest
 
-alternatively you may also use `pip`:
+alternatively, you may also use `pip`:
 
 ::
 
@@ -119,31 +119,11 @@ tests you need ``pytest`` too:
 
 Dependencies
 ============
-You need either a C++ or a Fortran 90 compiler. On a debian based linux system you can install it easily by typing::
+You need either a C++ or a Fortran 90 compiler. On debian based linux systems you may install one by issuing::
 
     $ sudo apt-get install gfortran g++
 
-Optional dependencies (for Python bindings):
-
-- Python header files (``sudo apt-get install python-dev``)
-- Python
-- NumPy
-- Cython
-- pycompilation
-- pytest
-
-see CI scripts for examples.
-
-For building documentation, running tests for releasing etc you need:
-
-- pytest-pep8
-- pytest-flakes
-- sphinx
-- sphinx_rtd_theme
-- numpydoc
-- twine
-- sphinx-pypi-upload
-
+See `setup.py <setup.py>`_ for optional (Python) dependencies.
 
 Notes
 =====
@@ -158,8 +138,6 @@ First time you need to add it::
 
     git subtree add --prefix finitediff/newton_interval git://github.com/bjodah/newton_interval master
 
-
-(Users of Ubuntu 12.04 who want to use git subtree, see http://stackoverflow.com/questions/17797328)
 
 References
 ==========
