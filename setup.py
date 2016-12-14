@@ -124,8 +124,8 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         else:
             ext_modules[0].sources += other_sources
 
-if ext_modules[0].sources[0].startswith('/'):
-    raise ValueError("Absolute path not allowed: %s" % ext_modules[0].sources[0])
+    if ext_modules[0].sources[0].startswith('/'):
+        raise ValueError("Absolute path not allowed: %s" % ext_modules[0].sources[0])
 
 tests = [
     pkg_name + '.tests',
