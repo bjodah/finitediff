@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# distutils: sources = ['src/finitediff_fort.f90', 'src/c_finitediff_fort.f90', 'finitediff/external/newton_interval/src/newton_interval.c']
 
 # For wrapping src/finitediff_fort.f90
 

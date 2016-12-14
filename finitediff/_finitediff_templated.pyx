@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
+# distutils: sources = ['finitediff/external/newton_interval/src/newton_interval.c']
 
 # For wrapping finitediff_templated.h
 
