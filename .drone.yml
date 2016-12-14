@@ -1,0 +1,19 @@
+build:
+  image: bjodah/bjodahimg16dev:latest
+  commands:
+    - ./scripts/ci.sh finitediff
+    - ./scripts/generate_docs.sh
+    - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
+    - ./scripts/prepare_deploy.sh
+
+deploy:
+
+  rsync:
+    host: hera.physchem.kth.se
+    user: finitediff
+    port: 22
+    source: deploy/
+    target: ~
+    recursive: true
+    delete: false
+

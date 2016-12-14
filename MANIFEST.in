@@ -1,0 +1,6 @@
+recursive-include finitediff/include *.hpp *.h *.pxd
+recursive-include finitediff/external *.c *.h
+include AUTHORS
+include CHANGES.rst
+include LICENSE
+include README.rst

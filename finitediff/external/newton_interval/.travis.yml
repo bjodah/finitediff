@@ -1,0 +1,6 @@
+language: c
+script:
+  - cd tests
+  - make
+notifications:
+  email: false
