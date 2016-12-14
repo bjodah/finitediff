@@ -1,3 +1,7 @@
+v0.3.3
+======
+- Improved setup.py
+
 v0.3.2
 ======
 - git-archive generated zip now pip-installable
