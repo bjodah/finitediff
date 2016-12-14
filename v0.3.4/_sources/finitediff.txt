@@ -1,0 +1,8 @@
+finitediff package
+==================
+
+.. automodule:: finitediff
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
