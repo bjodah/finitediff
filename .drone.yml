@@ -1,8 +1,9 @@
 build:
-  image: bjodah/bjodahimg:v1.1
+  image: bjodah/bjodahimg16dev:latest
   commands:
     - ./scripts/ci.sh finitediff
     - ./scripts/generate_docs.sh
+    - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
     - ./scripts/prepare_deploy.sh
 
 deploy:

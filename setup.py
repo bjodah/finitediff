@@ -3,35 +3,79 @@
 
 import io
 import os
+import pprint
+import re
 import sys
 import shutil
+import subprocess
+import warnings
 
 from setuptools import setup
 
 pkg_name = 'finitediff'
-
-
-USE_FORTRAN = os.environ.get('USE_FORTRAN', '0').lower() in ('1', 'true')
+url = 'https://github.com/bjodah/' + pkg_name
+license = 'BSD'
 
 
 def _path_under_setup(*args):
     return os.path.join(os.path.dirname(__file__), *args)
 
 
-if USE_FORTRAN:
+release_py_path = _path_under_setup(pkg_name, '_release.py')
+config_py_path = _path_under_setup(pkg_name, '_config.py')
+env = None  # silence pyflakes, 'env' is actually set on the next line
+exec(open(config_py_path).read())
+for k, v in list(env.items()):
+    env[k] = os.environ.get('%s_%s' % (pkg_name.upper(), k), v)
+
+_USE_FORTRAN = env['USE_FORTRAN'] == '1'  # e.g.: $ export FINITEDIFF_USE_FORTRAN=1
+
+_version_env_var = '%s_RELEASE_VERSION' % pkg_name.upper()
+RELEASE_VERSION = os.environ.get(_version_env_var, '')
+
+# http://conda.pydata.org/docs/build.html#environment-variables-set-during-the-build-process
+CONDA_BUILD = os.environ.get('CONDA_BUILD', '0') == '1'
+if CONDA_BUILD:
+    try:
+        FINITEDIFF_RELEASE_VERSION = 'v' + open(
+            '__conda_version__.txt', 'rt').readline().rstrip()
+    except IOError:
+        pass
+
+
+if len(RELEASE_VERSION) > 1 and RELEASE_VERSION[0] == 'v':
+    TAGGED_RELEASE = True
+    __version__ = RELEASE_VERSION[1:]
+else:
+    TAGGED_RELEASE = False
+    # read __version__ attribute from _release.py:
+    exec(io.open(release_py_path, encoding='utf-8').read())
+    if __version__.endswith('git'):
+        try:
+            _git_version = subprocess.check_output(
+                ['git', 'describe', '--dirty']).rstrip().decode('utf-8').replace('-dirty', '.dirty')
+        except subprocess.CalledProcessError:
+            warnings.warn("A git-archive is being installed - version information incomplete.")
+        else:
+            if 'develop' not in sys.argv:
+                warnings.warn("Using git to derive version: dev-branches may compete.")
+                __version__ = re.sub('v([0-9.]+)-(\d+)-(\w+)', r'\1.post\2+\3', _git_version)  # .dev < '' < .post
+
+
+if _USE_FORTRAN:
     interface = 'fort'
     sources = [
-        _path_under_setup('src', 'finitediff_fort.f90'),
-        _path_under_setup('src', 'c_finitediff_fort.f90'),
+        os.path.join('src', 'finitediff_fort.f90'),
+        os.path.join('src', 'c_finitediff_fort.f90'),
     ]
 else:
     interface = 'templated'
     sources = []
 
+USE_CYTHON = os.path.exists(_path_under_setup('finitediff', '_finitediff_'+interface+'.pyx'))
+ext = '.pyx' if USE_CYTHON else ('.c' if _USE_FORTRAN else '.cpp')
 
-USE_CYTHON = os.path.exists(_path_under_setup(
-    'finitediff', '_finitediff_templated.pyx'))
-ext = '.pyx' if USE_CYTHON else '.cpp'
+
 sources += [
     'finitediff/external/newton_interval/src/newton_interval.c',
     'finitediff/_finitediff_' + interface + ext
@@ -50,7 +94,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         numpy.get_include()
     ]
 
-    if USE_FORTRAN:
+    if _USE_FORTRAN:
         from pycompilation.dist import pc_build_ext, PCExtension
         from pycompilation.util import ArbitraryDepthGlob
 
@@ -65,7 +109,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
                     }
                 },
                 include_dirs=include_dirs,
-                language=None if USE_FORTRAN else 'c++',
+                language=None if _USE_FORTRAN else 'c++',
                 logger=True
             )
         ]
@@ -84,27 +128,9 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
             ext_modules = cythonize(ext_modules, include_path=include_dirs,
                                     gdb_debug=True)
 
-FINITEDIFF_RELEASE_VERSION = os.environ.get('FINITEDIFF_RELEASE_VERSION', '')
-
-# http://conda.pydata.org/docs/build.html#environment-variables-set-during-the-build-process
-CONDA_BUILD = os.environ.get('CONDA_BUILD', '0') == '1'
-if CONDA_BUILD:
-    try:
-        FINITEDIFF_RELEASE_VERSION = 'v' + open(
-            '__conda_version__.txt', 'rt').readline().rstrip()
-    except IOError:
-        pass
-
-release_py_path = _path_under_setup(pkg_name, '_release.py')
-
-if len(FINITEDIFF_RELEASE_VERSION) > 1 and \
-   FINITEDIFF_RELEASE_VERSION[0] == 'v':
-    TAGGED_RELEASE = True
-    __version__ = FINITEDIFF_RELEASE_VERSION[1:]
-else:
-    TAGGED_RELEASE = False
-    # read __version__ attribute from release.py:
-    exec(open(release_py_path).read())
+tests = [
+    pkg_name + '.tests',
+]
 
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -114,38 +140,35 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Mathematics',
 ]
 
-tests = [
-    pkg_name + '.tests',
-]
-
-with io.open(_path_under_setup(pkg_name, '__init__.py'), 'rt',
-             encoding='utf-8') as f:
+with io.open(_path_under_setup(pkg_name, '__init__.py'), 'rt', encoding='utf-8') as f:
     short_description = f.read().split('"""')[1].split('\n')[1]
-assert 10 < len(short_description) < 255
+if not 10 < len(short_description) < 255:
+    warnings.warn("Short description from __init__.py proably not read correctly.")
 long_description = io.open(_path_under_setup('README.rst'),
                            encoding='utf-8').read()
-assert len(long_description) > 100
+if not len(long_description) > 100:
+    warnings.warn("Long description from README.rst probably not read correctly.")
+_author, _author_email = io.open(_path_under_setup('AUTHORS'), 'rt', encoding='utf-8').readline().split('<')
 
 
 setup_kwargs = dict(
     name=pkg_name,
     version=__version__,  # from release_py_path
-    author='Björn Dahlgren',
-    author_email='bjodah@DELETEMEgmail.com',
     description=short_description,
     long_description=long_description,
-    classifiers=classifiers,
-    license='BSD',
-    url='https://github.com/bjodah/'+pkg_name,
-    download_url=('https://github.com/bjodah/' + pkg_name +
-                  '/archive/v'+__version__+'.tar.gz'),
+    author=_author.strip(),
+    author_email=_author_email.split('>')[0].strip(),
+    url=url,
+    license=license,
+    keywords=["finite-difference", "taylor series", "extrapolation"],
     packages=[pkg_name] + tests,
     include_package_data=True,
     cmdclass=cmdclass,
     ext_modules=ext_modules,
+    classifiers=classifiers,
     setup_requires=['cython'] if USE_CYTHON else [],
     install_requires=['numpy'],
-    extras_require={'all': ['pytest']}
+    extras_require={'all': ['pytest', 'sphinx', 'sphinx_rtd_theme', 'numpydoc']}
 )
 
 if __name__ == '__main__':
@@ -157,7 +180,11 @@ if __name__ == '__main__':
             shutil.move(release_py_path, release_py_path+'__temp__')
             open(release_py_path, 'wt').write(
                 "__version__ = '{}'\n".format(__version__))
+        shutil.move(config_py_path, config_py_path+'__temp__')
+        with open(config_py_path, 'wt') as fh:
+            fh.write("env = {}\n".format(pprint.pformat(env)))
         setup(**setup_kwargs)
     finally:
         if TAGGED_RELEASE:
             shutil.move(release_py_path+'__temp__', release_py_path)
+        shutil.move(config_py_path+'__temp__', config_py_path)
