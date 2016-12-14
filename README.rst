@@ -129,14 +129,14 @@ Notes
 =====
 There is a git subtree under finitediff, update through::
 
-    git subtree pull --prefix finitediff/newton_interval newton_interval master --squash
+    git subtree pull --prefix finitediff/external/newton_interval newton_interval master --squash
 
 
 where the repo "newton_interval" is https://github.com/bjodah/newton_interval.git
 
 First time you need to add it::
 
-    git subtree add --prefix finitediff/newton_interval git://github.com/bjodah/newton_interval master
+    git subtree add --prefix finitediff/external/newton_interval git://github.com/bjodah/newton_interval master
 
 
 References
@@ -180,8 +180,9 @@ http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
 
 License
 =======
-Open Source. Released under the very permissive "simplified
-(2-clause) BSD license". See LICENSE.txt for further details.
+The source code is Open Source and is released under the very permissive
+`"simplified (2-clause) BSD license" <https://opensource.org/licenses/BSD-2-Clause>`_.
+See `LICENSE <LICENSE>`_ for further details.
 
 
 Authors
