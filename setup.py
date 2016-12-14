@@ -5,9 +5,9 @@ import io
 import os
 import pprint
 import re
-import sys
 import shutil
 import subprocess
+import sys
 import warnings
 
 from setuptools import setup
@@ -64,23 +64,22 @@ else:
 
 if _USE_FORTRAN:
     interface = 'fort'
-    sources = [
+    other_sources = [
         os.path.join('src', 'finitediff_fort.f90'),
         os.path.join('src', 'c_finitediff_fort.f90'),
     ]
 else:
     interface = 'templated'
-    sources = []
+    other_sources = []
 
 USE_CYTHON = os.path.exists(_path_under_setup('finitediff', '_finitediff_'+interface+'.pyx'))
 ext = '.pyx' if USE_CYTHON else ('.c' if _USE_FORTRAN else '.cpp')
 
-
-sources += [
-    'finitediff/external/newton_interval/src/newton_interval.c',
-    'finitediff/_finitediff_' + interface + ext
+modname = 'finitediff._finitediff_' + interface
+srcname = os.path.join('finitediff', '_finitediff_' + interface)
+other_sources += [
+    os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
 ]
-
 
 cmdclass = {}
 ext_modules = []
@@ -101,8 +100,8 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         cmdclass = {'build_ext': pc_build_ext}
         ext_modules = [
             PCExtension(
-                'finitediff._finitediff_'+interface,
-                sources=sources,
+                modname,
+                sources=[srcname+ext] + other_sources,
                 pycompilation_compile_kwargs={
                     'per_file_kwargs': {
                         ArbitraryDepthGlob(b'*.c'): {'std': 'c99'}
@@ -116,17 +115,17 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
     else:
         # default path (no external dependencies):
         from setuptools.extension import Extension
-        modname = '_finitediff_'+interface
         ext_modules = [
-            Extension('finitediff.'+modname,
-                      sources,
-                      language='c++',
-                      include_dirs=include_dirs)
+            Extension(modname, [srcname+ext], include_dirs=include_dirs)
         ]
         if USE_CYTHON:
             from Cython.Build import cythonize
-            ext_modules = cythonize(ext_modules, include_path=include_dirs,
-                                    gdb_debug=True)
+            ext_modules = cythonize(ext_modules, include_path=include_dirs, gdb_debug=True)
+        else:
+            ext_modules[0].sources += other_sources
+
+if ext_modules[0].sources[0].startswith('/'):
+    raise ValueError("Absolute path not allowed: %s" % ext_modules[0].sources[0])
 
 tests = [
     pkg_name + '.tests',
@@ -166,7 +165,7 @@ setup_kwargs = dict(
     cmdclass=cmdclass,
     ext_modules=ext_modules,
     classifiers=classifiers,
-    setup_requires=['cython'] if USE_CYTHON else [],
+    setup_requires=['numpy'] + (['cython'] if USE_CYTHON else []),
     install_requires=['numpy'],
     extras_require={'all': ['pytest', 'sphinx', 'sphinx_rtd_theme', 'numpydoc']}
 )
