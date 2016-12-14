@@ -1,9 +1,12 @@
+{% set name = "finitediff" %}
+{% set version = "0.4.0.dev0+git" %}
+
 package:
-  name: finitediff
-  version: 0.3.0.git
+  name: {{ name|lower }}
+  version: {{ version }}
 
 source:
-  path: ../
+  git_url: ../
 
 build:
   number: 0
@@ -23,4 +26,5 @@ test:
 
 about:
   home: https://github.com/bjodah/finitediff
-  license: Simplified BSD license
+  license: BSD 2-Clause
+  license_file: LICENSE
