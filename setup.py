@@ -37,7 +37,7 @@ RELEASE_VERSION = os.environ.get(_version_env_var, '')
 CONDA_BUILD = os.environ.get('CONDA_BUILD', '0') == '1'
 if CONDA_BUILD:
     try:
-        FINITEDIFF_RELEASE_VERSION = 'v' + open(
+        RELEASE_VERSION = 'v' + open(
             '__conda_version__.txt', 'rt').readline().rstrip()
     except IOError:
         pass

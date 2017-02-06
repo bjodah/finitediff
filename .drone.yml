@@ -1,6 +1,7 @@
 build:
   image: bjodah/bjodahimg16dev:latest
   commands:
+    - bash -c '[[ $(python setup.py --version) =~ ^[0-9]+.* ]]'
     - ./scripts/ci.sh finitediff
     - ./scripts/generate_docs.sh
     - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
