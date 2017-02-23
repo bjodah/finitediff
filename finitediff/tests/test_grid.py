@@ -13,8 +13,11 @@ def g(x):
     s = sigm(x, 20, 1, 4)
     s2 = sigm(x, 5, 1, 4)
     g.nelem_call += x.size
+    g.nfev += 1
     return 10*(1-s2**2)*np.exp(20*s)/np.exp(20*x)+0.1*(x-3)**2
+
 g.nelem_call = 0
+g.nfev = 0
 
 
 def test_adapted_grid():
@@ -37,5 +40,7 @@ def test_adapted_grid__performance():
 
 def test_adapted_grid__minimum_number_of_evals():
     g.nelem_call = 0
+    g.nfev = 0
     adapted_grid(0, 2, g, (8,)*4)
     assert g.nelem_call == 8*4
+    assert g.nfev == 4

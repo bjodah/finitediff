@@ -50,12 +50,20 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
         nextgrid = np.empty(grid.size + na)
         nextgrid[0] = grid[0]
         ptr = 1
+        yslices = []
         for gi, nloc in enumerate(additions):
             nextgrid[ptr:ptr+nloc+1] = np.linspace(grid[gi], grid[gi+1], 2+nloc)[1:]
             nexty[ptr+nloc] = y[gi+1]
             if nloc > 0:
-                nexty[ptr:ptr+nloc] = cb(nextgrid[ptr:ptr+nloc])
+                yslices.append(slice(ptr, ptr+nloc))
             ptr += nloc + 1
+        newy = cb(np.concatenate([nextgrid[yslc] for yslc in yslices]))
+        ystart, ystop = 0, 0
+        for yslc in yslices:
+            ystop += yslc.stop - yslc.start
+            nexty[yslc] = newy[ystart:ystop]
+            ystart = ystop
+
         grid = nextgrid
         y = nexty
     return grid, y
