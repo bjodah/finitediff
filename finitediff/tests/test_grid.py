@@ -19,6 +19,8 @@ def g(x):
 g.nelem_call = 0
 g.nfev = 0
 
+def g2(x):
+    return g(2*x) + g(x)
 
 def test_adapted_grid():
     ag, y = adapted_grid(0, 2, g, (8,)*4)
@@ -44,3 +46,11 @@ def test_adapted_grid__minimum_number_of_evals():
     adapted_grid(0, 2, g, (8,)*4)
     assert g.nelem_call == 8*4
     assert g.nfev == 4
+
+
+def test_adapted_grid__metric():
+    def gs(x):
+        return [(a, b) for a, b in zip(g(x), g2(x))]
+    grid, res = adapted_grid(0, 2, gs, (8,)*4, metric=lambda x: x[0] + x[1])
+    assert grid.shape == (32,)
+    assert np.array(res.tolist()).shape == (32, 2)

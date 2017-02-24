@@ -5,7 +5,7 @@ import numpy as np
 from .util import interpolate_ahead, avg_stddev
 
 
-def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ())):
+def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None):
     """" Creates an adapted (1D) grid by subsequent subgrid insertions.
 
     Parameters
@@ -23,7 +23,8 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
             raise ValueError('Need even number of grid points for each addition')
 
     grid = np.linspace(xstart, xstop, grid_additions[0])
-    y = cb(grid)
+    results = cb(grid)
+    y = np.array(results if metric is None else [metric(r) for r in results], dtype=np.float64)
     for na in grid_additions[1:]:
         additions = np.zeros(grid.size - 1, dtype=int)
         for direction, blur in zip(('fw', 'bw'), blurs):
@@ -45,6 +46,8 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
                 if (np.sum(rerr) - na//2):
                     raise ValueError('Balancing failed.')
             additions[slice(ntrail-1, None) if direction == 'fw' else slice(None, 1-ntrail)] += rerr
+        nextresults = np.empty(grid.size + na, dtype=object)
+        nextresults[0] = results[0]
         nexty = np.empty(grid.size + na)
         nexty[0] = y[0]
         nextgrid = np.empty(grid.size + na)
@@ -53,20 +56,24 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
         yslices = []
         for gi, nloc in enumerate(additions):
             nextgrid[ptr:ptr+nloc+1] = np.linspace(grid[gi], grid[gi+1], 2+nloc)[1:]
+            nextresults[ptr+nloc] = results[gi+1]
             nexty[ptr+nloc] = y[gi+1]
             if nloc > 0:
                 yslices.append(slice(ptr, ptr+nloc))
             ptr += nloc + 1
-        newy = cb(np.concatenate([nextgrid[yslc] for yslc in yslices]))
+        newresults = cb(np.concatenate([nextgrid[yslc] for yslc in yslices]))
+        newy = newresults if metric is None else np.array([metric(r) for r in newresults])
         ystart, ystop = 0, 0
         for yslc in yslices:
             ystop += yslc.stop - yslc.start
+            nextresults[yslc] = newresults[ystart:ystop]
             nexty[yslc] = newy[ystart:ystop]
             ystart = ystop
 
         grid = nextgrid
+        results = nextresults
         y = nexty
-    return grid, y
+    return grid, results
 
 
 def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x):
