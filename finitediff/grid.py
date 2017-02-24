@@ -77,7 +77,16 @@ def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x):
     abs_dydtg = np.abs(dydtg)
     tgc = tg[:-1] + dtg/2
     imax = np.argsort(abs_dydtg)[-consider:][::-1]
-    return ([(tgc[m], tgc[m+1] - tgc[m-1], dy[m]) for m in imax],
+
+    def w(m):
+        if m == 0:
+            return tgc[2]
+        elif m == tgc.size - 1:
+            return tgc[-1] - tgc[-3]
+        else:
+            return tgc[m+1] - tgc[m-1]
+
+    return ([(tgc[m], w(m), dy[m]) for m in imax],
             [abs_dydtg[m]/abs_dydtg[imax[-1]] for m in imax[:-1]])
 
 
