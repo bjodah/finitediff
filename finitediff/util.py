@@ -29,3 +29,10 @@ def interpolate_ahead(x, y, n, direction='fw'):
         _v = np.array([xv])
         values.append(interpolate_by_finite_diff(_x, _y, _v, order=0, ntail=n, nhead=0))
     return np.array(values[rev]).squeeze(), slice(n, None) if forward else slice(None, -n)
+
+
+def avg_stddev(arr, w):
+    avg, wsum = np.average(arr, weights=w, returned=True)
+    res = arr - avg
+    stddev = np.sqrt(np.sum(np.dot(w, np.square(res))/(res.size - 1)/wsum))
+    return avg, stddev

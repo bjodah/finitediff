@@ -2,7 +2,7 @@
 from __future__ import (absolute_import, division, print_function)
 
 import numpy as np
-from .util import interpolate_ahead
+from .util import interpolate_ahead, avg_stddev
 
 
 def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ())):
@@ -67,3 +67,29 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
         grid = nextgrid
         y = nexty
     return grid, y
+
+
+def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x):
+    tg = trnsfm(grid)
+    dtg = np.diff(tg)
+    dy = np.diff(y)
+    dydtg = dy/dtg
+    abs_dydtg = np.abs(dydtg)
+    tgc = tg[:-1] + dtg/2
+    imax = np.argsort(abs_dydtg)[-consider:][::-1]
+    return ([(tgc[m], tgc[m+1] - tgc[m-1], dy[m]) for m in imax],
+            [abs_dydtg[m]/abs_dydtg[imax[-1]] for m in imax[:-1]])
+
+
+def pool_discontinuity_approx(loc_res, consistency_criterion=10):
+    points, w2 = map(np.array, loc_res)
+    w1 = np.abs(points[:, 2])
+    avg1, stddev_avg1 = avg_stddev(points[:, 0], w1)
+    avg2, stddev_avg2 = avg_stddev(points[:-1, 0], w2)
+    avgerr1, stddev_avgerr1 = avg_stddev(points[:, 1], w1)
+    avgerr2, stddev_avgerr2 = avg_stddev(points[:-1, 1], w2)
+    if stddev_avg1/(avgerr1+stddev_avgerr1) > consistency_criterion:
+        raise ValueError("Consistency criterion not met for avg1")
+    if stddev_avg2/(avgerr1+stddev_avgerr2) > consistency_criterion:
+        raise ValueError("Consistency criterion not met for avg1")
+    return 0.5*(avg1 + avg2), stddev_avg1 + stddev_avg2 + 3*abs(avg1 - avg2)
