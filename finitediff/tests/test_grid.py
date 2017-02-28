@@ -19,8 +19,10 @@ def g(x):
 g.nelem_call = 0
 g.nfev = 0
 
+
 def g2(x):
     return g(2*x) + g(x)
+
 
 def test_adapted_grid():
     ag, y = adapted_grid(0, 2, g, (8,)*4)

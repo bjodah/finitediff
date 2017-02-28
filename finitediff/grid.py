@@ -5,7 +5,8 @@ import numpy as np
 from .util import interpolate_ahead, avg_stddev
 
 
-def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None):
+def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
+                 atol=None, rtol=None):
     """" Creates an adapted (1D) grid by subsequent subgrid insertions.
 
     Parameters
@@ -25,11 +26,16 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
     grid = np.linspace(xstart, xstop, grid_additions[0])
     results = cb(grid)
     y = np.array(results if metric is None else [metric(r) for r in results], dtype=np.float64)
+    done = False
     for na in grid_additions[1:]:
         additions = np.zeros(grid.size - 1, dtype=int)
         for direction, blur in zip(('fw', 'bw'), blurs):
             est, slc = interpolate_ahead(grid, y, ntrail, direction)
             err = np.abs(y[slc] - est)
+            if atol is not None:
+                done = done and np.all(err < atol)
+            if rtol is not None:
+                done = done and np.all(err/y[slc] < rtol)
             for ib, b in enumerate(blur, 1):
                 blur_slices = (slice(ib, None), slice(None, -ib))
                 err[blur_slices[direction == 'bw']] += b*err[blur_slices[direction == 'fw']]
@@ -73,6 +79,8 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
         grid = nextgrid
         results = nextresults
         y = nexty
+        if done:
+            break
     return grid, results
 
 
@@ -109,3 +117,27 @@ def pool_discontinuity_approx(loc_res, consistency_criterion=10):
     if stddev_avg2/(avgerr1+stddev_avgerr2) > consistency_criterion:
         raise ValueError("Consistency criterion not met for avg1")
     return 0.5*(avg1 + avg2), stddev_avg1 + stddev_avg2 + 3*abs(avg1 - avg2)
+
+
+def plot_convergence(key, values, cb, metric=None, **kwargs):
+    import matplotlib.pyplot as plt
+
+    if key in kwargs:
+        raise ValueError("Cannot have key=%s when given in kwargs" % key)
+    fig, axes = plt.subplots(1, len(values), figsize=(16, 5),
+                             sharey=True, gridspec_kw={'wspace': 0})
+    scores = []
+    for val, ax in zip(values, np.atleast_1d(axes)):
+        kwargs[key] = val
+        grid, results = adapted_grid(0, 2, cb, metric=metric, **kwargs)
+        y = results if metric is None else np.array(
+            [metric(r) for r in results])
+        ax.vlines(grid, 0, 1, transform=ax.get_xaxis_transform(),
+                  linestyle='--', color='k', alpha=.3, linewidth=.5)
+        ax.plot(grid, y)
+        between_x = grid[:-1] + np.diff(grid)/2
+        between_y = y[:-1] + np.diff(y)/2
+        rbx = cb(between_x)
+        ybx = rbx if metric is None else np.array([metric(r) for r in rbx])
+        scores.append(np.sum(np.abs(between_y - ybx)))
+    return np.array(scores)
