@@ -26,9 +26,9 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
     grid = np.linspace(xstart, xstop, grid_additions[0])
     results = cb(grid)
     y = np.array(results if metric is None else [metric(r) for r in results], dtype=np.float64)
-    done = False
     for na in grid_additions[1:]:
         additions = np.zeros(grid.size - 1, dtype=int)
+        done = True if atol is not None or rtol is not None else False
         for direction, blur in zip(('fw', 'bw'), blurs):
             est, slc = interpolate_ahead(grid, y, ntrail, direction)
             err = np.abs(y[slc] - est)
@@ -126,7 +126,7 @@ def plot_convergence(key, values, cb, metric=None, **kwargs):
         raise ValueError("Cannot have key=%s when given in kwargs" % key)
     fig, axes = plt.subplots(1, len(values), figsize=(16, 5),
                              sharey=True, gridspec_kw={'wspace': 0})
-    scores = []
+    scores, grid_sizes = [], []
     for val, ax in zip(values, np.atleast_1d(axes)):
         kwargs[key] = val
         grid, results = adapted_grid(0, 2, cb, metric=metric, **kwargs)
@@ -140,4 +140,5 @@ def plot_convergence(key, values, cb, metric=None, **kwargs):
         rbx = cb(between_x)
         ybx = rbx if metric is None else np.array([metric(r) for r in rbx])
         scores.append(np.sum(np.abs(between_y - ybx)))
-    return np.array(scores)
+        grid_sizes.append(grid.size)
+    return np.array(scores), grid_sizes
