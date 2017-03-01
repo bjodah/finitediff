@@ -6,7 +6,7 @@ from .util import interpolate_ahead, avg_stddev
 
 
 def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
-                 atol=None, rtol=None):
+                 atol=None, rtol=None, extremum_refinement=None):
     """" Creates an adapted (1D) grid by subsequent subgrid insertions.
 
     Parameters
@@ -14,19 +14,76 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
     xstart : float
     xstop : float
     cb : callbable
+        Function to be evaluated (note that noise is handled poorly).
     grid_additions : iterable of ints (even numbers)
+        Sequence specifying how many gridpoints to add each time.
     ntrail : int (>= 2)
+        Number of points to include in the look-ahead extrapolation.
     blurs : pair of iterables of ints (of same length)
-
+        Blur fractions of absolute residuals to neighbors.
+    atol : float
+        Absolute tolerance to be fulfilled by all absolute residuals for early exit.
+    rtol : float
+        Relative tolerance to be fulfilled by all absolute residuals for early exit.
+    extremum_refinement : locator (callable), n (int), predicate (callable)
+        Between each grid addition a callable for locating the extremum (e.g. np.argmax)
+        can be evaluated. The integer specifies how many gridpoints that should be inserted
+        on each side (one side if on boundary) of the extremum.
     """
     for na in grid_additions:
         if (na % 2) != 0:
             raise ValueError('Need even number of grid points for each addition')
+    if extremum_refinement == 'max':
+        extremum_refinement = (np.argmax, 1, lambda y, i: True)
+    elif extremum_refinement == 'min':
+        extremum_refinement = (np.argmin, 1, lambda y, i: True)
+
+    def add_to(adds, grd, res, ys):
+        na = np.sum(adds)
+        if na == 0:
+            return grd, res, ys
+        nextresults = np.empty(grd.size + na, dtype=object)
+        nextresults[0] = res[0]
+        nexty = np.empty(grd.size + na)
+        nexty[0] = ys[0]
+        nextgrid = np.empty(grd.size + na)
+        nextgrid[0] = grd[0]
+        ptr = 1
+        yslices = []
+        for gi, nloc in enumerate(adds):
+            nextgrid[ptr:ptr+nloc+1] = np.linspace(grd[gi], grd[gi+1], 2+nloc)[1:]
+            nextresults[ptr+nloc] = res[gi+1]
+            nexty[ptr+nloc] = ys[gi+1]
+            if nloc > 0:
+                yslices.append(slice(ptr, ptr+nloc))
+            ptr += nloc + 1
+        newresults = cb(np.concatenate([nextgrid[yslc] for yslc in yslices]))
+        newy = newresults if metric is None else np.array([metric(r) for r in newresults])
+        ystart, ystop = 0, 0
+        for yslc in yslices:
+            ystop += yslc.stop - yslc.start
+            nextresults[yslc] = newresults[ystart:ystop]
+            nexty[yslc] = newy[ystart:ystop]
+            ystart = ystop
+
+        return nextgrid, nextresults, nexty
 
     grid = np.linspace(xstart, xstop, grid_additions[0])
     results = cb(grid)
     y = np.array(results if metric is None else [metric(r) for r in results], dtype=np.float64)
+
     for na in grid_additions[1:]:
+        if extremum_refinement:
+            extremum_cb, extremum_n, predicate_cb = extremum_refinement
+            argext = extremum_cb(y)
+            if predicate_cb(y, argext):
+                additions = np.zeros(grid.size - 1, dtype=int)
+                if argext > 0:  # left of
+                    additions[argext-1] = extremum_n
+                elif argext < grid.size - 1:  # right of
+                    additions[argext] = extremum_n
+                grid, results, y = add_to(additions, grid, results, y)
+
         additions = np.zeros(grid.size - 1, dtype=int)
         done = True if atol is not None or rtol is not None else False
         for direction, blur in zip(('fw', 'bw'), blurs):
@@ -52,33 +109,7 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
                 if (np.sum(rerr) - na//2):
                     raise ValueError('Balancing failed.')
             additions[slice(ntrail-1, None) if direction == 'fw' else slice(None, 1-ntrail)] += rerr
-        nextresults = np.empty(grid.size + na, dtype=object)
-        nextresults[0] = results[0]
-        nexty = np.empty(grid.size + na)
-        nexty[0] = y[0]
-        nextgrid = np.empty(grid.size + na)
-        nextgrid[0] = grid[0]
-        ptr = 1
-        yslices = []
-        for gi, nloc in enumerate(additions):
-            nextgrid[ptr:ptr+nloc+1] = np.linspace(grid[gi], grid[gi+1], 2+nloc)[1:]
-            nextresults[ptr+nloc] = results[gi+1]
-            nexty[ptr+nloc] = y[gi+1]
-            if nloc > 0:
-                yslices.append(slice(ptr, ptr+nloc))
-            ptr += nloc + 1
-        newresults = cb(np.concatenate([nextgrid[yslc] for yslc in yslices]))
-        newy = newresults if metric is None else np.array([metric(r) for r in newresults])
-        ystart, ystop = 0, 0
-        for yslc in yslices:
-            ystop += yslc.stop - yslc.start
-            nextresults[yslc] = newresults[ystart:ystop]
-            nexty[yslc] = newy[ystart:ystop]
-            ystart = ystop
-
-        grid = nextgrid
-        results = nextresults
-        y = nexty
+        grid, results, y = add_to(additions, grid, results, y)
         if done:
             break
     return grid, results
