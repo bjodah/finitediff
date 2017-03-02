@@ -5,6 +5,7 @@ build:
     - ./scripts/generate_docs.sh
     - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
     - ./scripts/prepare_deploy.sh
+    - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
 
 deploy:
 
