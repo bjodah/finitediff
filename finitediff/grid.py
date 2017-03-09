@@ -115,42 +115,28 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
     return grid, results
 
 
-def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x):
+def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x, ntrail=2):
+    y = np.asarray(y, dtype=np.float64)
+    dy = np.diff(y)
     tg = trnsfm(grid)
     dtg = np.diff(tg)
-    dy = np.diff(y)
-    dydtg = dy/dtg
-    abs_dydtg = np.abs(dydtg)
-    tgc = tg[:-1] + dtg/2
-    imax = np.argsort(abs_dydtg)[-consider:][::-1]
-
-    def w(m):
-        if m == 0:
-            return tgc[2]
-        elif m == tgc.size - 1:
-            return tgc[-1] - tgc[-3]
-        else:
-            return tgc[m+1] - tgc[m-1]
-
-    return ([(tgc[m], w(m), dy[m]) for m in imax],
-            [abs_dydtg[m]/abs_dydtg[imax[-1]] for m in imax[:-1]])
+    err = np.zeros(y.size)
+    for d in ('fw', 'bw'):
+        est, slc = interpolate_ahead(tg, y, ntrail, d)
+        start = (ntrail - 1) if d == 'fw' else 0
+        stop = -(ntrail - 1) if d=='bw' else None
+        err[slc] += np.abs(y[slc] - est)/dtg[start:stop]*dy[start:stop]
+    imax = np.argsort(err)[-consider:][::-1]
+    return [(tg[m], err[m]) for m in imax]
 
 
 def pool_discontinuity_approx(loc_res, consistency_criterion=10):
-    points, w2 = map(np.array, loc_res)
-    w1 = np.abs(points[:, 2])
-    avg1, stddev_avg1 = avg_stddev(points[:, 0], w1)
-    avg2, stddev_avg2 = avg_stddev(points[:-1, 0], w2)
-    avgerr1, stddev_avgerr1 = avg_stddev(points[:, 1], w1)
-    avgerr2, stddev_avgerr2 = avg_stddev(points[:-1, 1], w2)
-    if stddev_avg1/(avgerr1+stddev_avgerr1) > consistency_criterion:
-        raise ValueError("Consistency criterion not met for avg1")
-    if stddev_avg2/(avgerr1+stddev_avgerr2) > consistency_criterion:
-        raise ValueError("Consistency criterion not met for avg1")
-    return 0.5*(avg1 + avg2), stddev_avg1 + stddev_avg2 + 3*abs(avg1 - avg2)
+    points = np.array(loc_res)
+    w1 = np.abs(points[:, 1])
+    return avg_stddev(points[:, 0], w1)
 
 
-def plot_convergence(key, values, cb, metric=None, **kwargs):
+def plot_convergence(key, values, cb, metric=None, xstart=0, xstop=2, **kwargs):
     import matplotlib.pyplot as plt
 
     if key in kwargs:
@@ -158,9 +144,12 @@ def plot_convergence(key, values, cb, metric=None, **kwargs):
     fig, axes = plt.subplots(1, len(values), figsize=(16, 5),
                              sharey=True, gridspec_kw={'wspace': 0})
     scores, grid_sizes = [], []
+    if key is None and len(values) != 1:
+        raise ValueError("Not considering key")
     for val, ax in zip(values, np.atleast_1d(axes)):
-        kwargs[key] = val
-        grid, results = adapted_grid(0, 2, cb, metric=metric, **kwargs)
+        if key is not None:
+            kwargs[key] = val
+        grid, results = adapted_grid(xstart, xstop, cb, metric=metric, **kwargs)
         y = results if metric is None else np.array(
             [metric(r) for r in results])
         ax.vlines(grid, 0, 1, transform=ax.get_xaxis_transform(),

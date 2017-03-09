@@ -24,8 +24,8 @@ def interpolate_ahead(x, y, n, direction='fw'):
     rev = slice(None, None, 1) if forward else slice(None, None, -1)
     values = []
     for idx, (xv, yv) in enumerate(zip(x[rev][n:], y[rev][n:])):
-        _x = np.ascontiguousarray(x[rev][idx:idx+n])
-        _y = np.ascontiguousarray(y[rev][idx:idx+n])
+        _x = np.ascontiguousarray(x[rev][idx:idx+n], dtype=np.float64)
+        _y = np.ascontiguousarray(y[rev][idx:idx+n], dtype=np.float64)
         _v = np.array([xv])
         values.append(interpolate_by_finite_diff(_x, _y, _v, order=0, ntail=n, nhead=0))
     return np.array(values[rev]).squeeze(), slice(n, None) if forward else slice(None, -n)
