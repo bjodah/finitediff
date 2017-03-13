@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function)
 
+import math
 import numpy as np
-from ..grid import adapted_grid
+from ..grid import adapted_grid, locate_discontinuity, pool_discontinuity_approx
 
 
 def sigm(x, m, o, n):
@@ -22,6 +23,10 @@ g.nfev = 0
 
 def g2(x):
     return g(2*x) + g(x)
+
+g3 = np.vectorize(lambda t: (
+    math.exp(-t) + (.2 if round(t*1234567) % 3 == 0 else 0)
+) if t < 5 else 0.5*math.exp(5-t))  # noisy function
 
 
 def test_adapted_grid():
@@ -56,3 +61,13 @@ def test_adapted_grid__metric():
     grid, res = adapted_grid(0, 2, gs, (8,)*4, metric=lambda x: x[0] + x[1])
     assert grid.shape == (32,)
     assert np.array(res.tolist()).shape == (32, 2)
+
+
+def test_locate_discontinuity():
+    for snr in [False, True]:
+        loc_res = locate_discontinuity(*adapted_grid(0, 10, g3, grid_additions=(16,)*8, snr=snr), consider=5)
+        avg, s = pool_discontinuity_approx(loc_res)
+        if snr:
+            assert abs(avg - 5) < 0.03
+        else:
+            assert abs(avg - 5) > 1  # this is a negative test, i.e. not strict!
