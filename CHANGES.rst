@@ -1,3 +1,11 @@
+v0.3.5
+======
+- Added finitediff.grid
+
+v0.3.4
+======
+- Fixes to source distribution
+
 v0.3.3
 ======
 - Improved setup.py

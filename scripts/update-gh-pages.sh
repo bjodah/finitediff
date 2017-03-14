@@ -10,17 +10,21 @@ remote=${2:-origin}
 
 ori_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
 tmpdir=$(mktemp -d)
-cleanup() {
-    rm -r $tmpdir
-}
-trap cleanup INT TERM
 
 cp -r doc/_build/html/ $tmpdir
 git ls-files --others | tar cf $tmpdir/untracked.tar -T -
+cleanup() {
+    git checkout $ori_branch
+    tar xf $tmpdir/untracked.tar
+    rm -r $tmpdir
+}
+trap cleanup INT TERM EXIT
+
 if [[ -d .gh-pages-skeleton ]]; then
     cp -r .gh-pages-skeleton $tmpdir
 fi
 
+git fetch $remote
 git checkout gh-pages
 if [[ $? -ne 0 ]]; then
     git checkout --orphan gh-pages
@@ -32,6 +36,7 @@ if [[ $? -ne 0 ]]; then
     preexisting=0
 else
     preexisting=1
+    git pull
 fi
 
 if [[ $preexisting == 1 ]]; then
@@ -39,14 +44,19 @@ if [[ $preexisting == 1 ]]; then
         # overwrite previous docs
         git reset --hard HEAD~1
     done
+else
+    git reset --hard
 fi
 
-shopt -s extglob
 git clean -xfd
 if [[ $preexisting == 1 ]]; then
-    git rm -rf !(v*) > /dev/null
+    mv v*/ $tmpdir
+    git rm -rf * > /dev/null
 fi
 cp -r $tmpdir/html/ $tag
+if [[ $preexisting == 1 ]]; then
+    mv $tmpdir/v*/ .
+fi
 if [[ -d $tmpdir/.gh-pages-skeleton ]]; then
     cp -r $tmpdir/.gh-pages-skeleton/. .
 fi
@@ -67,6 +77,3 @@ if [[ $preexisting == 1 ]]; then
 else
     git push --set-upstream $remote gh-pages
 fi
-git checkout $ori_branch
-tar xf $tmpdir/untracked.tar
-cleanup
