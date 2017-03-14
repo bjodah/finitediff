@@ -27,4 +27,5 @@ import os
 assert "finitediff_templated.pxd" in os.listdir(gi())
 '
 )
-! grep "DO-NOT-MERGE!" -R . --exclude ci.sh
+
+./scripts/render_notebooks.sh
