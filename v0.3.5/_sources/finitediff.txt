@@ -1,0 +1,28 @@
+finitediff package
+==================
+
+.. automodule:: finitediff
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Submodules
+----------
+
+finitediff.grid module
+----------------------
+
+.. automodule:: finitediff.grid
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+finitediff.util module
+----------------------
+
+.. automodule:: finitediff.util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
