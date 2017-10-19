@@ -5,14 +5,13 @@ import numpy as np
 from .util import interpolate_ahead, avg_stddev
 
 
-def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
-                 atol=None, rtol=None, extremum_refinement=None, snr=False):
-    """" Creates an adapted (1D) grid by subsequent subgrid insertions.
+def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
+                atol=None, rtol=None, extremum_refinement=None, snr=False):
+    """ Refines an existing grid by adding points to it.
 
     Parameters
     ----------
-    xstart : float
-    xstop : float
+    grid : array
     cb : callbable
         Function to be evaluated (note that noise is handled poorly).
     grid_additions : iterable of ints (even numbers)
@@ -31,6 +30,10 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
         on each side (one side if on boundary) of the extremum.
     snr : bool
         Use signal-to-noise ratio the lower the grid-addition-weight of potential noise.
+
+    Returns
+    -------
+    (grid, errors)
 
     """
     for na in grid_additions:
@@ -71,11 +74,10 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
 
         return nextgrid, nextresults, nexty
 
-    grid = np.linspace(xstart, xstop, grid_additions[0])
     results = cb(grid)
     y = np.array(results if metric is None else [metric(r) for r in results], dtype=np.float64)
 
-    for na in grid_additions[1:]:
+    for na in grid_additions:
         if extremum_refinement:
             extremum_cb, extremum_n, predicate_cb = extremum_refinement
             argext = extremum_cb(y)
@@ -134,6 +136,23 @@ def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), ntrail=2, blurs=(()
         if done:
             break
     return grid, results
+
+
+def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), **kwargs):
+    """" Creates an adapted (1D) grid by subsequent subgrid insertions.
+
+    Parameters
+    ----------
+    xstart : float
+    xstop : float
+    cb : callbable
+        Function to be evaluated (note that noise is handled poorly).
+    grid_additions : iterable of ints (even numbers)
+        Sequence specifying how many gridpoints to add each time.
+    \\*\\*kwargs : see :func:`refine_grid`.
+    """
+    grid = np.linspace(xstart, xstop, grid_additions[0])
+    return refine_grid(grid, cb, grid_additions=grid_additions[1:], **kwargs)
 
 
 def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x, ntrail=2):
