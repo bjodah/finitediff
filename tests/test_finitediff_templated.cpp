@@ -145,7 +145,6 @@ void check_x_exp_mx_(const unsigned maxord, const double x, std::vector<double> 
     for (unsigned order=0; order <= maxord; ++order){
         const double atol = std::pow(10.0, lg_atol0 + degrade_factor*order);
         const double adiff = std::abs(ref_out.first[order] - ref_out.second[order]);
-        std::cout << "order: " << order << std::endl;
         REQUIRE( adiff < atol );
     }
 }
