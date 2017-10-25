@@ -27,12 +27,14 @@ def rebalanced_grid(grid, err, base=0.25, num=None, resolution_factor=10, smooth
             tot += e*np.exp(-(x-gx)**2/(2*(fwhm/2.35482)**2))
         return tot
 
-    finegrid = np.zeros(grid.size * resolution_factor)
+    finegrid = np.zeros((grid.size-1) * resolution_factor + 1)
     for i in range(grid.size-1):
         finegrid[i*resolution_factor:(i+1)*resolution_factor] = np.linspace(
             grid[i], grid[i+1], resolution_factor+1)[:-1]
-    finegrid[-1] = grid[-1]
+    finegrid[-resolution_factor-1:] = np.linspace(grid[-2], grid[-1], resolution_factor + 1)
     smoothed = smooth_err(finegrid) + base*area_err/(grid[-1] - grid[0])
-    interr = np.cumsum(0.5*smoothed * _avgdiff(finegrid))
+    assert np.all(smoothed > 0)
+    assert np.all(_avgdiff(finegrid) > 0)
+    interr = np.cumsum(smoothed * _avgdiff(finegrid))
     cb = interp1d(interr, finegrid)
     return cb(np.linspace(interr[0], interr[-1], num))
