@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function)
 
-import math
 import numpy as np
-from ..grid import adapted_grid
+from ..make import adapted_grid
+from ._common import g
 
 
 def test_adapted_grid():

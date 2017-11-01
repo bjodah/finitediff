@@ -5,6 +5,7 @@ import numpy as np
 
 from ..util import interpolate_ahead
 
+
 def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
                 atol=None, rtol=None, extremum_refinement=None, snr=False):
     """ Refines an existing grid by adding points to it.

@@ -5,6 +5,7 @@ import math
 import numpy as np
 from scipy.interpolate import interp1d
 
+
 def _avgdiff(x):
     dx = np.diff(x)
     dx2 = np.zeros_like(x)
@@ -18,7 +19,7 @@ def rebalanced_grid(grid, err, base=0.25, num=None, resolution_factor=10, smooth
         num = grid.size
 
     dx = np.diff(grid)
-    area_err = 0.5*(err[1:] + err[:-1]) @ dx  # trapezoidal rule
+    area_err = 0.5*np.dot(err[1:] + err[:-1], dx)  # trapezoidal rule
     dx2 = _avgdiff(grid)
 
     def smooth_err(x):
@@ -41,6 +42,67 @@ def rebalanced_grid(grid, err, base=0.25, num=None, resolution_factor=10, smooth
     return cb(np.linspace(interr[0], interr[-1], num))
 
 
+def pre_pruning_mask(grid, rtol=1e-12, atol=0.0):
+    """ Returns a mask for grid pruning.
+
+    Any grid spacing smaller than ``rtol*gridvalue + atol`` will
+    be pruned. In general the value on the right is removed unless it is
+    the last point in the grid.
+
+    Parameters
+    ----------
+    grid : array
+    rtol : float
+    atol : float
+
+    Returns
+    -------
+    NumPy array of ``numpy.bool_`` (to be used as mask).
+
+    """
+    if np.any(np.diff(grid) < 0):
+        raise ValueError("grid needs to be monotonic")
+    limit = grid[-1] - (atol + abs(rtol*grid[-1]))
+    mask = np.empty(grid.size, dtype=np.bool_)
+    mask[grid.size - 1] = True  # rightmost point included
+    for ridx in range(grid.size-2, -1, -1):
+        if grid[ridx] < limit:
+            mask[ridx] = True
+            break
+        else:
+            mask[ridx] = False
+    else:
+        raise ValueError("no grid-points left")
+    mask[0] = True  # leftmost point included
+    limit = grid[0] + abs(rtol*grid[0]) + atol
+    for idx in range(1, ridx):
+        if grid[idx] < limit:
+            mask[idx] = False
+        else:
+            mask[idx] = True
+            limit = grid[idx] + abs(rtol*grid[idx]) + atol
+    return mask
+
+
+def combine_grids(grids, **kwargs):
+    """ Combines multiple grids and prunes them using pre_pruning mask
+
+    Parameters
+    ----------
+    grids : iterable of array_like grids
+    \\*\\* : dict
+        Keyword arguments passed on to pre_pruning_mask
+
+    Returns
+    -------
+    Strictly increasing monotonic array
+
+    """
+    supergrid = np.sort(np.concatenate(grids))
+    mask = pre_pruning_mask(supergrid, **kwargs)
+    return supergrid[mask]
+
+
 def grid_pruning_mask(grid, err, ndrop=None, protect_sparse=None, pow_err=2, pow_dx=2):
     """ Returns a mask for grid pruning.
 
@@ -56,6 +118,7 @@ def grid_pruning_mask(grid, err, ndrop=None, protect_sparse=None, pow_err=2, pow
         Exponent of error in weighting.
     pow_dx : number
         Exponent of grid spacing in weighting.
+
     """
     if ndrop is None:
         ndrop = math.ceil(grid.size * 0.25)

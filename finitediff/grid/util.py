@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function)
 
-from ..util import interpolate_ahead
+import numpy as np
+from ..util import interpolate_ahead, avg_stddev
 
 
 def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x, ntrail=2):
@@ -38,6 +39,5 @@ def grid_error(grid, y, ntrail=2):
         Number of points to include in the look-ahead extrapolation.
 
     """
-    slcs, errs = [], []
     est, _ = interpolate_ahead(grid, y, ntrail, direction='both')
     return est - y

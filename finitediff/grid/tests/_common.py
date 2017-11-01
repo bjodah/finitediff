@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function)
 
+import math
 import numpy as np
 
 
@@ -17,6 +18,7 @@ def g(x):
 
 g.nelem_call = 0
 g.nfev = 0
+
 
 def g2(x):
     return g(2*x) + g(x)
