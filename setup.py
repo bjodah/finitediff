@@ -167,7 +167,7 @@ setup_kwargs = dict(
     classifiers=classifiers,
     setup_requires=['numpy'] + (['cython'] if USE_CYTHON else []),
     install_requires=['numpy'],
-    extras_require={'all': ['pytest', 'sphinx', 'sphinx_rtd_theme', 'numpydoc']}
+    extras_require={'all': ['scipy', 'pytest', 'sphinx', 'sphinx_rtd_theme', 'numpydoc']}
 )
 
 if __name__ == '__main__':
