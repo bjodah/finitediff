@@ -31,7 +31,7 @@ install:
       conda config --set show_channel_urls true
 
 script:
-    - conda install pip pytest
+    - conda install pip pytest numpy cython scipy
     - pip install .
     - pytest
 
