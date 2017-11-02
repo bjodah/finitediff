@@ -88,8 +88,8 @@ other_sources += [
 
 cmdclass = {}
 ext_modules = []
-if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
-            '--help-commands', 'egg_info', 'clean', '--version'):
+if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
+            '--help-commands', 'egg_info', 'clean', '--version') for arg in sys.argv[1:]):
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
