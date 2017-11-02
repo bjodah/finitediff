@@ -72,11 +72,16 @@ else:
     interface = 'templated'
     other_sources = []
 
-USE_CYTHON = os.path.exists(_path_under_setup('finitediff', '_finitediff_'+interface+'.pyx'))
-ext = '.pyx' if USE_CYTHON else ('.c' if _USE_FORTRAN else '.cpp')
+basename = '_finitediff_'+interface
+ext = '.c' if _USE_FORTRAN else '.cpp'
+if os.path.exists(_path_under_setup('finitediff', basename+ext)):
+    USE_CYTHON = False
+else:
+    USE_CYTHON = True
+    ext = '.pyx'
 
-modname = 'finitediff._finitediff_' + interface
-srcname = os.path.join('finitediff', '_finitediff_' + interface)
+modname = 'finitediff.' + basename
+srcname = os.path.join('finitediff', basename)
 other_sources += [
     os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
 ]
@@ -120,7 +125,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         ]
         if USE_CYTHON:
             from Cython.Build import cythonize
-            ext_modules = cythonize(ext_modules, include_path=include_dirs, gdb_debug=True)
+            ext_modules = cythonize(ext_modules, include_path=include_dirs)
         else:
             ext_modules[0].sources += other_sources
 
