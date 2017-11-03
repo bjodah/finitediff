@@ -1,6 +1,4 @@
 #!/bin/bash -xeu
-(cd examples/; make)
-(cd tests/; make)
 PKG_NAME=${1:-${CI_REPO##*/}}
 if [[ "$CI_BRANCH" =~ ^v[0-9]+.[0-9]?* ]]; then
     eval export ${PKG_NAME^^}_RELEASE_VERSION=\$CI_BRANCH

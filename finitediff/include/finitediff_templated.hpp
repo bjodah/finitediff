@@ -6,7 +6,6 @@
 namespace finitediff {
     // Recommended functions:
     // calculate_weights (or generate_weights as a convenient wrapper)
-    // The *_optim functions have not been better in practice and there is a potentially expensive sort call involved.
 
     template <typename Real_t>
     void calculate_weights(const Real_t * const __restrict__ grid, const unsigned len_g,
@@ -144,74 +143,6 @@ namespace finitediff {
         calculate_weights<Real_t>(&grid[0], grid.size(), maxorder_, &coeffs[0], around);
         return coeffs;
     }
-
-    template<typename Real_t, template<typename, typename...> class Cont, typename... Args>
-    Cont<Real_t, Args...> generate_weights_optim(const Cont<Real_t, Args...>& grid, int maxorder=-1, const Real_t around=0){
-        const unsigned n_ = grid.size();
-        std::vector<unsigned> index(n_);
-        for (unsigned idx=0; idx < n_; ++idx)
-            index[idx] = idx;
-        std::sort(index.begin(), index.end(),
-             [&](const unsigned& a, const unsigned& b) {
-                      return (std::abs(grid[a] - around) < std::abs(grid[b] - around));
-             });
-        Cont<Real_t, Args...> reordered_grid(n_);
-        for (unsigned idx=0; idx < n_; ++idx){
-            reordered_grid[idx] = grid[index[idx]];
-        }
-        auto reordered_coeffs = generate_weights(reordered_grid, maxorder, around);
-        const unsigned len_coeffs = reordered_coeffs.size();
-        const unsigned ncols = len_coeffs/n_;
-
-        Cont<Real_t, Args...> coeffs(len_coeffs);
-        for (unsigned order=0; order < ncols; ++order){
-            for (unsigned idx=0; idx < n_; ++idx)
-                coeffs[order*n_ + index[idx]] += reordered_coeffs[order*n_ + idx];
-        }
-        return coeffs;
-    }
-
-    template <typename Real_t>
-    void calculate_weights_optim(const Real_t * const __restrict__ grid, const unsigned len_g,
-                                 const unsigned max_deriv, Real_t * const __restrict__ weights, const Real_t around=0) {
-        if (len_g < max_deriv + 1){
-            throw std::logic_error("size of grid insufficient");
-        }
-        std::vector<unsigned> index(len_g);
-        for (unsigned idx=0; idx < len_g; ++idx)
-            index[idx] = idx;
-        std::sort(index.begin(), index.end(),
-             [&](const unsigned& a, const unsigned& b) {
-                      return (std::abs(grid[a] - around) < std::abs(grid[b] - around));
-             });
-        std::vector<Real_t> reordered_grid(len_g);
-        for (unsigned idx=0; idx < len_g; ++idx){
-            reordered_grid[idx] = grid[index[idx]];
-        }
-        std::vector<Real_t> reordered_weights(len_g*(max_deriv + 1), 0);
-        calculate_weights(&reordered_grid[0], len_g, max_deriv, &reordered_weights[0], around);
-        for (unsigned order=0; order <= max_deriv; ++order){
-            for (unsigned idx=0; idx < len_g; ++idx)
-                weights[order*len_g + index[idx]] += reordered_weights[order*len_g + idx];
-        }
-    }
-
-    template <typename Real_t>
-    void apply_fd_optim(const int nin, const int maxorder,
-                        const Real_t * const __restrict__ xdata,
-                        const Real_t * const __restrict__ ydata,
-                        const Real_t xtgt,
-                        Real_t * const __restrict__ out){
-        std::vector<Real_t> c(nin * (maxorder+1));
-        finitediff::calculate_weights_optim<Real_t>(xdata, nin, maxorder, &c[0], xtgt);
-        for (int j=0; j <= maxorder; ++j){
-            out[j] = 0;
-            for (int i=0; i<nin; ++i)
-                out[j] += c[i + j*nin] * ydata[i];
-        }
-    }
-
-
 #endif
 
 }
