@@ -132,8 +132,13 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
     if ext_modules[0].sources[0].startswith('/'):
         raise ValueError("Absolute path not allowed: %s" % ext_modules[0].sources[0])
 
+submodules = [
+    pkg_name + '.grid',
+]
+
 tests = [
     pkg_name + '.tests',
+    pkg_name + '.grid.tests',
 ]
 
 classifiers = [
@@ -165,7 +170,7 @@ setup_kwargs = dict(
     url=url,
     license=license,
     keywords=["finite-difference", "taylor series", "extrapolation"],
-    packages=[pkg_name] + tests,
+    packages=[pkg_name] + submodules + tests,
     include_package_data=True,
     cmdclass=cmdclass,
     ext_modules=ext_modules,
