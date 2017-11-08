@@ -34,6 +34,7 @@ script:
     - conda install pip pytest numpy cython scipy
     - pip install .
     - cd /; pytest --pyargs finitediff; cd -
+    - conda install conda-build
     - conda build conda-recipe/
 
 notifications:
