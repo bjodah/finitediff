@@ -2,7 +2,8 @@
 from __future__ import (absolute_import, division, print_function)
 
 import numpy as np
-from .util import interpolate_ahead, avg_stddev
+
+from ..util import interpolate_ahead
 
 
 def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
@@ -136,69 +137,3 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
         if done:
             break
     return grid, results
-
-
-def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), **kwargs):
-    """" Creates an adapted (1D) grid by subsequent subgrid insertions.
-
-    Parameters
-    ----------
-    xstart : float
-    xstop : float
-    cb : callbable
-        Function to be evaluated (note that noise is handled poorly).
-    grid_additions : iterable of ints (even numbers)
-        Sequence specifying how many gridpoints to add each time.
-    \\*\\*kwargs : see :func:`refine_grid`.
-    """
-    grid = np.linspace(xstart, xstop, grid_additions[0])
-    return refine_grid(grid, cb, grid_additions=grid_additions[1:], **kwargs)
-
-
-def locate_discontinuity(grid, y, consider, trnsfm=lambda x: x, ntrail=2):
-    y = np.asarray(y, dtype=np.float64)
-    dy = np.diff(y)
-    tg = trnsfm(grid)
-    dtg = np.diff(tg)
-    err = np.zeros(y.size)
-    for d in ('fw', 'bw'):
-        est, slc = interpolate_ahead(tg, y, ntrail, d)
-        start = (ntrail - 1) if d == 'fw' else 0
-        stop = -(ntrail - 1) if d == 'bw' else None
-        err[slc] += np.abs(y[slc] - est)/dtg[start:stop]*dy[start:stop]
-    imax = np.argsort(err)[-consider:][::-1]
-    return [(tg[m], err[m]) for m in imax]
-
-
-def pool_discontinuity_approx(loc_res, consistency_criterion=10):
-    points = np.array(loc_res)
-    w1 = np.abs(points[:, 1])
-    return avg_stddev(points[:, 0], w1)
-
-
-def plot_convergence(key, values, cb, metric=None, xstart=0, xstop=2, **kwargs):
-    import matplotlib.pyplot as plt
-
-    if key in kwargs:
-        raise ValueError("Cannot have key=%s when given in kwargs" % key)
-    fig, axes = plt.subplots(1, len(values), figsize=(16, 5),
-                             sharey=True, gridspec_kw={'wspace': 0})
-    scores, grid_sizes = [], []
-    if key is None and len(values) != 1:
-        raise ValueError("Not considering key")
-    for val, ax in zip(values, np.atleast_1d(axes)):
-        if key is not None:
-            kwargs[key] = val
-        grid, results = adapted_grid(xstart, xstop, cb, metric=metric, **kwargs)
-        y = results if metric is None else np.array(
-            [metric(r) for r in results])
-        ax.vlines(grid, 0, 1, transform=ax.get_xaxis_transform(),
-                  linestyle='--', color='k', alpha=.3, linewidth=.5)
-        ax.plot(grid, y)
-        between_x = grid[:-1] + np.diff(grid)/2
-        between_y = y[:-1] + np.diff(y)/2
-        rbx = cb(between_x)
-        ybx = rbx if metric is None else np.array([metric(r) for r in rbx])
-        scores.append(np.sum(np.abs(between_y - ybx)))
-        grid_sizes.append(grid.size)
-    return np.array(scores), grid_sizes

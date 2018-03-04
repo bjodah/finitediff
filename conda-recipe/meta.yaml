@@ -10,21 +10,26 @@ source:
 
 build:
   number: 0
+  script: python setup.py install --single-version-externally-managed --record record.txt
 
 requirements:
   build:
     - python
-    - numpy
+    - setuptools
     - cython
-  run:
     - numpy
+  run:
     - python
+    - numpy
+    - scipy
 
 test:
   requires:
-    - numpy
+    - pytest
+  commands:
+    - pytest --pyargs {{ name }}
 
 about:
-  home: https://github.com/bjodah/finitediff
+  home: https://github.com/bjodah/{{ name }}
   license: BSD 2-Clause
   license_file: LICENSE

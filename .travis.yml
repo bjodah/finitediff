@@ -1,18 +1,41 @@
-sudo: required
-dist: trusty
 language: generic
+os: osx
+osx_image: xcode6.4
+
 before_install:
-  - sudo apt-get install -qq gfortran g++ python-pip python-numpy python-argh python-pytest python-pip python-dev
-  - python -m pip install --user pycompilation
-  - python -m pip install --user Cython --install-option="--no-cython-compile"
+    - |
+      echo ""
+      echo "Removing homebrew from Travis CI to avoid conflicts."
+      curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall > ~/uninstall_homebrew
+      chmod +x ~/uninstall_homebrew
+      ~/uninstall_homebrew -fq
+      rm ~/uninstall_homebrew
+
 install:
-  - python setup.py build_ext --inplace
-  - export PYTHONPATH=.:$PYTHONPATH
-# command to run tests
+    - |
+      echo ""
+      echo "Installing a fresh version of Miniconda."
+      MINICONDA_URL="https://repo.continuum.io/miniconda"
+      MINICONDA_FILE="Miniconda3-latest-MacOSX-x86_64.sh"
+      curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
+      bash $MINICONDA_FILE -b
+
+    # Configure conda.
+    - |
+      echo ""
+      echo "Configuring conda."
+      source /Users/travis/miniconda3/bin/activate root
+      conda config --set always_yes yes
+      conda update python
+      conda install conda-build
+      conda install conda-build
+      conda config --remove channels defaults
+      conda config --add channels defaults
+      conda config --add channels conda-forge
+      conda config --set show_channel_urls true
+
 script: 
-  - PYTHONPATH=$(pwd) python -m pytest
-  - FINITEDIFF_USE_FORTRAN=1 python setup.py build_ext --inplace
-  - rm finitediff/*templated*.so
-  - PYTHONPATH=$(pwd) py.test
+    - conda build conda-recipe
+
 notifications:
   email: false

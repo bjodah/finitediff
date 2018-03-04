@@ -86,8 +86,8 @@ and of course using the python bindings:
 
    >>> from finitediff import get_weights
    >>> import numpy as np
-   >>> c = get_weights(np.array([-1., 0, 1]), 0, maxorder=1)
-   >>> np.allclose(c[:, 1], [-.5, 0, .5])
+   >>> c = get_weights(np.array([0, -1., 1]), 0, maxorder=1)
+   >>> np.allclose(c[:, 1], [0, -.5, .5])
    True
 
 

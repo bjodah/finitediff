@@ -1,6 +1,11 @@
+v0.4.0
+======
+- Removed ``*_optim`` functions. (since intermediate results were not used anyways)
+- Python wrapper has a new utility subpackage: .grid
+
 v0.3.5
 ======
-- Added finitediff.grid
+- Added (module) finitediff.grid
 
 v0.3.4
 ======

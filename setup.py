@@ -72,19 +72,24 @@ else:
     interface = 'templated'
     other_sources = []
 
-USE_CYTHON = os.path.exists(_path_under_setup('finitediff', '_finitediff_'+interface+'.pyx'))
-ext = '.pyx' if USE_CYTHON else ('.c' if _USE_FORTRAN else '.cpp')
+basename = '_finitediff_'+interface
+ext = '.c' if _USE_FORTRAN else '.cpp'
+if os.path.exists(_path_under_setup('finitediff', basename+ext)):
+    USE_CYTHON = False
+else:
+    USE_CYTHON = True
+    ext = '.pyx'
 
-modname = 'finitediff._finitediff_' + interface
-srcname = os.path.join('finitediff', '_finitediff_' + interface)
+modname = 'finitediff.' + basename
+srcname = os.path.join('finitediff', basename)
 other_sources += [
     os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
 ]
 
 cmdclass = {}
 ext_modules = []
-if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
-            '--help-commands', 'egg_info', 'clean', '--version'):
+if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
+            '--help-commands', 'egg_info', 'clean', '--version') for arg in sys.argv[1:]):
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
@@ -120,15 +125,20 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and sys.argv[1] not in (
         ]
         if USE_CYTHON:
             from Cython.Build import cythonize
-            ext_modules = cythonize(ext_modules, include_path=include_dirs, gdb_debug=True)
+            ext_modules = cythonize(ext_modules, include_path=include_dirs)
         else:
             ext_modules[0].sources += other_sources
 
     if ext_modules[0].sources[0].startswith('/'):
         raise ValueError("Absolute path not allowed: %s" % ext_modules[0].sources[0])
 
+submodules = [
+    pkg_name + '.grid',
+]
+
 tests = [
     pkg_name + '.tests',
+    pkg_name + '.grid.tests',
 ]
 
 classifiers = [
@@ -160,14 +170,14 @@ setup_kwargs = dict(
     url=url,
     license=license,
     keywords=["finite-difference", "taylor series", "extrapolation"],
-    packages=[pkg_name] + tests,
+    packages=[pkg_name] + submodules + tests,
     include_package_data=True,
     cmdclass=cmdclass,
     ext_modules=ext_modules,
     classifiers=classifiers,
     setup_requires=['numpy'] + (['cython'] if USE_CYTHON else []),
     install_requires=['numpy'],
-    extras_require={'all': ['pytest', 'sphinx', 'sphinx_rtd_theme', 'numpydoc']}
+    extras_require={'all': ['scipy', 'pytest', 'sphinx', 'sphinx_rtd_theme', 'numpydoc']}
 )
 
 if __name__ == '__main__':

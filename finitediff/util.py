@@ -6,6 +6,9 @@ from . import interpolate_by_finite_diff
 
 
 def interpolate_ahead(x, y, n, direction='fw'):
+    if not np.all(np.diff(x) > 0):
+        raise ValueError("x not strictly monotonic.")
+
     if direction == 'both':
         y1, slc1 = interpolate_ahead(x, y, n, 'fw')
         y2, slc2 = interpolate_ahead(x, y, n, 'bw')
