@@ -2,6 +2,7 @@ v0.4.0
 ======
 - Removed ``*_optim`` functions. (since intermediate results were not used anyways)
 - Python wrapper has a new utility subpackage: .grid
+- Tweaked conda-recipe
 
 v0.3.5
 ======
