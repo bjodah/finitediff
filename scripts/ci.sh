@@ -5,7 +5,7 @@ if [[ "$CI_BRANCH" =~ ^v[0-9]+.[0-9]?* ]]; then
     echo ${CI_BRANCH} | tail -c +2 > __conda_version__.txt
 fi
 python3 setup.py sdist
-(cd dist/; python3 -m pip install $PKG_NAME-$($PYTHON ../setup.py --version).tar.gz)
+(cd dist/; python3 -m pip install $PKG_NAME-$(python3 ../setup.py --version).tar.gz)
 (cd /; python3 -m pytest --pyargs $PKG_NAME)
 python3 -m pip install --user -e .[all]
 PYTHONPATH=$(pwd) ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html
