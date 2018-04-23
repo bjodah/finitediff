@@ -6,6 +6,7 @@ jobs:
       - image: continuumio/miniconda3
     steps:
       - checkout
+      - run: apt-get --quiet update && apt-get --quiet --assume-yes install gcc g++
       - run: conda config --set always_yes yes
       - run: conda update python
       - run: conda install conda-build
