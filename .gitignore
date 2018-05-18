@@ -9,7 +9,7 @@ TAGS
 */#*#
 *.pyc
 */*.pyc
-.cache/
+.*cache/
 finitediff/*.so
 src/*.mod
 src/tests/*.mod
@@ -17,7 +17,6 @@ src/tests/*.o
 src/tests/test_finitediff_fort
 src/tests/test_finitediff
 build/
-.cache/
 cython_debug/
 MANIFEST
 dist/

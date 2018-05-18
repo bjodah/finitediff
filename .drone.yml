@@ -4,6 +4,7 @@ build:
     - ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-6.0/bin/llvm-symbolizer
     - ASAN_OPTIONS=symbolize=1
   commands:
+    - git fetch -tq  # used by ``git describe``
     - bash -c '[[ $(python3 setup.py --version) =~ ^[0-9]+.* ]]'
     - (cd examples/; make -B CXX=clang++-6.0 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
     - (cd examples/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O2")

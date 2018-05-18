@@ -18,10 +18,10 @@ requirements:
     - setuptools
     - pip
     - cython
-    - numpy
+    - numpy 1.11.*
   run:
     - python
-    - numpy
+    - numpy >=1.11
     - scipy
 
 test:
