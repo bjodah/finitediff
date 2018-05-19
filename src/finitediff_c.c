@@ -21,7 +21,7 @@ int calculate_weights(
     c4 = grid[0] - around;
     for (i=1; i < (max_deriv+1); ++i){
         for (int j=0; j < len_g; ++j){
-            weights[i*ld_weights + j] = 0;  // clear weights
+            weights[i*ld_weights + j] = 0;  /* clear weights */
         }
     }
     weights[0] = 1;
