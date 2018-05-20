@@ -1,7 +1,8 @@
 CFLAGS ?= -std=c89 -Wall -Wextra -Werror -pedantic -O0 -g -ggdb -I../finitediff/include
-LDLIBS ?= -lm
-CXX ?= g++
 CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../finitediff/include -fno-omit-frame-pointer -D_GLIBCXX_DEBUG
+LDLIBS ?= -lm
+CC ?= gcc
+CXX ?= g++
 
 .PHONY: test debug clean
 

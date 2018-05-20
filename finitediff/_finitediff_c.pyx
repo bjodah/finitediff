@@ -143,7 +143,7 @@ def interpolate_by_finite_diff(
     >>> x = np.array([0, 1, 2])
     >>> y = np.array([[2, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]])
     >>> xout = np.linspace(0.5, 1.5, 5)
-    >>> r = ifd(x, y, xout, maxorder=2, ntail=1, nhead=1)
+    >>> r = ifd(x, y, xout, maxorder=2)
     >>> r.shape
     (5, 4, 3)
 
@@ -167,7 +167,7 @@ def interpolate_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
-    cdef int nsets = yarr.size // tgts.size
+    cdef int nsets = yarr.size // xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=3] yout = np.zeros(
         (nout, nsets, maxorder+1), order='C', dtype=np.float64)
     cdef int i, j=0

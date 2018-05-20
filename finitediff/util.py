@@ -30,7 +30,7 @@ def interpolate_ahead(x, y, n, direction='fw'):
         _x = np.ascontiguousarray(x[rev][idx:idx+n], dtype=np.float64)
         _y = np.ascontiguousarray(y[rev][idx:idx+n], dtype=np.float64)
         _v = np.array([xv])
-        values.append(interpolate_by_finite_diff(_x, _y, _v, order=0, ntail=n, nhead=0))
+        values.append(interpolate_by_finite_diff(_x, _y, _v, maxorder=0, ntail=n, nhead=0))
     return np.array(values[rev]).squeeze(), slice(n, None) if forward else slice(None, -n)
 
 

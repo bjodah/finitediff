@@ -12,10 +12,6 @@ TAGS
 .*cache/
 finitediff/*.so
 src/*.mod
-src/tests/*.mod
-src/tests/*.o
-src/tests/test_finitediff_fort
-src/tests/test_finitediff
 build/
 cython_debug/
 MANIFEST
