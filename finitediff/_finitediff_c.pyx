@@ -41,7 +41,7 @@ def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
 
 def derivatives_at_point_by_finite_diff(
         grid, ydata, double xtgt,
-        int maxorder, yorder='C', squeeze=None):
+        int maxorder, yorder='C', reshape=None):
     """ Esimates of derivatives up to specified order at a point.
 
     Estimates derivatives/function values of requested order
@@ -63,9 +63,9 @@ def derivatives_at_point_by_finite_diff(
         The default is 0 (interpolation).
     yorder : char
         NumPy "order" of ydata.
-    squeeze: bool
-        Whether numpy.squeeze is applied to returned array. Default:
-        ``True`` if ``ydata.ndim == 1``.
+    reshape: bool
+        Whether to return a 2D array or not. Default:
+        not unless ``ydata.ndim == 1``.
 
 
     Returns
@@ -94,15 +94,15 @@ def derivatives_at_point_by_finite_diff(
     if xarr.size < maxorder+1:
         raise ValueError("xdata too short for requested derivative order")
     apply_fd(&yarr[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
-    result = yout.reshape((nsets, maxorder+1))
-    if getattr(ydata, 'ndim', 1) == 1:
-        return result.squeeze()
+    if reshape is None:
+        reshape = ydata.ndim != 1
+    if reshape:
+        return yout.reshape((nsets, maxorder+1))
     else:
-        return result
-
+        return yout
 
 def interpolate_by_finite_diff(
-        grid, ydata, xtgts, int maxorder=0, int ntail=2, int nhead=2, yorder='C'):
+        grid, ydata, xtgts, int maxorder=0, int ntail=2, int nhead=2, yorder='C', reshape=None):
     """ Estimates derivatives of requested order at multiple points.
 
     Estimates derivatives/function values of requested order
@@ -127,9 +127,9 @@ def interpolate_by_finite_diff(
         how many points in ``grid`` after ``xtgts`` to include (default = 2).
     yorder : char
         NumPy "order" of ydata.
-    squeeze: bool
-        Whether numpy.squeeze is applied to returned array. Default:
-        ``True`` if ``ydata.ndim == 1``.
+    reshape: bool
+        Whether to return a 3D array or not. Default:
+        not unless ``ydata.ndim == 1``.
 
     Returns
     -------
@@ -168,8 +168,8 @@ def interpolate_by_finite_diff(
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
     cdef int nsets = yarr.size // xarr.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=3] yout = np.zeros(
-        (nout, nsets, maxorder+1), order='C', dtype=np.float64)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(
+        (nout*nsets*(maxorder+1)), order='C', dtype=np.float64)
     cdef int i, j=0
 
     if xarr.size < ntail+nhead:
@@ -182,7 +182,7 @@ def interpolate_by_finite_diff(
             &xarr[0], xarr.size, tgts[i], j))
         j = min(j, xarr.size - nin)
         apply_fd(
-            &yout[i, 0, 0],
+            &yout[0],
             maxorder+1,
             nsets,
             maxorder,
@@ -192,8 +192,9 @@ def interpolate_by_finite_diff(
             xarr.size,
             tgts[i]
         )
-
-    if getattr(ydata, 'ndim', 1) == 1:
-        return yout.squeeze()
+    if reshape is None:
+        reshape = ydata.ndim != 2
+    if reshape:
+        return yout.reshape((nout, nsets, maxorder+1))
     else:
-        return yout
+        return yout.reshape((nout, -1))

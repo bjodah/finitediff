@@ -10,7 +10,7 @@ build:
     - (cd examples/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O2")
     - (cd tests/; make -B CXX=clang++-6.0 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
     - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O2")
-    - (cd tests/; make -f test_fortran.mk)
+    - (cd tests/; make -f fortran_tests.mk)
     - ./scripts/ci.sh finitediff
     - ./scripts/generate_docs.sh
     - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
