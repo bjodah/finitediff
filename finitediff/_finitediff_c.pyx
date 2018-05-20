@@ -93,7 +93,7 @@ def derivatives_at_point_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty((maxorder+1)*nsets)
     if xarr.size < maxorder+1:
         raise ValueError("xdata too short for requested derivative order")
-    apply_fd(&yarr[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
+    apply_fd(&yout[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
     if reshape is None:
         reshape = ydata.ndim != 1
     if reshape:
