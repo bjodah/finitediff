@@ -32,7 +32,7 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
         n = xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.empty((n, maxorder+1), order='F')
-    populate_weights[double](xtgt, &xarr[0], n-1, maxorder, &c[0, 0])
+    calculate_weights(&c[0, 0], n, &xarr[0], n, maxorder, xtgt)
     return c
 
 
@@ -83,7 +83,7 @@ def derivatives_at_point_by_finite_diff(
         raise ValueError("xdata and ydata shapes incompatible")
     if xdata.size < order+1:
         raise ValueError("xdata too short for requested derivative order")
-    apply_fd[double](xdata.size, order, &xdata[0], &ydata[0], xout, &yout[0])
+    apply_fd(&yout[0], yout.size, 1, order, xdata.size, &xdata[0], &ydata[0], ydata.size, xout)
     return yout
 
 
@@ -155,12 +155,16 @@ def interpolate_by_finite_diff(
         j = max(0, get_interval_from_guess(
             &xdata[0], xdata.shape[0], xout[i], j))
         j = min(j, xdata.shape[0]-nin)
-        apply_fd[double](
-            nin,
+        apply_fd(
+            &out[0],
+            out.shape[0],
+            1,
             order,
+            nin,
             &xdata[j],
             &ydata[j],
-            xout[i],
-            &out[0])
+            order + 1,
+            xout[i]
+        )
         yout[i, :] = out
     return yout

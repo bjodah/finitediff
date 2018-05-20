@@ -22,6 +22,7 @@ MANIFEST
 dist/
 doc/
 finitediff/_finitediff_templated.cpp
+finitediff/_finitediff_c.c
 *.egg-info
 examples/demo
 examples/a.out

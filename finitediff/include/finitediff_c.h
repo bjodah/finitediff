@@ -36,11 +36,7 @@ extern "C" {
   a) ``len_g < max_deriv + 1``
   b) all values in ``grid`` are unique
 
-  Returns
-  -------
-  0: success
-  1: size of grid too small
-  
+ 
   References
   ----------
   Generation of Finite Difference Formulas on Arbitrarily
@@ -62,7 +58,23 @@ void calculate_weights(
  
   Parameters
   ----------
-  out :
+  out : array of derivatives at ``xtgt``
+  ld_out : leading  dimension of ``out``
+  nsets : outer diension of ydata
+  max_deriv : highest derivative to calculate for
+  len_g : length of ``xdata``
+  xdata : grid points
+  ydata : (sets of) values (``nsets`` x ``len_g``)
+  ldy : leading dimension of ``ydata`` (usually ``len_g``)
+  xtgt : value of x at which derivatives are to be estimated
+
+  Returns
+  -------
+  0: success
+  1: malloc failed
+  2: ``len_g < max_deriv + 1``
+  3: ``ld_out < max_deriv + 1``
+
 */
 int apply_fd(
     FINITEDIFF_REAL * const FINITEDIFF_RESTRICT out,

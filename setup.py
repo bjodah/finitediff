@@ -28,8 +28,6 @@ exec(open(config_py_path).read())
 for k, v in list(env.items()):
     env[k] = os.environ.get('%s_%s' % (pkg_name.upper(), k), v)
 
-_USE_FORTRAN = env['USE_FORTRAN'] == '1'  # e.g.: $ export FINITEDIFF_USE_FORTRAN=1
-
 _version_env_var = '%s_RELEASE_VERSION' % pkg_name.upper()
 RELEASE_VERSION = os.environ.get(_version_env_var, '')
 
@@ -62,18 +60,11 @@ else:
                 __version__ = re.sub('v([0-9.]+)-(\d+)-(\w+)', r'\1.post\2+\3', _git_version)  # .dev < '' < .post
 
 
-if _USE_FORTRAN:
-    interface = 'fort'
-    other_sources = [
-        os.path.join('src', 'finitediff_fort.f90'),
-        os.path.join('src', 'c_finitediff_fort.f90'),
-    ]
-else:
-    interface = 'templated'
-    other_sources = []
+interface = 'c'
+other_sources = [os.path.join('src', 'finitediff_c.c')]
 
 basename = '_finitediff_'+interface
-ext = '.c' if _USE_FORTRAN else '.cpp'
+ext = '.c'
 if os.path.exists(_path_under_setup('finitediff', basename+ext)):
     USE_CYTHON = False
 else:
@@ -89,7 +80,7 @@ other_sources += [
 cmdclass = {}
 ext_modules = []
 if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
-            '--help-commands', 'egg_info', 'clean', '--version') for arg in sys.argv[1:]):
+        '--help-commands', 'egg_info', 'clean', '--version') for arg in sys.argv[1:]):
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
@@ -98,36 +89,16 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
         numpy.get_include()
     ]
 
-    if _USE_FORTRAN:
-        from pycompilation.dist import pc_build_ext, PCExtension
-        from pycompilation.util import ArbitraryDepthGlob
-
-        cmdclass = {'build_ext': pc_build_ext}
-        ext_modules = [
-            PCExtension(
-                modname,
-                sources=[srcname+ext] + other_sources,
-                pycompilation_compile_kwargs={
-                    'per_file_kwargs': {
-                        ArbitraryDepthGlob(b'*.c'): {'std': 'c99'}
-                    }
-                },
-                include_dirs=include_dirs,
-                language=None if _USE_FORTRAN else 'c++',
-                logger=True
-            )
-        ]
+    # default path (no external dependencies):
+    from setuptools.extension import Extension
+    ext_modules = [
+        Extension(modname, [srcname+ext], include_dirs=include_dirs)
+    ]
+    if USE_CYTHON:
+        from Cython.Build import cythonize
+        ext_modules = cythonize(ext_modules, include_path=include_dirs)
     else:
-        # default path (no external dependencies):
-        from setuptools.extension import Extension
-        ext_modules = [
-            Extension(modname, [srcname+ext], include_dirs=include_dirs)
-        ]
-        if USE_CYTHON:
-            from Cython.Build import cythonize
-            ext_modules = cythonize(ext_modules, include_path=include_dirs)
-        else:
-            ext_modules[0].sources += other_sources
+        ext_modules[0].sources += other_sources
 
     if ext_modules[0].sources[0].startswith('/'):
         raise ValueError("Absolute path not allowed: %s" % ext_modules[0].sources[0])
