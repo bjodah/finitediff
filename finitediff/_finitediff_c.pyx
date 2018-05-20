@@ -91,9 +91,7 @@ def derivatives_at_point_by_finite_diff(
         raise ValueError("Incompatible shapes: grid & ydata")
     cdef int nsets = yarr.size // xtgt.size
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty((maxorder+1)*nsets)
-    if xdata.size != ydata.size:
-        raise ValueError("xdata and ydata shapes incompatible")
-    if xdata.size < maxorder+1:
+    if xarr.size < maxorder+1:
         raise ValueError("xdata too short for requested derivative order")
     apply_fd(&yarr[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
     result = yout.reshape((nsets, maxorder+1))
