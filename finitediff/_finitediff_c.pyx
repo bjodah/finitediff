@@ -170,12 +170,10 @@ def interpolate_by_finite_diff(
     cdef int nsets = yarr.size // tgts.size
     cdef cnp.ndarray[cnp.float64_t, ndim=3] yout = np.zeros(
         (nout, nsets, maxorder+1), order='C', dtype=np.float64)
-    cdef int i, j
+    cdef int i, j=0
 
     if xarr.size < ntail+nhead:
         raise ValueError("ntail + nhead < grid.shape[0]")
-    if xarr.size != ydata.shape[0]:
-        raise ValueError("grid.shape[0] != ydata.shape[0]")
     if nhead+ntail < maxorder+1:
         raise ValueError("nhead+ntail < maxorder+1")
 
@@ -190,7 +188,7 @@ def interpolate_by_finite_diff(
             maxorder,
             nin,
             &xarr[j],
-            &ydata[j],
+            &yarr[j],
             xarr.size,
             tgts[i]
         )
