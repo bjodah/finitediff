@@ -30,7 +30,7 @@ def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
          Fortran order (contiguous along columns)
          with weights for 0:th order in first column.
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = numpy.ravel(grid)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ravel(grid)
     if n == -1:
         n = xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
@@ -89,7 +89,7 @@ def derivatives_at_point_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ravel(ydata, order=yorder)
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
-    cdef int nsets = yarr.size // xout.size
+    cdef int nsets = yarr.size // xtgt.size
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty((maxorder+1)*nsets)
     if xdata.size != ydata.size:
         raise ValueError("xdata and ydata shapes incompatible")
@@ -109,7 +109,7 @@ def interpolate_by_finite_diff(
 
     Estimates derivatives/function values of requested order
     at multiple points (``xtgts``) based on finite difference using
-    provided xdata and ydata.
+    provided ``grid`` and ``ydata``.
 
     Parameters
     ----------
@@ -124,9 +124,9 @@ def interpolate_by_finite_diff(
         Up to what order derivatives are to be estimated.
         The default is 0 (interpolation).
     ntail : int, optional
-        how many points in xdata before xout to inclued (default = 2).
+        how many points in ``grid`` before ``xtgts`` to inclued (default = 2).
     nhead : int, optional
-        how many points in xdata after xout to include (default = 2).
+        how many points in ``grid`` after ``xtgts`` to include (default = 2).
     yorder : char
         NumPy "order" of ydata.
     squeeze: bool
@@ -152,8 +152,8 @@ def interpolate_by_finite_diff(
     Notes
     -----
     It is required that: ``order >= ntail + nhead``
-    Algortithm assumes non-regularly spaced xdata. If
-    xdata is regularly spaced this algortihm is not optimal
+    Algortithm assumes non-regularly spaced ``grid``. If
+    ``grid`` is regularly spaced this algortihm is not optimal
     from a performance perspective.
 
     References
@@ -163,37 +163,38 @@ def interpolate_by_finite_diff(
     Bengt Fornberg, Mathematics of computation, 51, 184, 1988, 699-706
     """
     cdef int nin = ntail+nhead
-    cdef int nout = xout.size
+    cdef int nout = xtgts.size
     cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts)
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ravel(ydata, order=yorder)
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
-    cdef int nsets = yarr.size // xout.size
+    cdef int nsets = yarr.size // tgts.size
     cdef cnp.ndarray[cnp.float64_t, ndim=3] yout = np.zeros(
         (nout, nsets, maxorder+1), order='C', dtype=np.float64)
     cdef int i, j
 
-    if xdata.shape[0] < ntail+nhead:
-        raise ValueError("ntail + nhead < xdata.shape[0]")
-    if xdata.shape[0] != ydata.shape[0]:
-        raise ValueError("xdata.shape[0] != ydata.shape[0]")
+    if xarr.size < ntail+nhead:
+        raise ValueError("ntail + nhead < grid.shape[0]")
+    if xarr.size != ydata.shape[0]:
+        raise ValueError("grid.shape[0] != ydata.shape[0]")
     if nhead+ntail < maxorder+1:
         raise ValueError("nhead+ntail < maxorder+1")
 
     for i in range(nout):
         j = max(0, get_interval_from_guess(
-            &xdata[0], xdata.shape[0], xout[i], j))
-        j = min(j, xdata.shape[0]-nin)
+            &xarr[0], xarr.size, tgts[i], j))
+        j = min(j, xarr.size - nin)
         apply_fd(
             &yout[i, 0, 0],
             maxorder+1,
             nsets,
             maxorder,
             nin,
-            &xdata[j],
+            &xarr[j],
             &ydata[j],
             xarr.size,
-            xout[i]
+            tgts[i]
         )
 
     if getattr(ydata, 'ndim', 1) == 1:
