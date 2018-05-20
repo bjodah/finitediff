@@ -97,7 +97,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
     if USE_CYTHON:
         from Cython.Build import cythonize
         ext_modules = cythonize(ext_modules, include_path=include_dirs,
-                                compiler_directives={'embedsignature': True})
+                                compiler_directives={'embedsignature': True, 'binding': True})
     else:
         ext_modules[0].sources += other_sources
 
