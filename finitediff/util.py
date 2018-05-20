@@ -35,6 +35,20 @@ def interpolate_ahead(x, y, n, direction='fw'):
 
 
 def avg_stddev(arr, w):
+    """ Calculates the average and standard deviation.
+
+    Parameters
+    ----------
+    arr : array_like
+        Values.
+    w : array_like
+        Weights.
+
+    Returns
+    -------
+    tuple of 2 floats (average & standard deviation)
+
+    """
     avg, wsum = np.average(arr, weights=w, returned=True)
     res = arr - avg
     stddev = np.sqrt(np.sum(np.dot(w, np.square(res))/(res.size - 1)/wsum))
