@@ -138,6 +138,17 @@ def interpolate_by_finite_diff(
     array_like
         Estimates from applying the finite difference scheme
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from finitediff import interpolate_by_finite_diff as ifd
+    >>> x = np.array([0, 1, 2])
+    >>> y = np.array([[2, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]])
+    >>> xout = np.linspace(0.5, 1.5, 5)
+    >>> r = ifd(x, y, xout, maxorder=2, ntail=1, nhead=1)
+    >>> r.shape
+    (5, 4, 3)
+
     Notes
     -----
     It is required that: ``order >= ntail + nhead``
