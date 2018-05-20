@@ -89,7 +89,7 @@ def derivatives_at_point_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
-    cdef int nsets = yarr.size // xtgt.size
+    cdef int nsets = yarr.size // xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty((maxorder+1)*nsets)
     if xarr.size < maxorder+1:
         raise ValueError("xdata too short for requested derivative order")
