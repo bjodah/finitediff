@@ -91,6 +91,20 @@ and of course using the python bindings:
    True
 
 
+from Python you can also use the finite differences to interpolate
+values (or derivatives thereof):
+
+.. code:: python
+
+    >>> from finitediff import interpolate_by_finite_diff as ifd
+    >>> x = np.array([0, 1, 2])
+    >>> y = np.array([[2, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]])
+    >>> xout = np.linspace(0.5, 1.5, 5)
+    >>> r = ifd(x, y, xout, maxorder=2)
+    >>> r.shape
+    (5, 4, 3)
+
+
 see the ``examples/`` directory for more examples.
 
 Installation
