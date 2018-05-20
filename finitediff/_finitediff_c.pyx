@@ -8,26 +8,29 @@ from newton_interval cimport get_interval, get_interval_from_guess
 from finitediff_c cimport apply_fd, calculate_weights
 
 
-def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
+def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
     """
     Generates finite differnece weights.
 
     Parameters
     ----------
-    xarr: array_like
+    grid: array_like
+        Grid points.
     xtgt: float
+        Point at which estimates should be accurate.
     n: int, optional
-        default: -1 (means use length of xarr)
+        Number of points used in ``xarr``. default: -1 (means use length of xarr).
     maxorder: int, optional
         default: 0 (means interpolation)
 
     Returns
     -------
     array_like
-         2 dimensional array with shape==(n, maxorder) with
+         2 dimensional array with shape==(n, maxorder+1) with
          Fortran order (contiguous along columns)
          with weights for 0:th order in first column.
     """
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = numpy.ravel(grid)
     if n == -1:
         n = xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
@@ -37,33 +40,37 @@ def get_weights(double [::1] xarr, double xtgt, int n=-1, int maxorder=0):
 
 
 def derivatives_at_point_by_finite_diff(
-        double [::1] xdata, double [::1] ydata, double xout,
-        int order):
-    """
+        grid, ydata, double xtgt,
+        int maxorder, yorder='C', squeeze=None):
+    """ Esimates of derivatives up to specified order at a point.
+
     Estimates derivatives/function values of requested order
-    at multiple points (xout) based on finite difference using
-    provided xdata and ydata.
+    at multiple points (xtgt) based on finite difference using
+    provided ``grid`` and ``ydata``.
 
     Parameters
-    ==========
-    xdata : array_like
-        values of the independent variable
-
+    ----------
+    grid : array_like
+        Grid points: values of the independent variable ("x-data").
     ydata : array_like
-        values of the dependent variable
-
-    xout : float
-        value of the independent variable where the
+        Values of the dependent variable. May be two dimensional, in
+        which case the weights of the grid is reused.
+    xtgt : float
+        The target value of the independent variable where the
         the finite difference scheme should be applied.
-
-    order : int, optional
-        what order of derivatives to estimate.
-        The default is 0 (interpolation)
+    maxorder : int, optional
+        Maximum order of derivatives to estimate.
+        The default is 0 (interpolation).
+    yorder : char
+        NumPy "order" of ydata.
+    squeeze: bool
+        Whether numpy.squeeze is applied to returned array. Default:
+        ``True`` if ``ydata.ndim == 1``.
 
 
     Returns
     -------
-    float
+    numpy.ndarray
         Estimate from applying the finite difference scheme.
 
     Examples
@@ -78,45 +85,53 @@ def derivatives_at_point_by_finite_diff(
     Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
     Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty(order+1)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ravel(ydata, order=yorder)
+    if yarr.size % xarr.size:
+        raise ValueError("Incompatible shapes: grid & ydata")
+    cdef int nsets = yarr.size // xout.size
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty((maxorder+1)*nsets)
     if xdata.size != ydata.size:
         raise ValueError("xdata and ydata shapes incompatible")
-    if xdata.size < order+1:
+    if xdata.size < maxorder+1:
         raise ValueError("xdata too short for requested derivative order")
-    apply_fd(&yout[0], yout.size, 1, order, xdata.size, &xdata[0], &ydata[0], ydata.size, xout)
-    return yout
+    apply_fd(&yarr[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
+    result = yout.reshape((nsets, maxorder+1))
+    if getattr(ydata, 'ndim', 1) == 1:
+        return result.squeeze()
+    else:
+        return result
 
 
 def interpolate_by_finite_diff(
-        double [::1] xdata, double [::1] ydata, double [::1] xout,
-        int order=0, int ntail=2, int nhead=2):
-    """
+        grid, ydata, xtgts, int maxorder=0, int ntail=2, int nhead=2, yorder='C'):
+    """ Estimates derivatives of requested order at multiple points.
+
     Estimates derivatives/function values of requested order
-    at multiple points (xout) based on finite difference using
+    at multiple points (``xtgts``) based on finite difference using
     provided xdata and ydata.
 
     Parameters
-    ==========
-    xdata : array_like
-        values of the independent variable
-
+    ----------
+    grid : array_like
+        Values of the independent variable ("x-data").
     ydata : array_like
-        values of the dependent variable
-
-    xout : array_like
-        values of the independent variable where the
+        Values of the dependent variable.
+    xtgts : array_like
+        Values of the independent variable where the
         the finite difference scheme should be applied.
-
-    order : int, optional
-        what order of derivatives to estimate.
-        The default is 0 (interpolation)
-
+    maxorder : int, optional
+        Up to what order derivatives are to be estimated.
+        The default is 0 (interpolation).
     ntail : int, optional
         how many points in xdata before xout to inclued (default = 2).
-
     nhead : int, optional
         how many points in xdata after xout to include (default = 2).
-
+    yorder : char
+        NumPy "order" of ydata.
+    squeeze: bool
+        Whether numpy.squeeze is applied to returned array. Default:
+        ``True`` if ``ydata.ndim == 1``.
 
     Returns
     -------
@@ -125,10 +140,10 @@ def interpolate_by_finite_diff(
 
     Notes
     -----
-    It is required that: order >= ntail + nhead
+    It is required that: ``order >= ntail + nhead``
     Algortithm assumes non-regularly spaced xdata. If
-    xdata is regularly spaced this algortihm is not the optimal
-    to use with respect to performance.
+    xdata is regularly spaced this algortihm is not optimal
+    from a performance perspective.
 
     References
     ----------
@@ -138,33 +153,39 @@ def interpolate_by_finite_diff(
     """
     cdef int nin = ntail+nhead
     cdef int nout = xout.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] out = np.empty(
-        order+1, dtype=np.float64)
-    cdef cnp.ndarray[cnp.float64_t, ndim=2] yout =np.zeros(
-        (nout, order+1), order='C', dtype=np.float64)
-    cdef int i, j # i,j are counters
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ravel(ydata, order=yorder)
+    if yarr.size % xarr.size:
+        raise ValueError("Incompatible shapes: grid & ydata")
+    cdef int nsets = yarr.size // xout.size
+    cdef cnp.ndarray[cnp.float64_t, ndim=3] yout = np.zeros(
+        (nout, nsets, maxorder+1), order='C', dtype=np.float64)
+    cdef int i, j
 
     if xdata.shape[0] < ntail+nhead:
         raise ValueError("ntail + nhead < xdata.shape[0]")
     if xdata.shape[0] != ydata.shape[0]:
         raise ValueError("xdata.shape[0] != ydata.shape[0]")
-    if nhead+ntail < order+1:
-        raise ValueError("nhead+ntail < order+1")
+    if nhead+ntail < maxorder+1:
+        raise ValueError("nhead+ntail < maxorder+1")
 
     for i in range(nout):
         j = max(0, get_interval_from_guess(
             &xdata[0], xdata.shape[0], xout[i], j))
         j = min(j, xdata.shape[0]-nin)
         apply_fd(
-            &out[0],
-            out.shape[0],
-            1,
-            order,
+            &yout[i, 0, 0],
+            maxorder+1,
+            nsets,
+            maxorder,
             nin,
             &xdata[j],
             &ydata[j],
-            order + 1,
+            xarr.size,
             xout[i]
         )
-        yout[i, :] = out
-    return yout
+
+    if getattr(ydata, 'ndim', 1) == 1:
+        return yout.squeeze()
+    else:
+        return yout
