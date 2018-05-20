@@ -172,8 +172,8 @@ def interpolate_by_finite_diff(
         (nout*nsets*(maxorder+1)), order='C', dtype=np.float64)
     cdef int i, j=0
 
-    if xarr.size < ntail+nhead:
-        raise ValueError("ntail + nhead < grid.shape[0]")
+    if xarr.size < min(ntail, nhead) + 1:
+        raise ValueError("grid is too small")
     if nhead+ntail < maxorder+1:
         raise ValueError("nhead+ntail < maxorder+1")
 
