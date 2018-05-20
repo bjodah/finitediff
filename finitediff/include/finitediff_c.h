@@ -63,9 +63,11 @@ int apply_fd(
     FINITEDIFF_REAL * const FINITEDIFF_RESTRICT out,
     const int ld_out,
     const int nsets,
-    const int maxorder,
+    const int max_deriv,
+    const int len_g,
     const FINITEDIFF_REAL * const FINITEDIFF_RESTRICT xdata,
     const FINITEDIFF_REAL * const FINITEDIFF_RESTRICT ydata,
+    const int ldy,
     const FINITEDIFF_REAL xtgt
 );
 

@@ -20,7 +20,7 @@ int calculate_weights(
     c1 = 1;
     c4 = grid[0] - around;
     for (i=1; i < (max_deriv+1); ++i){
-        for (int j=0; j < len_g; ++j){
+        for (j=0; j < len_g; ++j){
             weights[i*ld_weights + j] = 0;  /* clear weights */
         }
     }
@@ -73,7 +73,7 @@ int apply_fd(
     int ret = 0;
     FINITEDIFF_REAL * const w = malloc(sizeof(FINITEDIFF_REAL)*ldw*(max_deriv+1));
     if (!w) {
-        ret = 1
+        ret = 1;
         goto exit0;
     }
     if (len_g < max_deriv + 1){
