@@ -65,7 +65,7 @@ def derivatives_at_point_by_finite_diff(
         NumPy "order" of ydata.
     reshape: bool
         Whether to return a 2D array or not. Default:
-        not unless ``ydata.ndim == 1``.
+        if ``ydata.ndim != 1``.
 
 
     Returns
@@ -129,7 +129,7 @@ def interpolate_by_finite_diff(
         NumPy "order" of ydata.
     reshape: bool
         Whether to return a 3D array or not. Default:
-        not unless ``ydata.ndim == 1``.
+        if ``ydata.ndim != 1``.
 
     Returns
     -------
@@ -193,7 +193,7 @@ def interpolate_by_finite_diff(
             tgts[i]
         )
     if reshape is None:
-        reshape = ydata.ndim != 2
+        reshape = ydata.ndim != 1
     if reshape:
         return yout.reshape((nout, nsets, maxorder+1))
     else:
