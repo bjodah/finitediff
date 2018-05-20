@@ -85,6 +85,7 @@ def derivatives_at_point_by_finite_diff(
     Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
     Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
+    ydata = np.asarray(ydata)
     cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
     if yarr.size % xarr.size:
@@ -160,6 +161,7 @@ def interpolate_by_finite_diff(
     Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
     Bengt Fornberg, Mathematics of computation, 51, 184, 1988, 699-706
     """
+    ydata = np.asarray(ydata)
     cdef int nin = ntail+nhead
     cdef int nout = xtgts.size
     cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)

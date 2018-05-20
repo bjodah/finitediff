@@ -55,6 +55,7 @@ def test_interpolate_by_finite_diff():
                            rtol=tol, atol=tol)
 
 
+
 def test_get_weights():
     c = get_weights(np.array([5., 6., 7.]), 5, maxorder=1)
     assert np.allclose(c[:, 1], np.array([-3/2, 2, -1/2]))
@@ -137,12 +138,26 @@ def test_get_weights():
     # deemed excessive at the moment)
 
 
-def test_interpolate_by_finite_diff__multiple_ydata():
+def test_interpolate_by_finite_diff__multiple_ydata__shape():
     x = np.array([0, 1, 2])
     y = np.array([[2, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]])
     xout = np.linspace(0.5, 1.5, 5)
     r = interpolate_by_finite_diff(x, y, xout, maxorder=2)
     assert r.shape == (5, 4, 3)
+
+
+def test_interpolate_by_finite_diff__multiple_ydata__data():
+    xarr = np.linspace(-1.5, 1.7, 53)
+    ny = 4
+    xtest = np.linspace(-1.4, 1.6, 57)
+    yarr = [i*np.exp(xarr) for i in range(1, ny+1)]
+    yexact = np.array([i*np.exp(xtest) for i in range(1, ny+1)]).T
+    maxorder = 4
+    y = interpolate_by_finite_diff(xarr, yarr, xtest, maxorder=maxorder, ntail=5, nhead=5)
+    assert y.shape == (xtest.size, ny, maxorder+1)
+    for ci in range(y.shape[2]):
+        tol = 10**-(13-ci*2)
+        assert np.allclose(yexact, y[..., ci], rtol=tol, atol=tol)
 
 
 if __name__ == '__main__':
