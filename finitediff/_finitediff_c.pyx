@@ -145,7 +145,7 @@ def interpolate_by_finite_diff(
     >>> xout = np.linspace(0.5, 1.5, 5)
     >>> r = ifd(x, y, xout, maxorder=2)
     >>> r.shape
-    (5, 4, 3)
+    (3, 4, 5)
 
     Notes
     -----
@@ -195,6 +195,6 @@ def interpolate_by_finite_diff(
     if reshape is None:
         reshape = ydata.ndim != 1
     if reshape:
-        return yout.reshape((nout, nsets, maxorder+1))
+        return yout.reshape((maxorder+1, nsets, nout), order='F')
     else:
-        return yout.reshape((nout, -1))
+        return yout.reshape((-1, nout), order='F')

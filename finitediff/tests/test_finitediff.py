@@ -141,7 +141,7 @@ def test_interpolate_by_finite_diff__multiple_ydata():
     y = np.array([[2, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]])
     xout = np.linspace(0.5, 1.5, 5)
     r = interpolate_by_finite_diff(x, y, xout, maxorder=2)
-    assert r.shape == (5, 4, 3)
+    assert r.shape == (3, 4, 5)
 
 
 
