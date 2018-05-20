@@ -32,7 +32,7 @@ int test_calculate_weights_3(){
 int test_calculate_weights_5(){
     double x5[5] = {-2, -1, 0, 1, 2};
     const int ldw = 7;
-    const int len_g = 3;
+    const int len_g = 5;
     const int max_deriv = 2;
     double * w5 = malloc(sizeof(double)*ldw*(max_deriv+1));
     const double around = 0.0;

@@ -1,11 +1,11 @@
-#include <finitediff_c.h>
 #include <stdlib.h>
+#include <finitediff_c.h>
 
 #define FINITEDIFF_MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 int calculate_weights(
-    FINITEDIFF_REAL * const FINITEDIFF_RESTRICT weights,
-    const int ld_weights,
+    FINITEDIFF_REAL * const FINITEDIFF_RESTRICT w,
+    const int ldw,
     const FINITEDIFF_REAL * const FINITEDIFF_RESTRICT grid,
     const int len_g,
     const int max_deriv,
@@ -13,42 +13,38 @@ int calculate_weights(
 )
 {
     int i, j, k, mn;
-    FINITEDIFF_REAL c1, c2, c2_r, c4, c3, c3_r, c5, tmp1, tmp2;
+    FINITEDIFF_REAL c1, c2, c2_r, c3, c3_r, c4, c5;
     if (len_g < max_deriv + 1){
         return 1;
     }
     c1 = 1;
     c4 = grid[0] - around;
-    for (i=1; i < (max_deriv+1); ++i){
-        for (j=0; j < len_g; ++j){
-            weights[i*ld_weights + j] = 0;  /* clear weights */
+    for (i = 0; i < (max_deriv+1); ++i){
+        for (j = 0; j < len_g; ++j){
+            w[i*ldw + j] = 0;  /* clear weights */
         }
     }
-    weights[0] = 1;
-    for (i=1; i < len_g; ++i){
+    w[0] = 1;
+    for (i = 1; i < len_g; ++i){
         mn = FINITEDIFF_MIN(i, max_deriv);
         c2 = 1;
         c5 = c4;
         c4 = grid[i] - around;
-        for (j=0; j<i; ++j){
+        for (j = 0; j < i; ++j){
             c3 = grid[i] - grid[j];
             c3_r = 1/c3;
             c2 = c2*c3;
             if (j == i-1){
                 c2_r = 1/c2;
-                for (k=mn; k>=1; --k){
-                    tmp1 = weights[i - 1 + (k-1)*ld_weights];
-                    tmp2 = weights[i - 1 + k*ld_weights];
-                    weights[i + k*ld_weights] = c1*(k*tmp1 - c5*tmp2)*c2_r;
+                for (k = mn; k >= 1; --k){
+                    w[i + k*ldw] = c1*(k*w[i - 1 + (k-1)*ldw] - c5*w[i - 1 + k*ldw])*c2_r;
                 }
-                weights[i] = -c1*c5*weights[i-1]*c2_r;
+                w[i] = -c1*c5*w[i-1]*c2_r;
             }
-            for (k=mn; k>=1; --k){
-                tmp1 = weights[j + k*ld_weights];
-                tmp2 = weights[j + (k-1)*ld_weights];
-                weights[j + k*ld_weights] = (c4*tmp1 - k*tmp2)*c3_r;
+            for (k = mn; k >= 1; --k){
+                w[j + k*ldw] = (c4*w[j + k*ldw] - k*w[j + (k-1)*ldw])*c3_r;
             }
-            weights[j] = c4*weights[j]*c3_r;
+            w[j] = c4*w[j]*c3_r;
         }
         c1 = c2;
     }

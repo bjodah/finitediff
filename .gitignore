@@ -23,9 +23,7 @@ dist/
 doc/
 finitediff/_finitediff_templated.cpp
 *.egg-info
-tests/test_finitediff_templated
 examples/demo
-tests/catch.hpp
 examples/a.out
 examples/demo_ord
 examples/demo_ordering
