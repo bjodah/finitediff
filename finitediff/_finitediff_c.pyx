@@ -30,7 +30,7 @@ def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
          Fortran order (contiguous along columns)
          with weights for 0:th order in first column.
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ravel(grid)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(np.ravel(grid), dtype=np.float64)
     if n == -1:
         n = xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
@@ -85,8 +85,8 @@ def derivatives_at_point_by_finite_diff(
     Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
     Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706
     """
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ravel(ydata, order=yorder)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
     cdef int nsets = yarr.size // xtgt.size
@@ -162,9 +162,9 @@ def interpolate_by_finite_diff(
     """
     cdef int nin = ntail+nhead
     cdef int nout = xtgts.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ravel(ydata, order=yorder)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts, dtype=np.float64)
+    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
     if yarr.size % xarr.size:
         raise ValueError("Incompatible shapes: grid & ydata")
     cdef int nsets = yarr.size // tgts.size
