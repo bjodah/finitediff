@@ -55,7 +55,6 @@ def test_interpolate_by_finite_diff():
                            rtol=tol, atol=tol)
 
 
-
 def test_get_weights():
     c = get_weights(np.array([5., 6., 7.]), 5, maxorder=1)
     assert np.allclose(c[:, 1], np.array([-3/2, 2, -1/2]))
