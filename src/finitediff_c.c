@@ -1,9 +1,10 @@
-#include <stdlib.h>
-#include <finitediff_c.h>
+#include <stdlib.h> /* malloc & free */
+#include <string.h> /* memset */
+#include "finitediff_c.h"
 
 #define FINITEDIFF_MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-int calculate_weights(
+void calculate_weights(
     FINITEDIFF_REAL * const FINITEDIFF_RESTRICT w,
     const int ldw,
     const FINITEDIFF_REAL * const FINITEDIFF_RESTRICT grid,
@@ -14,16 +15,9 @@ int calculate_weights(
 {
     int i, j, k, mn;
     FINITEDIFF_REAL c1, c2, c2_r, c3, c3_r, c4, c5;
-    if (len_g < max_deriv + 1){
-        return 1;
-    }
     c1 = 1;
     c4 = grid[0] - around;
-    for (i = 0; i < (max_deriv+1); ++i){
-        for (j = 0; j < len_g; ++j){
-            w[i*ldw + j] = 0;  /* clear weights */
-        }
-    }
+    memset(w, 0, sizeof(FINITEDIFF_REAL)*ldw*(max_deriv+1));
     w[0] = 1;
     for (i = 1; i < len_g; ++i){
         mn = FINITEDIFF_MIN(i, max_deriv);
@@ -48,7 +42,6 @@ int calculate_weights(
         }
         c1 = c2;
     }
-    return 0;
 }
 
 int apply_fd(
@@ -67,7 +60,8 @@ int apply_fd(
     const int ldw = len_g;
     FINITEDIFF_REAL tmp;
     int ret = 0;
-    FINITEDIFF_REAL * const w = malloc(sizeof(FINITEDIFF_REAL)*ldw*(max_deriv+1));
+    FINITEDIFF_REAL * w;
+    w = malloc(sizeof(FINITEDIFF_REAL)*ldw*(max_deriv+1));
     if (!w) {
         ret = 1;
         goto exit0;
@@ -76,7 +70,7 @@ int apply_fd(
         ret = 2;
         goto exit1;
     }
-    if (max_deriv < ld_out) {
+    if (ld_out < max_deriv + 1) {
         ret = 3;
         goto exit1;
     }

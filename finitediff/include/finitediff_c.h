@@ -31,6 +31,11 @@ extern "C" {
   max_deriv: highest derivative.
   around: location where approximations are to be accurate
   
+  Requirements
+  ------------
+  a) ``len_g < max_deriv + 1``
+  b) all values in ``grid`` are unique
+
   Returns
   -------
   0: success
@@ -42,7 +47,7 @@ extern "C" {
   Spaced Grids, Bengt Fornberg,
   Mathematics of compuation, 51, 184, 1988, 699-706
 */
-int calculate_weights(
+void calculate_weights(
     FINITEDIFF_REAL * const FINITEDIFF_RESTRICT weights,
     const int ld_weights,
     const FINITEDIFF_REAL * const FINITEDIFF_RESTRICT grid,
