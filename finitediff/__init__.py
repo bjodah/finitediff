@@ -13,6 +13,7 @@ from ._finitediff_c import (
 
 __all__ = ['derivatives_at_point_by_finite_diff', 'interpolate_by_finite_diff', 'get_weights']
 
+
 def get_include():
     from pkg_resources import resource_filename, Requirement
     return resource_filename(Requirement.parse(__name__),
