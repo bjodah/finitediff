@@ -154,7 +154,7 @@ First time you need to add it::
 
 References
 ==========
-The algortihm is a Fortran 90 rewrite of:
+The algortihm is a rewrite of:
 
 http://dx.doi.org/10.1137/S0036144596322507
 
