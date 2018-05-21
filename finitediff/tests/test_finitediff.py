@@ -40,9 +40,8 @@ def test_interpolate_by_finite_diff():
     xarr = np.linspace(-1.5, 1.7, 53)
     yarr = np.exp(xarr)
     xtest = np.linspace(-1.4, 1.6, 57)
-    y = interpolate_by_finite_diff(xarr, yarr, xtest,
-                                   maxorder=4, ntail=5,
-                                   nhead=5)
+    y = interpolate_by_finite_diff(xarr.tolist(), yarr.tolist(), xtest.tolist(),
+                                   maxorder=4, ntail=5, nhead=5)
     if __name__ == '__main__':
         import matplotlib.pyplot as plt
         for ci in range(y.shape[1]):

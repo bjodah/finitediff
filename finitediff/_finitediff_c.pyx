@@ -162,6 +162,7 @@ def interpolate_by_finite_diff(
     Bengt Fornberg, Mathematics of computation, 51, 184, 1988, 699-706
     """
     ydata = np.asarray(ydata)
+    xtgts = np.asarray(xtgts)
     cdef int nin = ntail+nhead
     cdef int nout = xtgts.size
     cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)
