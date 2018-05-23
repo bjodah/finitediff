@@ -14,7 +14,7 @@ tmpdir=$(mktemp -d)
 cp -r doc/_build/html/ $tmpdir
 git ls-files --others | tar cf $tmpdir/untracked.tar -T -
 cleanup() {
-    git checkout $ori_branch
+    git checkout -f $ori_branch
     tar xf $tmpdir/untracked.tar
     rm -r $tmpdir
 }
@@ -30,13 +30,16 @@ if [[ $? -ne 0 ]]; then
     git checkout --orphan gh-pages
     if [[ $? -ne 0 ]]; then
         >&2 echo "Failed to switch to 'gh-pages' branch."
-        cleanup
         exit 1
     fi
     preexisting=0
 else
     preexisting=1
     git pull
+    if [[ $? -ne 0 ]]; then
+        >&2 echo "git pull failed (no internet connection?)"
+        exit 1
+    fi
 fi
 
 if [[ $preexisting == 1 ]]; then

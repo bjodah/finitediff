@@ -26,7 +26,7 @@ PKG_UPPER=$(echo $PKG | tr '[:lower:]' '[:upper:]')
 ./scripts/run_tests.sh
 env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION python setup.py sdist
 if [[ -e ./scripts/generate_docs.sh ]]; then
-    env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION ./scripts/generate_docs.sh  # $4 ${5:-$PKG} v$VERSION
+    env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION ./scripts/generate_docs.sh
 fi
 
 # All went well, add a tag and push it.
