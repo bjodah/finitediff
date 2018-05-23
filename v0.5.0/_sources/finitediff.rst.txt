@@ -16,8 +16,8 @@ Subpackages
 Submodules
 ----------
 
-finitediff\.util module
------------------------
+finitediff.util module
+----------------------
 
 .. automodule:: finitediff.util
     :members:

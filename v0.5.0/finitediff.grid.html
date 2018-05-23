@@ -8,11 +8,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>finitediff.grid package &mdash; finitediff 0.5.0 documentation</title>
+  <title>finitediff.grid package &mdash; finitediff 0.5.0.post1+g283671f documentation</title>
   
 
-  
-  
   
   
 
@@ -35,8 +33,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="finitediff 0.5.0 documentation" href="index.html"/>
+    <link rel="top" title="finitediff 0.5.0.post1+g283671f documentation" href="index.html"/>
         <link rel="up" title="finitediff package" href="finitediff.html"/>
+        <link rel="next" title="finitediff.grid.tests package" href="finitediff.grid.tests.html"/>
         <link rel="prev" title="finitediff package" href="finitediff.html"/> 
 
   
@@ -46,7 +45,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -66,7 +64,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.0.post1+g283671f
               </div>
             
           
@@ -87,26 +85,24 @@
           
             
             
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+                <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="finitediff.html">finitediff package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="finitediff.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">finitediff.grid package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#finitediff-grid-make-module">finitediff.grid.make module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#finitediff-grid-plotting-module">finitediff.grid.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#finitediff-grid-rebalance-module">finitediff.grid.rebalance module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#finitediff-grid-refine-module">finitediff.grid.refine module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#finitediff-grid-util-module">finitediff.grid.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-finitediff.grid.make">finitediff.grid.make module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-finitediff.grid.plotting">finitediff.grid.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-finitediff.grid.rebalance">finitediff.grid.rebalance module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-finitediff.grid.refine">finitediff.grid.refine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-finitediff.grid.util">finitediff.grid.util module</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="finitediff.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="finitediff.html#finitediff-util-module">finitediff.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.html#module-finitediff.util">finitediff.util module</a></li>
 </ul>
 </li>
 </ul>
@@ -121,10 +117,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">finitediff</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">finitediff</a>
       </nav>
 
 
@@ -133,81 +127,290 @@
         <div class="rst-content">
           
 
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
           <li><a href="finitediff.html">finitediff package</a> &raquo;</li>
-        
-      <li>finitediff.grid package</li>
-    
-    
+      
+    <li>finitediff.grid package</li>
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/finitediff.grid.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="finitediff-grid-package">
-<h1>finitediff.grid package<a class="headerlink" href="#finitediff-grid-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-finitediff.grid">
+<span id="finitediff-grid-package"></span><h1>finitediff.grid package<a class="headerlink" href="#module-finitediff.grid" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="finitediff.grid.tests.html">finitediff.grid.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_make">finitediff.grid.tests.test_make module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_rebalance">finitediff.grid.tests.test_rebalance module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_refine">finitediff.grid.tests.test_refine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_util">finitediff.grid.tests.test_util module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="finitediff-grid-make-module">
-<h2>finitediff.grid.make module<a class="headerlink" href="#finitediff-grid-make-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-finitediff.grid.make">
+<span id="finitediff-grid-make-module"></span><h2>finitediff.grid.make module<a class="headerlink" href="#module-finitediff.grid.make" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="finitediff.grid.make.adapted_grid">
+<code class="descclassname">finitediff.grid.make.</code><code class="descname">adapted_grid</code><span class="sig-paren">(</span><em>xstart</em>, <em>xstop</em>, <em>cb</em>, <em>grid_additions=(50</em>, <em>50)</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/make.html#adapted_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.make.adapted_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>” Creates an adapted (1D) grid by subsequent subgrid insertions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>xstart</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd></dd>
+<dt><strong>xstop</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd></dd>
+<dt><strong>cb</strong> <span class="classifier-delimiter">:</span> <span class="classifier">callbable</span></dt>
+<dd><p class="first last">Function to be evaluated (note that noise is handled poorly).</p>
+</dd>
+<dt><strong>grid_additions</strong> <span class="classifier-delimiter">:</span> <span class="classifier">iterable of ints (even numbers)</span></dt>
+<dd><p class="first last">Sequence specifying how many gridpoints to add each time.</p>
+</dd>
+<dt><strong>**kwargs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">see <code class="xref py py-func docutils literal notranslate"><span class="pre">refine_grid()</span></code>.</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="finitediff-grid-plotting-module">
-<h2>finitediff.grid.plotting module<a class="headerlink" href="#finitediff-grid-plotting-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-finitediff.grid.plotting">
+<span id="finitediff-grid-plotting-module"></span><h2>finitediff.grid.plotting module<a class="headerlink" href="#module-finitediff.grid.plotting" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="finitediff.grid.plotting.plot_convergence">
+<code class="descclassname">finitediff.grid.plotting.</code><code class="descname">plot_convergence</code><span class="sig-paren">(</span><em>key</em>, <em>values</em>, <em>cb</em>, <em>metric=None</em>, <em>xstart=0</em>, <em>xstop=2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/plotting.html#plot_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.plotting.plot_convergence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="finitediff-grid-rebalance-module">
-<h2>finitediff.grid.rebalance module<a class="headerlink" href="#finitediff-grid-rebalance-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-finitediff.grid.rebalance">
+<span id="finitediff-grid-rebalance-module"></span><h2>finitediff.grid.rebalance module<a class="headerlink" href="#module-finitediff.grid.rebalance" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="finitediff.grid.rebalance.combine_grids">
+<code class="descclassname">finitediff.grid.rebalance.</code><code class="descname">combine_grids</code><span class="sig-paren">(</span><em>grids</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/rebalance.html#combine_grids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.rebalance.combine_grids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines multiple grids and prunes them using pre_pruning mask</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>grids</strong> <span class="classifier-delimiter">:</span> <span class="classifier">iterable of array_like grids</span></dt>
+<dd></dd>
+<dt><strong>**</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Keyword arguments passed on to pre_pruning_mask</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>Strictly increasing monotonic array</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="finitediff.grid.rebalance.grid_pruning_mask">
+<code class="descclassname">finitediff.grid.rebalance.</code><code class="descname">grid_pruning_mask</code><span class="sig-paren">(</span><em>grid</em>, <em>err</em>, <em>ndrop=None</em>, <em>protect_sparse=None</em>, <em>pow_err=2</em>, <em>pow_dx=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/rebalance.html#grid_pruning_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.rebalance.grid_pruning_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a mask for grid pruning.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>grid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd></dd>
+<dt><strong>err</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd></dd>
+<dt><strong>ndrop</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">If not provided taken as 25% of grid size (rounded upward).</p>
+</dd>
+<dt><strong>protect_sparse</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">If not provided taken as 25% of grid size (rounded upward).</p>
+</dd>
+<dt><strong>pow_err</strong> <span class="classifier-delimiter">:</span> <span class="classifier">number</span></dt>
+<dd><p class="first last">Exponent of error in weighting.</p>
+</dd>
+<dt><strong>pow_dx</strong> <span class="classifier-delimiter">:</span> <span class="classifier">number</span></dt>
+<dd><p class="first last">Exponent of grid spacing in weighting.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="finitediff.grid.rebalance.pre_pruning_mask">
+<code class="descclassname">finitediff.grid.rebalance.</code><code class="descname">pre_pruning_mask</code><span class="sig-paren">(</span><em>grid</em>, <em>rtol=1e-12</em>, <em>atol=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/rebalance.html#pre_pruning_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.rebalance.pre_pruning_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a mask for grid pruning.</p>
+<p>Any grid spacing smaller than <code class="docutils literal notranslate"><span class="pre">rtol*gridvalue</span> <span class="pre">+</span> <span class="pre">atol</span></code> will
+be pruned. In general the value on the right is removed unless it is
+the last point in the grid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>grid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd></dd>
+<dt><strong>rtol</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd></dd>
+<dt><strong>atol</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>NumPy array of ``numpy.bool_`` (to be used as mask).</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="finitediff.grid.rebalance.rebalanced_grid">
+<code class="descclassname">finitediff.grid.rebalance.</code><code class="descname">rebalanced_grid</code><span class="sig-paren">(</span><em>grid</em>, <em>err</em>, <em>base=0.25</em>, <em>num=None</em>, <em>resolution_factor=10</em>, <em>smooth_fact=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/rebalance.html#rebalanced_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.rebalance.rebalanced_grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="finitediff-grid-refine-module">
-<h2>finitediff.grid.refine module<a class="headerlink" href="#finitediff-grid-refine-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-finitediff.grid.refine">
+<span id="finitediff-grid-refine-module"></span><h2>finitediff.grid.refine module<a class="headerlink" href="#module-finitediff.grid.refine" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="finitediff.grid.refine.refine_grid">
+<code class="descclassname">finitediff.grid.refine.</code><code class="descname">refine_grid</code><span class="sig-paren">(</span><em>grid</em>, <em>cb</em>, <em>grid_additions=(50</em>, <em>50)</em>, <em>ntrail=2</em>, <em>blurs=(()</em>, <em>())</em>, <em>metric=None</em>, <em>atol=None</em>, <em>rtol=None</em>, <em>extremum_refinement=None</em>, <em>snr=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/refine.html#refine_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.refine.refine_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refines an existing grid by adding points to it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>grid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd></dd>
+<dt><strong>cb</strong> <span class="classifier-delimiter">:</span> <span class="classifier">callbable</span></dt>
+<dd><p class="first last">Function to be evaluated (note that noise is handled poorly).</p>
+</dd>
+<dt><strong>grid_additions</strong> <span class="classifier-delimiter">:</span> <span class="classifier">iterable of ints (even numbers)</span></dt>
+<dd><p class="first last">Sequence specifying how many gridpoints to add each time.</p>
+</dd>
+<dt><strong>ntrail</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (&gt;= 2)</span></dt>
+<dd><p class="first last">Number of points to include in the look-ahead extrapolation.</p>
+</dd>
+<dt><strong>blurs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">pair of iterables of ints (of same length)</span></dt>
+<dd><p class="first last">Blur fractions of absolute residuals to neighbors.</p>
+</dd>
+<dt><strong>atol</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Absolute tolerance to be fulfilled by all absolute residuals for early exit.</p>
+</dd>
+<dt><strong>rtol</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Relative tolerance to be fulfilled by all absolute residuals for early exit.</p>
+</dd>
+<dt><strong>extremum_refinement</strong> <span class="classifier-delimiter">:</span> <span class="classifier">locator (callable), n (int), predicate (callable)</span></dt>
+<dd><p class="first last">Between each grid addition a callable for locating the extremum (e.g. np.argmax)
+can be evaluated. The integer specifies how many gridpoints that should be inserted
+on each side (one side if on boundary) of the extremum.</p>
+</dd>
+<dt><strong>snr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">Use signal-to-noise ratio the lower the grid-addition-weight of potential noise.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>(grid, errors)</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="finitediff-grid-util-module">
-<h2>finitediff.grid.util module<a class="headerlink" href="#finitediff-grid-util-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-finitediff.grid.util">
+<span id="finitediff-grid-util-module"></span><h2>finitediff.grid.util module<a class="headerlink" href="#module-finitediff.grid.util" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="finitediff.grid.util.grid_error">
+<code class="descclassname">finitediff.grid.util.</code><code class="descname">grid_error</code><span class="sig-paren">(</span><em>grid</em>, <em>y</em>, <em>ntrail=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/util.html#grid_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.util.grid_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates error at each grid point from extrapolation.</p>
+<p>Extrapolates from left (‘fw’) or from right (‘bw’).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>grid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd></dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd></dd>
+<dt><strong>ntrail</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Number of points to include in the look-ahead extrapolation.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="finitediff.grid.util.locate_discontinuity">
+<code class="descclassname">finitediff.grid.util.</code><code class="descname">locate_discontinuity</code><span class="sig-paren">(</span><em>grid</em>, <em>y</em>, <em>consider</em>, <em>trnsfm=&lt;function &lt;lambda&gt;&gt;</em>, <em>ntrail=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/util.html#locate_discontinuity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.util.locate_discontinuity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="finitediff.grid.util.pool_discontinuity_approx">
+<code class="descclassname">finitediff.grid.util.</code><code class="descname">pool_discontinuity_approx</code><span class="sig-paren">(</span><em>loc_res</em>, <em>consistency_criterion=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/grid/util.html#pool_discontinuity_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.grid.util.pool_discontinuity_approx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 </div>
 
 
-           </div>
-           <div class="articleComments">
-            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="finitediff.grid.tests.html" class="btn btn-neutral float-right" title="finitediff.grid.tests package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="finitediff.html" class="btn btn-neutral" title="finitediff package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="finitediff.html" class="btn btn-neutral" title="finitediff package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -238,11 +441,10 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.0',
+            VERSION:'0.5.0.post1+g283671f',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
