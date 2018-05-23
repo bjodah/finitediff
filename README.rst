@@ -16,12 +16,17 @@ finitediff
    :target: http://hera.physchem.kth.se/~finitediff/branches/master/htmlcov
    :alt: coverage
 
-``finitediff`` containts two implementations (`Fortran 90
-<src/finitediff_fort.f90>`_ and `C++ <finitediff/include/finitediff_templated.hpp>`_) version of Begnt Fornberg's
+``finitediff`` containts three implementations of Begnt Fornberg's
 formulae for generation of finite difference weights on aribtrarily
-spaced one dimensional grids. The finite difference weights can be
+spaced one dimensional grids:
+
+- `C89 <src/finitediff_c.c>`_
+- `Fortran 90 <src/finitediff_fort.f90>`_
+- `C++ <finitediff/include/finitediff_templated.hpp>`_
+
+The finite difference weights can be
 used for optimized inter-/extrapolation data series for up to
-arbitrary derivative order. Python_ bindings are provided.
+arbitrary derivative order. Python_ bindings (to the C versions) are also provided.
 
 .. _Python: https://www.python.org
 .. _finitediff: https://github.com/bjodah/finitediff
@@ -91,37 +96,45 @@ and of course using the python bindings:
    True
 
 
+from Python you can also use the finite differences to interpolate
+values (or derivatives thereof):
+
+.. code:: python
+
+    >>> from finitediff import interpolate_by_finite_diff as ifd
+    >>> x = np.array([0, 1, 2])
+    >>> y = np.array([[2, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]])
+    >>> xout = np.linspace(0.5, 1.5, 5)
+    >>> r = ifd(x, y, xout, maxorder=2)
+    >>> r.shape
+    (5, 4, 3)
+
+
 see the ``examples/`` directory for more examples.
 
 Installation
 ------------
-The simplest way to install finitediff is to use
-`conda package manager <http://conda.pydata.org/docs/>`_:
-
-::
-
-   $ conda install -c bjodah finitediff pytest
-
-alternatively, you may also use `pip`:
-
-::
+You can install ``finitediff`` by using ``pip``::
 
    $ python -m pip install --user finitediff
 
-(you can skip the ``--user`` flag if you have got root permissions), to run the
-tests you need ``pytest`` too:
-
-::
+(you can skip the ``--user`` flag if you have got root permissions),
+to run the tests you need ``pytest`` too::
 
    $ python -m pip install --user --upgrade pytest
    $ python -m pytest --pyargs finitediff
 
+alternatively (on Linux) you may also use
+`conda package manager <http://conda.pydata.org/docs/>`_::
+
+   $ conda install -c bjodah finitediff pytest
+
 
 Dependencies
 ============
-You need either a C++ or a Fortran 90 compiler. On debian based linux systems you may install one by issuing::
+You need either a C, C++ or a Fortran 90 compiler. On debian based linux systems you may install (all) by issuing::
 
-    $ sudo apt-get install gfortran g++
+    $ sudo apt-get install gfortran g++ gcc
 
 See `setup.py <setup.py>`_ for optional (Python) dependencies.
 
@@ -141,7 +154,7 @@ First time you need to add it::
 
 References
 ==========
-The algortihm is a Fortran 90 rewrite of:
+The algortihm is a rewrite of:
 
 http://dx.doi.org/10.1137/S0036144596322507
 

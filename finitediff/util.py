@@ -30,11 +30,25 @@ def interpolate_ahead(x, y, n, direction='fw'):
         _x = np.ascontiguousarray(x[rev][idx:idx+n], dtype=np.float64)
         _y = np.ascontiguousarray(y[rev][idx:idx+n], dtype=np.float64)
         _v = np.array([xv])
-        values.append(interpolate_by_finite_diff(_x, _y, _v, order=0, ntail=n, nhead=0))
+        values.append(interpolate_by_finite_diff(_x, _y, _v, maxorder=0, ntail=n, nhead=0))
     return np.array(values[rev]).squeeze(), slice(n, None) if forward else slice(None, -n)
 
 
 def avg_stddev(arr, w):
+    """ Calculates the average and standard deviation.
+
+    Parameters
+    ----------
+    arr : array_like
+        Values.
+    w : array_like
+        Weights.
+
+    Returns
+    -------
+    tuple of 2 floats (average & standard deviation)
+
+    """
     avg, wsum = np.average(arr, weights=w, returned=True)
     res = arr - avg
     stddev = np.sqrt(np.sum(np.dot(w, np.square(res))/(res.size - 1)/wsum))

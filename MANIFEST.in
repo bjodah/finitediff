@@ -1,5 +1,6 @@
 graft finitediff/external
-recursive-include finitediff/include *.hpp *.h *.pxd
+include finitediff/include/finitediff_c.h
+include finitediff/include/finitediff_c.pxd
 include AUTHORS
 include CHANGES.rst
 include LICENSE
