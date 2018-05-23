@@ -1,3 +1,10 @@
+v0.5.0
+======
+- C89 implementation
+- Efficient broadcasting from Python wrapper
+- Windows support
+- Documentation fixes
+
 v0.4.0
 ======
 - Removed ``*_optim`` functions. (since intermediate results were not used anyways)
