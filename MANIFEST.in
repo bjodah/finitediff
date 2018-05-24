@@ -1,6 +1,7 @@
 graft finitediff/external
 include finitediff/include/finitediff_c.h
 include finitediff/include/finitediff_c.pxd
+include finitediff/include/finitediff_templated.hpp
 include AUTHORS
 include CHANGES.rst
 include LICENSE
