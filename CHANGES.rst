@@ -1,3 +1,7 @@
+v0.5.1
+======
+- Include C++ header in Python distribution (backward compat.)
+
 v0.5.0
 ======
 - C89 implementation
