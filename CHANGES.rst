@@ -1,3 +1,7 @@
+v0.5.2
+======
+- Update newton_interval to only require C89.
+
 v0.5.1
 ======
 - Include C++ header in Python distribution (backward compat.)
