@@ -1,0 +1,59 @@
+finitediff.grid package
+=======================
+
+.. automodule:: finitediff.grid
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+
+    finitediff.grid.tests
+
+Submodules
+----------
+
+finitediff.grid.make module
+---------------------------
+
+.. automodule:: finitediff.grid.make
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+finitediff.grid.plotting module
+-------------------------------
+
+.. automodule:: finitediff.grid.plotting
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+finitediff.grid.rebalance module
+--------------------------------
+
+.. automodule:: finitediff.grid.rebalance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+finitediff.grid.refine module
+-----------------------------
+
+.. automodule:: finitediff.grid.refine
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+finitediff.grid.util module
+---------------------------
+
+.. automodule:: finitediff.grid.util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
