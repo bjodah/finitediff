@@ -1,3 +1,7 @@
+v0.5.3
+======
+- Update newton_interval with better check for Microsoft compiler
+
 v0.5.2
 ======
 - Update newton_interval to only require C89.
