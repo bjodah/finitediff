@@ -1,7 +1,7 @@
 #include <math.h>    /* ceil(), floor() */
 #include "newton_interval.h"
 
-#ifdef _MSVC
+#ifdef _MSC_VER
 #define NEWTON_UINT64 unsigned long long
 #else
 #include <stdint.h>
