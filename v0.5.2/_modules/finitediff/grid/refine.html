@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>finitediff.grid.refine &mdash; finitediff 0.5.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="finitediff 0.5.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> finitediff
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../finitediff.html">finitediff package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">finitediff</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>finitediff.grid.refine</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for finitediff.grid.refine</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..util</span> <span class="k">import</span> <span class="n">interpolate_ahead</span>
+
+
+<div class="viewcode-block" id="refine_grid"><a class="viewcode-back" href="../../../finitediff.grid.html#finitediff.grid.refine.refine_grid">[docs]</a><span class="k">def</span> <span class="nf">refine_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">grid_additions</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">ntrail</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">blurs</span><span class="o">=</span><span class="p">((),</span> <span class="p">()),</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">atol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extremum_refinement</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Refines an existing grid by adding points to it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid : array</span>
+<span class="sd">    cb : callbable</span>
+<span class="sd">        Function to be evaluated (note that noise is handled poorly).</span>
+<span class="sd">    grid_additions : iterable of ints (even numbers)</span>
+<span class="sd">        Sequence specifying how many gridpoints to add each time.</span>
+<span class="sd">    ntrail : int (&gt;= 2)</span>
+<span class="sd">        Number of points to include in the look-ahead extrapolation.</span>
+<span class="sd">    blurs : pair of iterables of ints (of same length)</span>
+<span class="sd">        Blur fractions of absolute residuals to neighbors.</span>
+<span class="sd">    atol : float</span>
+<span class="sd">        Absolute tolerance to be fulfilled by all absolute residuals for early exit.</span>
+<span class="sd">    rtol : float</span>
+<span class="sd">        Relative tolerance to be fulfilled by all absolute residuals for early exit.</span>
+<span class="sd">    extremum_refinement : locator (callable), n (int), predicate (callable)</span>
+<span class="sd">        Between each grid addition a callable for locating the extremum (e.g. np.argmax)</span>
+<span class="sd">        can be evaluated. The integer specifies how many gridpoints that should be inserted</span>
+<span class="sd">        on each side (one side if on boundary) of the extremum.</span>
+<span class="sd">    snr : bool</span>
+<span class="sd">        Use signal-to-noise ratio the lower the grid-addition-weight of potential noise.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (grid, errors)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">na</span> <span class="ow">in</span> <span class="n">grid_additions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">na</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Need even number of grid points for each addition&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extremum_refinement</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+        <span class="n">extremum_refinement</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">extremum_refinement</span> <span class="o">==</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span>
+        <span class="n">extremum_refinement</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_to</span><span class="p">(</span><span class="n">adds</span><span class="p">,</span> <span class="n">grd</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+        <span class="n">na</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">adds</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">na</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">grd</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">ys</span>
+        <span class="n">nextresults</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">grd</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">na</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="n">nextresults</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">nexty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">grd</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">na</span><span class="p">)</span>
+        <span class="n">nexty</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">nextgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">grd</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">na</span><span class="p">)</span>
+        <span class="n">nextgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">grd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ptr</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">yslices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">gi</span><span class="p">,</span> <span class="n">nloc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">adds</span><span class="p">):</span>
+            <span class="n">nextgrid</span><span class="p">[</span><span class="n">ptr</span><span class="p">:</span><span class="n">ptr</span><span class="o">+</span><span class="n">nloc</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">grd</span><span class="p">[</span><span class="n">gi</span><span class="p">],</span> <span class="n">grd</span><span class="p">[</span><span class="n">gi</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="o">+</span><span class="n">nloc</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">nextresults</span><span class="p">[</span><span class="n">ptr</span><span class="o">+</span><span class="n">nloc</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="n">gi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">nexty</span><span class="p">[</span><span class="n">ptr</span><span class="o">+</span><span class="n">nloc</span><span class="p">]</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="n">gi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nloc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">yslices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="n">ptr</span><span class="o">+</span><span class="n">nloc</span><span class="p">))</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">nloc</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">newresults</span> <span class="o">=</span> <span class="n">cb</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">nextgrid</span><span class="p">[</span><span class="n">yslc</span><span class="p">]</span> <span class="k">for</span> <span class="n">yslc</span> <span class="ow">in</span> <span class="n">yslices</span><span class="p">]))</span>
+        <span class="n">newy</span> <span class="o">=</span> <span class="n">newresults</span> <span class="k">if</span> <span class="n">metric</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">metric</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">newresults</span><span class="p">])</span>
+        <span class="n">ystart</span><span class="p">,</span> <span class="n">ystop</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">yslc</span> <span class="ow">in</span> <span class="n">yslices</span><span class="p">:</span>
+            <span class="n">ystop</span> <span class="o">+=</span> <span class="n">yslc</span><span class="o">.</span><span class="n">stop</span> <span class="o">-</span> <span class="n">yslc</span><span class="o">.</span><span class="n">start</span>
+            <span class="n">nextresults</span><span class="p">[</span><span class="n">yslc</span><span class="p">]</span> <span class="o">=</span> <span class="n">newresults</span><span class="p">[</span><span class="n">ystart</span><span class="p">:</span><span class="n">ystop</span><span class="p">]</span>
+            <span class="n">nexty</span><span class="p">[</span><span class="n">yslc</span><span class="p">]</span> <span class="o">=</span> <span class="n">newy</span><span class="p">[</span><span class="n">ystart</span><span class="p">:</span><span class="n">ystop</span><span class="p">]</span>
+            <span class="n">ystart</span> <span class="o">=</span> <span class="n">ystop</span>
+
+        <span class="k">return</span> <span class="n">nextgrid</span><span class="p">,</span> <span class="n">nextresults</span><span class="p">,</span> <span class="n">nexty</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">cb</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span> <span class="k">if</span> <span class="n">metric</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">metric</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">na</span> <span class="ow">in</span> <span class="n">grid_additions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">extremum_refinement</span><span class="p">:</span>
+            <span class="n">extremum_cb</span><span class="p">,</span> <span class="n">extremum_n</span><span class="p">,</span> <span class="n">predicate_cb</span> <span class="o">=</span> <span class="n">extremum_refinement</span>
+            <span class="n">argext</span> <span class="o">=</span> <span class="n">extremum_cb</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">predicate_cb</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">argext</span><span class="p">):</span>
+                <span class="n">additions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">argext</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># left of</span>
+                    <span class="n">additions</span><span class="p">[</span><span class="n">argext</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">extremum_n</span>
+                <span class="k">elif</span> <span class="n">argext</span> <span class="o">&lt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># right of</span>
+                    <span class="n">additions</span><span class="p">[</span><span class="n">argext</span><span class="p">]</span> <span class="o">=</span> <span class="n">extremum_n</span>
+                <span class="n">grid</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">add_to</span><span class="p">(</span><span class="n">additions</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="n">additions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">atol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="n">slcs</span><span class="p">,</span> <span class="n">errs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;fw&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">):</span>
+            <span class="n">est</span><span class="p">,</span> <span class="n">slc</span> <span class="o">=</span> <span class="n">interpolate_ahead</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ntrail</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">slc</span><span class="p">]</span> <span class="o">-</span> <span class="n">est</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">atol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">err</span> <span class="o">&lt;</span> <span class="n">atol</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">err</span><span class="o">/</span><span class="n">y</span><span class="p">[</span><span class="n">slc</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rtol</span><span class="p">)</span>
+            <span class="n">slcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slc</span><span class="p">)</span>
+            <span class="n">errs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">snr</span><span class="p">:</span>
+            <span class="n">all_errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">.</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">ntrail</span> <span class="o">+</span> <span class="n">errs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">errs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="o">.</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">ntrail</span><span class="p">])</span>
+            <span class="n">min__max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">all_errs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">all_errs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">dgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+            <span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**-</span><span class="mi">2</span>
+            <span class="n">delta</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dgrid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**-</span><span class="mi">2</span>
+            <span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">dgrid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">dgrid</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">lndelta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+            <span class="n">normlndelta</span> <span class="o">=</span> <span class="n">lndelta</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lndelta</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="n">errs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span> <span class="o">-</span> <span class="n">min__max</span><span class="p">[</span><span class="n">slcs</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="n">errs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">normlndelta</span><span class="p">[</span><span class="n">slcs</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+
+        <span class="k">for</span> <span class="n">direction</span><span class="p">,</span> <span class="n">blur</span><span class="p">,</span> <span class="n">slc</span><span class="p">,</span> <span class="n">err</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;fw&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">),</span> <span class="n">blurs</span><span class="p">,</span> <span class="n">slcs</span><span class="p">,</span> <span class="n">errs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ib</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">blur</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">blur_slices</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="n">ib</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="n">ib</span><span class="p">))</span>
+                <span class="n">err</span><span class="p">[</span><span class="n">blur_slices</span><span class="p">[</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;bw&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">b</span><span class="o">*</span><span class="n">err</span><span class="p">[</span><span class="n">blur_slices</span><span class="p">[</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;fw&#39;</span><span class="p">]]</span>
+            <span class="n">rerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">err</span><span class="o">*</span><span class="n">na</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">err</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rerr</span><span class="p">)</span> <span class="o">-</span> <span class="n">na</span><span class="o">//</span><span class="mi">2</span>
+            <span class="k">if</span> <span class="n">delta</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">rerr</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sorted_indices</span><span class="p">[</span><span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">):]:</span>
+                    <span class="n">rerr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rerr</span><span class="p">)</span> <span class="o">-</span> <span class="n">na</span><span class="o">//</span><span class="mi">2</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Balancing failed.&#39;</span><span class="p">)</span>
+            <span class="n">additions</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="n">ntrail</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;fw&#39;</span> <span class="k">else</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">ntrail</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">rerr</span>
+        <span class="n">grid</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">add_to</span><span class="p">(</span><span class="n">additions</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">results</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Bjoern Dahlgren &lt;bjodah@gmail.com&gt;.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.5.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
