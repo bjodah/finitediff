@@ -6,6 +6,9 @@ finitediff
 .. image:: https://img.shields.io/pypi/v/finitediff.svg
    :target: https://pypi.python.org/pypi/finitediff
    :alt: PyPI version
+.. image:: https://zenodo.org/badge/14988640.svg
+   :target: https://zenodo.org/badge/latestdoi/14988640
+   :alt: Zenodo DOI
 .. image:: https://img.shields.io/badge/python-2.7,3.4,3.5-blue.svg
    :target: https://www.python.org/
    :alt: Python version
