@@ -1,3 +1,7 @@
+v0.5.4
+======
+- Re-release for Zenodo
+
 v0.5.3
 ======
 - Update newton_interval with better check for Microsoft compiler
