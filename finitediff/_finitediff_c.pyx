@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# distutils: sources = ['finitediff/external/newton_interval/src/newton_interval.c', 'src/finitediff_c.c']
+# distutils: sources = ['external/newton_interval/src/newton_interval.c', 'src/finitediff_c.c']
 
 cimport numpy as cnp
 import numpy as np
 
 from newton_interval cimport get_interval, get_interval_from_guess
-from finitediff_c cimport finitediff_calc_and_apply_fd, finitediff_calculate_weights
+from finitediff_c cimport finitediff_calc_and_apply_fd, finitediff_calculate_weights, finitediff_interpolate_by_finite_diff
 
 
 def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
@@ -177,8 +177,9 @@ def interpolate_by_finite_diff(
     cdef int flag
 
     flag = finitediff_interpolate_by_finite_diff(
-        yout.data, nout, nsets, maxorder+1, (maxorder+1)*nin, maxorder+1,
-        ntail, nhead, xarr.data, xarr.size, yarr.data, xarr.size, tgts.data
+        <double*>yout.data, nout, nsets, maxorder+1, (maxorder+1)*nin, maxorder+1,
+        ntail, nhead, <double*>xarr.data, xarr.size, <double*>yarr.data, xarr.size,
+        <double*>tgts.data
     )
     if flag == 1:
         raise ValueError("grid is too small")
