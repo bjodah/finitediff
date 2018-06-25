@@ -130,11 +130,10 @@ int finitediff_interpolate_by_finite_diff(
     int tgt_idx, j=0, status=0, n_threads=1;
     const int nin = nhead + ntail;
     FINITEDIFF_REAL *w, *wp;
+    const int elem_strides_w_1 = FINITEDIFF_MIN(len_grid, nin);
 #ifndef FINITEDIFF_OPENMP
-    const int elem_strides_w_1 = len_grid;
     const int elem_strides_w_0 = elem_strides_w_1*(max_deriv+1);
 #else
-    const int elem_strides_w_1 = len_grid;
     const int elem_strides_w_0 = FINITEDIFF_ROUND_L1(elem_strides_w_1*(max_deriv+1));
     char * num_threads_var;
     num_threads_var = getenv("FINITEDIFF_NUM_THREADS");
@@ -169,10 +168,10 @@ int finitediff_interpolate_by_finite_diff(
         j = get_interval_from_guess(grid, len_grid, xtgt, j) - nhead;
         j = FINITEDIFF_MAX(0, FINITEDIFF_MIN(j, len_grid - nin));
         wp = w + omp_get_thread_num()*elem_strides_w_0;
-        finitediff_calculate_weights(wp, elem_strides_w_1, grid, len_grid, max_deriv, xtgt);
+        finitediff_calculate_weights(wp, elem_strides_w_1, grid+j, elem_strides_w_1, max_deriv, xtgt);
         finitediff_apply_fd(out + tgt_idx*elem_strides_out_0, elem_strides_out_1,
                             wp, elem_strides_w_1, nsets,
-                            max_deriv, len_grid, ydata+j*ldy*nsets, ldy);
+                            max_deriv, elem_strides_w_1, ydata+j*ldy*nsets, ldy);
     }
     free(w);
 exit0:
