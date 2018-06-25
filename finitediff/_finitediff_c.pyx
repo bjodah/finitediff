@@ -163,28 +163,31 @@ def interpolate_by_finite_diff(
     """
     ydata = np.asarray(ydata)
     xtgts = np.asarray(xtgts)
-    cdef int nin = ntail+nhead
-    cdef int nout = xtgts.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts, dtype=np.float64)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
-    if yarr.size % xarr.size:
+    cdef:
+        int flag
+        int nin = ntail+nhead
+        int nout = xtgts.size
+        cnp.ndarray[cnp.float64_t, ndim=1] xgrd = np.ascontiguousarray(grid, dtype=np.float64)
+        cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts, dtype=np.float64)
+        cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
+        int nsets = yarr.size // xgrd.size
+        cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(
+            (nout*nsets*(maxorder+1)), order='C', dtype=np.float64)
+
+    if yarr.size % xgrd.size:
         raise ValueError("Incompatible shapes: grid & ydata")
-    cdef int nsets = yarr.size // xarr.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(
-        (nout*nsets*(maxorder+1)), order='C', dtype=np.float64)
-    cdef int i, j=0
-    cdef int flag
 
     flag = finitediff_interpolate_by_finite_diff(
-        <double*>yout.data, nout, nsets, maxorder+1, (maxorder+1)*nin, maxorder+1,
-        ntail, nhead, <double*>xarr.data, xarr.size, <double*>yarr.data, xarr.size,
+        <double*>yout.data, nout, nsets, maxorder+1, nsets*(maxorder+1), maxorder+1,
+        ntail, nhead, <double*>xgrd.data, xgrd.size, <double*>yarr.data, xgrd.size,
         <double*>tgts.data
     )
     if flag == 1:
+        raise ValueError("Bad alloc")
+    elif flag == 2:
         raise ValueError("grid is too small")
-    if flag == 2:
-        raise ValueError("nhead+ntail < maxorder+1")
+    if flag == 4:
+        raise ValueError("too few points")
 
     if reshape is None:
         reshape = ydata.ndim != 1
