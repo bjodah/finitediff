@@ -11,8 +11,10 @@
 #else
   #define FINITEDIFF_RESTRICT
 #endif
-
-
+#define FINITEDIFF_MIN(x, y) ((x < y) ? x : y)
+#define FINITEDIFF_MAX(x, y) ((x > y) ? x : y)
+#define FINITEDIFF_
+#define FINITEDIFF_ROUND_L1(x) ((((unsigned)(sizeof(FINITEDIFF_REAL)*x) + 63u) & ~63u)/sizeof(FINITEDIFF_REAL))
 #ifdef __cplusplus
 extern "C" {
 #endif
