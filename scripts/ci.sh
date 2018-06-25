@@ -19,7 +19,7 @@ git archive -o /tmp/archive.zip HEAD
     python3 -c '
 from finitediff import get_include as gi
 import os
-assert "finitediff_templated.pxd" in os.listdir(gi())
+assert "finitediff_templated.hpp" in os.listdir(gi())
 '
     python3 -m pytest --pyargs finitediff
 )
