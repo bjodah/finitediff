@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c89 -Wall -Wextra -Werror -pedantic -O0 -g -ggdb -I../finitediff/include -I../external/newton_interval/include
+CFLAGS ?= -std=c89 -Wall -Wextra -Werror -pedantic -O0 -g -ggdb -I../finitediff/include -I../finitediff/external/newton_interval/include
 CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../finitediff/include -fno-omit-frame-pointer -D_GLIBCXX_DEBUG
 LDLIBS ?= -lm
 CC ?= gcc
@@ -21,7 +21,7 @@ test_finitediff_templated: test_finitediff_templated.cpp ../finitediff/include/f
 finitediff_c.o: ../src/finitediff_c.c ../finitediff/include/finitediff_c.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-newton_interval.o: ../external/newton_interval/src/newton_interval.c ../external/newton_interval/include/newton_interval.h
+newton_interval.o: ../finitediff/external/newton_interval/src/newton_interval.c ../finitediff/external/newton_interval/include/newton_interval.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 test_finitediff_c: test_finitediff_c.c finitediff_c.o newton_interval.o

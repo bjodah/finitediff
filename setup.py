@@ -74,7 +74,7 @@ else:
 modname = 'finitediff.' + basename
 srcname = os.path.join('finitediff', basename)
 other_sources += [
-    os.path.join('external', 'newton_interval', 'src', 'newton_interval.c')
+    os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
 ]
 
 cmdclass = {}
@@ -84,12 +84,11 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
-        os.path.join('external', 'newton_interval', 'include'),
+        os.path.join('finitediff', 'external', 'newton_interval', 'include'),
         os.path.join('finitediff', 'include'),
         numpy.get_include()
     ]
 
-    # default path (no external dependencies):
     from setuptools.extension import Extension
     ext_modules = [
         Extension(modname, [srcname+ext], include_dirs=include_dirs)
