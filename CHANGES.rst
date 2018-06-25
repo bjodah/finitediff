@@ -1,3 +1,8 @@
+v0.6.0
+======
+- New C API (prefixed function names with ``finitediff_``)
+- New C function: finitediff_interpolate_by_finite_diff (optionally OpenMP parallelized)
+
 v0.5.4
 ======
 - Re-release for Zenodo

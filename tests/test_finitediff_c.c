@@ -13,7 +13,7 @@ int test_calculate_weights_3(){
     const int max_deriv = 1;
     double * const w3 = malloc(sizeof(double)*ldw*(max_deriv+1));
     const double around = 0.0;
-    calculate_weights(w3, ldw, x3, len_g, max_deriv, around);
+    finitediff_calculate_weights(w3, ldw, x3, len_g, max_deriv, around);
     
     assert(fabs(w3[0] - 0) < 1e-15);
     assert(fabs(w3[1] - 1) < 1e-15);
@@ -34,7 +34,7 @@ int test_calculate_weights_5(){
     const int max_deriv = 2;
     double * const w5 = malloc(sizeof(double)*ldw*(max_deriv+1));
     const double around = 0.0;
-    calculate_weights(w5, ldw, x5, len_g, max_deriv, around);
+    finitediff_calculate_weights(w5, ldw, x5, len_g, max_deriv, around);
     
     assert(fabs(w5[ldw*0 + 0] - 0) < 1e-15);
     assert(fabs(w5[ldw*0 + 1] - 0) < 1e-15);
@@ -76,7 +76,7 @@ int get_ref_out_(
     for (order=0; order <= maxord; ++order){
         ref[order] = pow(-1, order)*(x - order)*exp(-x);
     }
-    flag = apply_fd(out, ldout, nsets, maxord, grid_len, grid, values, grid_len, x);
+    flag = finitediff_calc_and_apply_fd(out, ldout, nsets, maxord, grid_len, grid, values, grid_len, x);
     free(values);
     if (flag){
         printf("Error, flag=%d", flag);
@@ -138,11 +138,70 @@ int test_apply_fd()
     return 0;
 }
 
+int test_interpolate_by_finite_diff() {
+    double * out;
+    const int len_tgts = 5, nsets = 4, max_deriv = 2;
+    const int out_strd1 = max_deriv+1;
+    const int out_strd0 = out_strd1*nsets;
+    const int len_grid = 3;
+    const int ntail=2, nhead=2;
+    const double grid[3] = {0.0, 1.0, 2.0};
+    const double ydata[3*4] = {2.0, 3.0, 5.0,
+                               3.0, 4.0, 7.0,
+                               7.0, 8.0, 9.0,
+                               3.0, 4.0, 6.0};
+    const int ldy = len_grid;
+    const double xtgts[5] = {0.5 , 0.75, 1.  , 1.25, 1.5};
+
+    const double ref[60] = {
+    /* import numpy as np */
+    /* from finitediff import get_weights */
+    /* grid = np.array([0.0, 1.0, 2.0]) */
+    /* ydata = np.array([[2.0, 3, 5], [3, 4, 7], [7, 8, 9], [3, 4, 6]]) */
+    /* xtgts = np.linspace(0.5, 1.5, 5) */
+    /* ref = [] */
+    /* maxorder=2 */
+    /* for i in range(xtgts.size): */
+    /*     w = get_weights(grid, xtgts[i], -1, maxorder) */
+    /*     for j in range(ydata.shape[0]): */
+    /*         for k in range(maxorder+1): */
+    /*             ref.append(np.dot(w[:, k], ydata[j, :])) */
+    /* print(ref) */
+        2.375, 1.0, 1.0, 3.25, 1.0, 2.0, 7.5, 1.0, 0.0, 3.375, 1.0,
+        1.0, 2.65625, 1.25, 1.0, 3.5625, 1.5, 2.0, 7.75, 1.0, 0.0,
+        3.65625, 1.25, 1.0, 3.0, 1.5, 1.0, 4.0, 2.0, 2.0, 8.0, 1.0,
+        0.0, 4.0, 1.5, 1.0, 3.40625, 1.75, 1.0, 4.5625, 2.5, 2.0,
+        8.25, 1.0, 0.0, 4.40625, 1.75, 1.0, 3.875, 2.0, 1.0, 5.25,
+        3.0, 2.0, 8.5, 1.0, 0.0, 4.875, 2.0, 1.0
+    };
+    int i, flag = 0;
+    out = (double *)malloc(sizeof(double)*len_tgts*nsets*(max_deriv+1));
+    if (!out){
+        flag = -1;
+        goto exit0;
+    }
+    finitediff_interpolate_by_finite_diff(out, len_tgts, nsets, max_deriv, out_strd0, out_strd1,
+                                          ntail, nhead, grid, len_grid, ydata, ldy, xtgts);
+    for (i=0; i<len_tgts*nsets*max_deriv; ++i){
+        if (fabs(out[i] - ref[i]) > 1e-14){
+            printf("i=%d out[i]=%.5g ref[i]=%.5g\n", i, out[i], ref[i]);
+            flag = i+1;
+            goto exit1;
+        }
+    }
+exit1:
+    free(out);
+exit0:
+    return flag;
+}
+
 
 int main(){
     if (test_calculate_weights_3() ||
         test_calculate_weights_5() ||
-        test_apply_fd()) {
+        test_apply_fd() ||
+        test_interpolate_by_finite_diff()
+        ) {
         return 1;
     }
     return 0;

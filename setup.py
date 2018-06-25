@@ -74,7 +74,7 @@ else:
 modname = 'finitediff.' + basename
 srcname = os.path.join('finitediff', basename)
 other_sources += [
-    os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
+    os.path.join('external', 'newton_interval', 'src', 'newton_interval.c')
 ]
 
 cmdclass = {}

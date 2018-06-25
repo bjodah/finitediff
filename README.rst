@@ -44,6 +44,10 @@ from the Python bindings).
 The user may also manually generate the corresponding weights. (see
 ``calculate_weights``)
 
+Finitediff can be conditionally compiled to make ``finitediff_interpolate_by_finite_diff``
+multithreaded. Then the number of threads used is set through the environment variable
+``FINITEDIFF_NUM_THREADS`` (or ``OMP_NUM_THREADS``).
+
 
 Documentation
 -------------
@@ -140,19 +144,6 @@ You need either a C, C++ or a Fortran 90 compiler. On debian based linux systems
     $ sudo apt-get install gfortran g++ gcc
 
 See `setup.py <setup.py>`_ for optional (Python) dependencies.
-
-Notes
-=====
-There is a git subtree under finitediff, update through::
-
-    git subtree pull --prefix finitediff/external/newton_interval newton_interval master --squash
-
-
-where the repo "newton_interval" is https://github.com/bjodah/newton_interval.git
-
-First time you need to add it::
-
-    git subtree add --prefix finitediff/external/newton_interval git://github.com/bjodah/newton_interval master
 
 
 References

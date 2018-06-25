@@ -1,3 +1,7 @@
+clone:
+  depth: 2
+  recursive: true
+
 build:
   image: bjodah/bjodahimg18dev:v1.0
   environment:
