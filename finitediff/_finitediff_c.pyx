@@ -178,7 +178,7 @@ def interpolate_by_finite_diff(
         raise ValueError("Incompatible shapes: grid & ydata")
 
     flag = finitediff_interpolate_by_finite_diff(
-        <double*>yout.data, nout, nsets, maxorder+1, nsets*(maxorder+1), maxorder+1,
+        <double*>yout.data, nout, nsets, maxorder, nsets*(maxorder+1), maxorder+1,
         ntail, nhead, <double*>xgrd.data, xgrd.size, <double*>yarr.data, xgrd.size,
         <double*>tgts.data
     )

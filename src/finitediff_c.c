@@ -171,7 +171,7 @@ int finitediff_interpolate_by_finite_diff(
         finitediff_calculate_weights(wp, elem_strides_w_1, grid+j, elem_strides_w_1, max_deriv, xtgt);
         finitediff_apply_fd(out + tgt_idx*elem_strides_out_0, elem_strides_out_1,
                             wp, elem_strides_w_1, nsets,
-                            max_deriv, elem_strides_w_1, ydata+j*ldy*nsets, ldy);
+                            max_deriv, elem_strides_w_1, ydata + j, ldy);
     }
     free(w);
 exit0:
