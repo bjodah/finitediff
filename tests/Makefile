@@ -3,6 +3,8 @@ CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../finitediff/
 LDLIBS ?= -lm
 CC ?= gcc
 CXX ?= g++
+CFLAGS += $(EXTRA_COMPILE_ARGS)
+CXXFLAGS += $(EXTRA_COMPILE_ARGS)
 
 .PHONY: test debug clean
 

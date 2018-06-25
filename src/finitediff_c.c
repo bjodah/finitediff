@@ -3,17 +3,11 @@
 #include "finitediff_c.h"
 #include "newton_interval.h"
 
-#if !defined(NDEBUG)
-#include <stdio.h>
-#endif
-
 #ifdef FINITEDIFF_OPENMP
 #include <omp.h>
 #else
 #define omp_get_thread_num() 0
 #endif
-
-
 
 void finitediff_calculate_weights(
     FINITEDIFF_REAL * const FINITEDIFF_RESTRICT w,
@@ -162,24 +156,18 @@ int finitediff_interpolate_by_finite_diff(
         status = FINITEDIFF_STATUS_ERR_TOO_FEW_POINTS;
         goto exit0;
     }
-#if !defined(NDEBUG)
-    printf("len_targets=%d, nsets=%d, max_deriv=%d, elem_strides_out_0=%d, elem_strides_out_1=%d, ntail=%d, nhead=%d, len_grid=%d, ldy=%d, nin=%d\n", len_targets, nsets, max_deriv, elem_strides_out_0, elem_strides_out_1, ntail, nhead, len_grid, ldy, nin);
-#endif
     w = (FINITEDIFF_REAL *)malloc(sizeof(FINITEDIFF_REAL)*elem_strides_w_0*n_threads);
     if (!w) {
         status = FINITEDIFF_STATUS_ERR_BAD_ALLOC;
         goto exit0;
     }
 #ifdef FINITEDIFF_OPENMP
-#pragma omp parallel for private(xtgt, j, wp) schedule(static) num_threads(n_threads)
+#pragma omp parallel for private(xtgt, wp) firstprivate(j) schedule(static) num_threads(n_threads)
 #endif
     for (tgt_idx=0; tgt_idx<len_targets; ++tgt_idx) {
         xtgt = xtgts[tgt_idx];
         j = get_interval_from_guess(grid, len_grid, xtgt, j) - nhead;
         j = FINITEDIFF_MAX(0, FINITEDIFF_MIN(j, len_grid - nin));
-#if !defined(NDEBUG)
-        printf("tgt_idx=%d, xtgt=%.3f, j=%d\n", tgt_idx, xtgt, j);
-#endif
         wp = w + omp_get_thread_num()*elem_strides_w_0;
         finitediff_calculate_weights(wp, elem_strides_w_1, grid, len_grid, max_deriv, xtgt);
         finitediff_apply_fd(out + tgt_idx*elem_strides_out_0, elem_strides_out_1,

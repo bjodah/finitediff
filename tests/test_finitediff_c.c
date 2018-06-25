@@ -106,7 +106,10 @@ int check_x_exp_mx_(
     for (order=0; order <= maxord; ++order){
         atol = pow(10.0, lg_atol0 + degrade_factor*order);
         adiff = fabs(ref[order] - out[order]);
-        assert( adiff < atol );
+        if ( adiff > atol ){
+            flag = 1;
+            goto early_exit;
+        }
     }
 early_exit:
     free(ref);
@@ -183,16 +186,12 @@ int test_interpolate_by_finite_diff() {
     finitediff_interpolate_by_finite_diff(out, len_tgts, nsets, max_deriv, out_strd0, out_strd1,
                                           ntail, nhead, grid, len_grid, ydata, ldy, xtgts);
     for (i=0; i<len_tgts*nsets*(max_deriv+1); ++i){
-        if (!(i % 3)) printf("\n");
         if (fabs(out[i] - ref[i]) > 1e-14){
-            printf("i=%d out[i]=%.5g ref[i]=%.5g\n", i, out[i], ref[i]);
             flag = i+1;
-            /* goto exit1; */
-        } else {
-            printf("i=%d\n", i);
+            goto exit1;
         }
     }
-/* exit1: */
+exit1:
     free(out);
 exit0:
     return flag;

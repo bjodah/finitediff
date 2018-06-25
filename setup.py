@@ -84,8 +84,8 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
     # e.g. egg_info must not import from dependencies (pycompilation)
     import numpy
     include_dirs = [
-        'finitediff/external/newton_interval/include',
-        'finitediff/include',
+        os.path.join('external', 'newton_interval', 'include'),
+        os.path.join('finitediff', 'include'),
         numpy.get_include()
     ]
 
