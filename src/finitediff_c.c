@@ -3,6 +3,10 @@
 #include "finitediff_c.h"
 #include "newton_interval.h"
 
+#if !defined(NDEBUG)
+#include <stdio.h>
+#endif
+
 #ifdef FINITEDIFF_OPENMP
 #include <omp.h>
 #else
@@ -88,20 +92,20 @@ int finitediff_calc_and_apply_fd(
     const FINITEDIFF_REAL xtgt
     )
 {
-    int ret = 0;
+    int status = FINITEDIFF_STATUS_SUCCESS;
     FINITEDIFF_REAL * w;
     const int ldw=len_grid;
     w = (FINITEDIFF_REAL *)malloc(sizeof(FINITEDIFF_REAL)*ldw*(max_deriv+1));
     if (!w) {
-        ret = 1;
+        status = FINITEDIFF_STATUS_ERR_BAD_ALLOC;
         goto exit0;
     }
     if (len_grid < max_deriv + 1){
-        ret = 2;
+        status = FINITEDIFF_STATUS_ERR_TOO_SMALL_GRID;
         goto exit1;
     }
     if (ld_out < max_deriv + 1) {
-        ret = 3;
+        status = FINITEDIFF_STATUS_ERR_WRONG_LEADING_DIMENSION;
         goto exit1;
     }
     finitediff_calculate_weights(w, ldw, grid, len_grid, max_deriv, xtgt);
@@ -109,7 +113,7 @@ int finitediff_calc_and_apply_fd(
 exit1:
     free(w);
 exit0:
-    return ret;    
+    return status;
 }
 
 int finitediff_interpolate_by_finite_diff(
@@ -129,43 +133,53 @@ int finitediff_interpolate_by_finite_diff(
 )
 {
     FINITEDIFF_REAL xtgt;
-    int tgt_idx, j = 0;
+    int tgt_idx, j=0, status=0, n_threads=1;
     const int nin = nhead + ntail;
     FINITEDIFF_REAL *w, *wp;
 #ifndef FINITEDIFF_OPENMP
     const int elem_strides_w_1 = len_grid;
-    const int elem_strides_w_0 = 0;
+    const int elem_strides_w_0 = elem_strides_w_1*(max_deriv+1);
 #else
     const int elem_strides_w_1 = len_grid;
     const int elem_strides_w_0 = FINITEDIFF_ROUND_L1(elem_strides_w_1*(max_deriv+1));
     char * num_threads_var;
-    int n_threads;
-#endif
-
-    if (len_grid < FINITEDIFF_MIN(ntail, nhead) + 1) {
-        return 1;
-    }
-    if (nin < max_deriv){
-        return 2;
-    }
-
-#ifndef FINITEDIFF_OPENMP
-    w = (FINITEDIFF_REAL *)malloc(sizeof(FINITEDIFF_REAL)*elem_strides_w_1*(max_deriv+1));
-#else
     num_threads_var = getenv("FINITEDIFF_NUM_THREADS");
     if (num_threads_var) {
         n_threads = atoi(num_threads_var);
+        if (!n_threads) {
+            status = FINITEDIFF_STATUS_ERR_ILLEGAL_ENV_VAR;
+            goto exit0;
+        }
     } else {
         n_threads = omp_get_num_threads();
     }
+#endif
+    if (len_grid < max_deriv + 1){
+        status = FINITEDIFF_STATUS_ERR_TOO_SMALL_GRID;
+        goto exit0;
+    }
+    if (nin < max_deriv + 1){
+        status = FINITEDIFF_STATUS_ERR_TOO_FEW_POINTS;
+        goto exit0;
+    }
+#if !defined(NDEBUG)
+    printf("len_targets=%d, nsets=%d, max_deriv=%d, elem_strides_out_0=%d, elem_strides_out_1=%d, ntail=%d, nhead=%d, len_grid=%d, ldy=%d, nin=%d\n", len_targets, nsets, max_deriv, elem_strides_out_0, elem_strides_out_1, ntail, nhead, len_grid, ldy, nin);
+#endif
     w = (FINITEDIFF_REAL *)malloc(sizeof(FINITEDIFF_REAL)*elem_strides_w_0*n_threads);
+    if (!w) {
+        status = FINITEDIFF_STATUS_ERR_BAD_ALLOC;
+        goto exit0;
+    }
+#ifdef FINITEDIFF_OPENMP
 #pragma omp parallel for private(xtgt, j, wp) schedule(static) num_threads(n_threads)
 #endif
     for (tgt_idx=0; tgt_idx<len_targets; ++tgt_idx) {
         xtgt = xtgts[tgt_idx];
         j = get_interval_from_guess(grid, len_grid, xtgt, j) - nhead;
-        j = FINITEDIFF_MAX(0, j);
-        j = FINITEDIFF_MIN(j, len_grid - nin);
+        j = FINITEDIFF_MAX(0, FINITEDIFF_MIN(j, len_grid - nin));
+#if !defined(NDEBUG)
+        printf("tgt_idx=%d, xtgt=%.3f, j=%d\n", tgt_idx, xtgt, j);
+#endif
         wp = w + omp_get_thread_num()*elem_strides_w_0;
         finitediff_calculate_weights(wp, elem_strides_w_1, grid, len_grid, max_deriv, xtgt);
         finitediff_apply_fd(out + tgt_idx*elem_strides_out_0, elem_strides_out_1,
@@ -173,6 +187,7 @@ int finitediff_interpolate_by_finite_diff(
                             max_deriv, len_grid, ydata+j*ldy*nsets, ldy);
     }
     free(w);
-    return 0;
+exit0:
+    return status;
 }
     
