@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# distutils: sources = ['external/newton_interval/src/newton_interval.c', 'src/finitediff_c.c']
+# distutils: sources = ['finitediff/external/newton_interval/src/newton_interval.c', 'src/finitediff_c.c']
 
 cimport numpy as cnp
 import numpy as np
