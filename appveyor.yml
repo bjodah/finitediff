@@ -21,6 +21,7 @@ install:
     - cmd: conda update --yes --quiet conda
 
     - cmd: set PYTHONUNBUFFERED=1
+    - cmd: git submodule update --init --recursive
 
 # Skip .NET project specific build phase.
 build: off
