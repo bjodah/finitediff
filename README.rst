@@ -36,7 +36,7 @@ arbitrary derivative order. Python_ bindings (to the C versions) are also provid
 
 
 Capabilities
-============
+------------
 ``finitediff`` currently provides callbacks for estimation of derivatives
 or interpolation either at a single point or over an array (available
 from the Python bindings).
@@ -121,6 +121,17 @@ see the ``examples/`` directory for more examples.
 
 Installation
 ------------
+Simplest way to install is to use the `conda package manager <http://conda.pydata.org/docs/>`_:
+
+::
+
+   $ conda install -c conda-forge finitediff pytest
+   $ python -m pytest --pyargs finitediff
+
+tests should pass.
+
+Manual installation
+~~~~~~~~~~~~~~~~~~~
 You can install ``finitediff`` by using ``pip``::
 
    $ python -m pip install --user finitediff
@@ -131,14 +142,9 @@ to run the tests you need ``pytest`` too::
    $ python -m pip install --user --upgrade pytest
    $ python -m pytest --pyargs finitediff
 
-alternatively (on Linux) you may also use
-`conda package manager <http://conda.pydata.org/docs/>`_::
-
-   $ conda install -c bjodah finitediff pytest
-
 
 Dependencies
-============
+------------
 You need either a C, C++ or a Fortran 90 compiler. On debian based linux systems you may install (all) by issuing::
 
     $ sudo apt-get install gfortran g++ gcc
@@ -146,8 +152,8 @@ You need either a C, C++ or a Fortran 90 compiler. On debian based linux systems
 See `setup.py <setup.py>`_ for optional (Python) dependencies.
 
 
-References
-==========
+Citing
+------
 The algortihm is a rewrite of:
 
 http://dx.doi.org/10.1137/S0036144596322507
@@ -167,7 +173,7 @@ http://dx.doi.org/10.1137/S0036144596322507
     }
 
 
-Which is based on an article of the same author:
+Which references an article by the same author:
 
 http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
 
@@ -184,14 +190,25 @@ http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
       doi={10.1090/S0025-5718-1988-0935077-0}
     }
 
+You may want to, in addition to the paper, cite finitediff (for e.g. reproducibility),
+and you can get per-version DOIs from the zenodo archive:
 
-License
-=======
+.. image:: https://zenodo.org/badge/14988640.svg
+   :target: https://zenodo.org/badge/latestdoi/14988640
+   :alt: Zenodo DOI
+
+
+Licensing
+---------
 The source code is Open Source and is released under the very permissive
 `"simplified (2-clause) BSD license" <https://opensource.org/licenses/BSD-2-Clause>`_.
 See `LICENSE <LICENSE>`_ for further details.
 
 
-Authors
-=======
-See file `AUTHORS <AUTHORS>`_ in root.
+Author
+------
+Björn Ingvar Dahlgren, contact:
+ - gmail address: bjodah
+ - kth.se address: bda
+
+See file `AUTHORS <AUTHORS>`_ in root for a list of all authors.
