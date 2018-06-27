@@ -1,4 +1,4 @@
-graft finitediff/external
+graft finitediff/external/newton_interval
 include finitediff/include/finitediff_c.h
 include finitediff/include/finitediff_c.pxd
 include finitediff/include/finitediff_templated.hpp

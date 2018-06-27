@@ -1,0 +1,6 @@
+[submodule "external/newton_interval"]
+	path = external/newton_interval
+	url = git://github.com/bjodah/newton_interval
+[submodule "finitediff/external/newton_interval"]
+	path = finitediff/external/newton_interval
+	url = git://github.com/bjodah/newton_interval

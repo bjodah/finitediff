@@ -5,7 +5,7 @@ cimport numpy as cnp
 import numpy as np
 
 from newton_interval cimport get_interval, get_interval_from_guess
-from finitediff_c cimport apply_fd, calculate_weights
+from finitediff_c cimport finitediff_calc_and_apply_fd, finitediff_calculate_weights, finitediff_interpolate_by_finite_diff
 
 
 def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
@@ -35,7 +35,7 @@ def get_weights(grid, double xtgt, int n=-1, int maxorder=0):
         n = xarr.size
     cdef cnp.ndarray[cnp.float64_t, ndim=2, mode='fortran'] c = \
         np.empty((n, maxorder+1), order='F')
-    calculate_weights(&c[0, 0], n, &xarr[0], n, maxorder, xtgt)
+    finitediff_calculate_weights(&c[0, 0], n, &xarr[0], n, maxorder, xtgt)
     return c
 
 
@@ -94,7 +94,7 @@ def derivatives_at_point_by_finite_diff(
     cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.empty((maxorder+1)*nsets)
     if xarr.size < maxorder+1:
         raise ValueError("xdata too short for requested derivative order")
-    apply_fd(&yout[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
+    finitediff_calc_and_apply_fd(&yout[0], xarr.size, nsets, maxorder, xarr.size, &xarr[0], &yarr[0], xarr.size, xtgt)
     if reshape is None:
         reshape = ydata.ndim != 1
     if reshape:
@@ -163,38 +163,32 @@ def interpolate_by_finite_diff(
     """
     ydata = np.asarray(ydata)
     xtgts = np.asarray(xtgts)
-    cdef int nin = ntail+nhead
-    cdef int nout = xtgts.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] xarr = np.ascontiguousarray(grid, dtype=np.float64)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts, dtype=np.float64)
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
-    if yarr.size % xarr.size:
+    cdef:
+        int flag
+        int nin = ntail+nhead
+        int nout = xtgts.size
+        cnp.ndarray[cnp.float64_t, ndim=1] xgrd = np.ascontiguousarray(grid, dtype=np.float64)
+        cnp.ndarray[cnp.float64_t, ndim=1] tgts = np.ascontiguousarray(xtgts, dtype=np.float64)
+        cnp.ndarray[cnp.float64_t, ndim=1] yarr = np.ascontiguousarray(np.ravel(ydata, order=yorder), dtype=np.float64)
+        int nsets = yarr.size // xgrd.size
+        cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(
+            (nout*nsets*(maxorder+1)), order='C', dtype=np.float64)
+
+    if yarr.size % xgrd.size:
         raise ValueError("Incompatible shapes: grid & ydata")
-    cdef int nsets = yarr.size // xarr.size
-    cdef cnp.ndarray[cnp.float64_t, ndim=1] yout = np.zeros(
-        (nout*nsets*(maxorder+1)), order='C', dtype=np.float64)
-    cdef int i, j=0
 
-    if xarr.size < min(ntail, nhead) + 1:
+    flag = finitediff_interpolate_by_finite_diff(
+        <double*>yout.data, nout, nsets, maxorder, nsets*(maxorder+1), maxorder+1,
+        ntail, nhead, <double*>xgrd.data, xgrd.size, <double*>yarr.data, xgrd.size,
+        <double*>tgts.data
+    )
+    if flag == 1:
+        raise ValueError("Bad alloc")
+    elif flag == 2:
         raise ValueError("grid is too small")
-    if nhead+ntail < maxorder+1:
-        raise ValueError("nhead+ntail < maxorder+1")
+    if flag == 4:
+        raise ValueError("too few points")
 
-    for i in range(nout):
-        j = max(0, get_interval_from_guess(
-            &xarr[0], xarr.size, tgts[i], j))
-        j = min(j, xarr.size - nin)
-        apply_fd(
-            &yout[i*nsets*(maxorder+1)],
-            maxorder+1,
-            nsets,
-            maxorder,
-            nin,
-            &xarr[j],
-            &yarr[j],
-            xarr.size,
-            tgts[i]
-        )
     if reshape is None:
         reshape = ydata.ndim != 1
     if reshape:
