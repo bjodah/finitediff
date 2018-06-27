@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>finitediff package &mdash; finitediff 0.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="finitediff 0.6.0 documentation" href="index.html"/>
+        <link rel="next" title="finitediff.grid package" href="finitediff.grid.html"/>
+        <link rel="prev" title="Welcome to finitediff’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> finitediff
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">finitediff package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finitediff.grid.html">finitediff.grid package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-finitediff.util">finitediff.util module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">finitediff</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>finitediff package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/finitediff.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-finitediff">
+<span id="finitediff-package"></span><h1>finitediff package<a class="headerlink" href="#module-finitediff" title="Permalink to this headline">¶</a></h1>
+<p>Finite difference weights for any derivative order on arbitrarily spaced grids.</p>
+<dl class="attribute">
+<dt id="finitediff.derivatives_at_point_by_finite_diff">
+<code class="descclassname">finitediff.</code><code class="descname">derivatives_at_point_by_finite_diff</code><a class="headerlink" href="#finitediff.derivatives_at_point_by_finite_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Esimates of derivatives up to specified order at a point.</p>
+<p>Estimates derivatives/function values of requested order
+at multiple points (xtgt) based on finite difference using
+provided <code class="docutils literal notranslate"><span class="pre">grid</span></code> and <code class="docutils literal notranslate"><span class="pre">ydata</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>grid</strong> : array_like</p>
+<blockquote>
+<div><p>Grid points: values of the independent variable (“x-data”).</p>
+</div></blockquote>
+<p><strong>ydata</strong> : array_like</p>
+<blockquote>
+<div><p>Values of the dependent variable. May be two dimensional, in
+which case the weights of the grid is reused.</p>
+</div></blockquote>
+<p><strong>xtgt</strong> : float</p>
+<blockquote>
+<div><p>The target value of the independent variable where the
+the finite difference scheme should be applied.</p>
+</div></blockquote>
+<p><strong>maxorder</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum order of derivatives to estimate.
+The default is 0 (interpolation).</p>
+</div></blockquote>
+<p><strong>yorder</strong> : char</p>
+<blockquote>
+<div><p>NumPy “order” of ydata.</p>
+</div></blockquote>
+<p><strong>reshape: bool</strong></p>
+<blockquote>
+<div><p>Whether to return a 2D array or not. Default:
+if <code class="docutils literal notranslate"><span class="pre">ydata.ndim</span> <span class="pre">!=</span> <span class="pre">1</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>Estimate from applying the finite difference scheme.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<p>The underlying algorithm is from:
+Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
+Bengt Fornberg, Mathematics of compuation, 51, 184, 1988, 699-706</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">derivatives_at_point_by_finite_diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">.</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span>
+<span class="go">        np.array([.0, .25, 1.]), .5, 2)  # y=x**2</span>
+<span class="go">array([.25, 1.0, 2.0])  # (x**2, 2x, 2)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="finitediff.interpolate_by_finite_diff">
+<code class="descclassname">finitediff.</code><code class="descname">interpolate_by_finite_diff</code><a class="headerlink" href="#finitediff.interpolate_by_finite_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates derivatives of requested order at multiple points.</p>
+<p>Estimates derivatives/function values of requested order
+at multiple points (<code class="docutils literal notranslate"><span class="pre">xtgts</span></code>) based on finite difference using
+provided <code class="docutils literal notranslate"><span class="pre">grid</span></code> and <code class="docutils literal notranslate"><span class="pre">ydata</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>grid</strong> : array_like</p>
+<blockquote>
+<div><p>Values of the independent variable (“x-data”).</p>
+</div></blockquote>
+<p><strong>ydata</strong> : array_like</p>
+<blockquote>
+<div><p>Values of the dependent variable.</p>
+</div></blockquote>
+<p><strong>xtgts</strong> : array_like</p>
+<blockquote>
+<div><p>Values of the independent variable where the
+the finite difference scheme should be applied.</p>
+</div></blockquote>
+<p><strong>maxorder</strong> : int, optional</p>
+<blockquote>
+<div><p>Up to what order derivatives are to be estimated.
+The default is 0 (interpolation).</p>
+</div></blockquote>
+<p><strong>ntail</strong> : int, optional</p>
+<blockquote>
+<div><p>how many points in <code class="docutils literal notranslate"><span class="pre">grid</span></code> before <code class="docutils literal notranslate"><span class="pre">xtgts</span></code> to inclued (default = 2).</p>
+</div></blockquote>
+<p><strong>nhead</strong> : int, optional</p>
+<blockquote>
+<div><p>how many points in <code class="docutils literal notranslate"><span class="pre">grid</span></code> after <code class="docutils literal notranslate"><span class="pre">xtgts</span></code> to include (default = 2).</p>
+</div></blockquote>
+<p><strong>yorder</strong> : char</p>
+<blockquote>
+<div><p>NumPy “order” of ydata.</p>
+</div></blockquote>
+<p><strong>reshape: bool</strong></p>
+<blockquote>
+<div><p>Whether to return a 3D array or not. Default:
+if <code class="docutils literal notranslate"><span class="pre">ydata.ndim</span> <span class="pre">!=</span> <span class="pre">1</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array_like</p>
+<blockquote class="last">
+<div><p>Estimates from applying the finite difference scheme</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>It is required that: <code class="docutils literal notranslate"><span class="pre">order</span> <span class="pre">&gt;=</span> <span class="pre">ntail</span> <span class="pre">+</span> <span class="pre">nhead</span></code>
+Algortithm assumes non-regularly spaced <code class="docutils literal notranslate"><span class="pre">grid</span></code>. If
+<code class="docutils literal notranslate"><span class="pre">grid</span></code> is regularly spaced this algortihm is not optimal
+from a performance perspective.</p>
+<p class="rubric">References</p>
+<p>The underlying algorithm is from:
+Generation of Finite Difference Formulas on Arbitrarily Spaced Grids,
+Bengt Fornberg, Mathematics of computation, 51, 184, 1988, 699-706</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">finitediff</span> <span class="k">import</span> <span class="n">interpolate_by_finite_diff</span> <span class="k">as</span> <span class="n">ifd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">ifd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xout</span><span class="p">,</span> <span class="n">maxorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(5, 4, 3)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="finitediff.get_weights">
+<code class="descclassname">finitediff.</code><code class="descname">get_weights</code><span class="sig-paren">(</span><em>grid</em>, <em>double xtgt</em>, <em>int n=-1</em>, <em>int maxorder=0</em><span class="sig-paren">)</span><a class="headerlink" href="#finitediff.get_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates finite differnece weights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>grid: array_like</strong></p>
+<blockquote>
+<div><p>Grid points.</p>
+</div></blockquote>
+<p><strong>xtgt: float</strong></p>
+<blockquote>
+<div><p>Point at which estimates should be accurate.</p>
+</div></blockquote>
+<p><strong>n: int, optional</strong></p>
+<blockquote>
+<div><p>Number of points used in <code class="docutils literal notranslate"><span class="pre">xarr</span></code>. default: -1 (means use length of xarr).</p>
+</div></blockquote>
+<p><strong>maxorder: int, optional</strong></p>
+<blockquote>
+<div><p>default: 0 (means interpolation)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array_like</p>
+<blockquote class="last">
+<div><p>2 dimensional array with shape==(n, maxorder+1) with
+Fortran order (contiguous along columns)
+with weights for 0:th order in first column.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="finitediff.grid.html">finitediff.grid package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finitediff.grid.tests.html">finitediff.grid.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="finitediff.grid.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_make">finitediff.grid.tests.test_make module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_rebalance">finitediff.grid.tests.test_rebalance module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_refine">finitediff.grid.tests.test_refine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="finitediff.grid.tests.html#module-finitediff.grid.tests.test_util">finitediff.grid.tests.test_util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#module-finitediff.grid.make">finitediff.grid.make module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#module-finitediff.grid.plotting">finitediff.grid.plotting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#module-finitediff.grid.rebalance">finitediff.grid.rebalance module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#module-finitediff.grid.refine">finitediff.grid.refine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finitediff.grid.html#module-finitediff.grid.util">finitediff.grid.util module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-finitediff.util">
+<span id="finitediff-util-module"></span><h2>finitediff.util module<a class="headerlink" href="#module-finitediff.util" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="finitediff.util.avg_stddev">
+<code class="descclassname">finitediff.util.</code><code class="descname">avg_stddev</code><span class="sig-paren">(</span><em>arr</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/util.html#avg_stddev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.util.avg_stddev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the average and standard deviation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>arr</strong> : array_like</p>
+<blockquote>
+<div><p>Values.</p>
+</div></blockquote>
+<p><strong>w</strong> : array_like</p>
+<blockquote>
+<div><p>Weights.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">tuple of 2 floats (average &amp; standard deviation)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="finitediff.util.interpolate_ahead">
+<code class="descclassname">finitediff.util.</code><code class="descname">interpolate_ahead</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>n</em>, <em>direction='fw'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finitediff/util.html#interpolate_ahead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#finitediff.util.interpolate_ahead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="finitediff.grid.html" class="btn btn-neutral float-right" title="finitediff.grid package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to finitediff’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Bjoern Dahlgren &lt;bjodah@gmail.com&gt;.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.6.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
