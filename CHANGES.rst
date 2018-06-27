@@ -1,3 +1,7 @@
+v0.6.2
+======
+- Fix C macro bug
+
 v0.6.1
 ======
 - Support MSVC++ <10.0
