@@ -1,3 +1,7 @@
+v0.6.1
+======
+- Support MSVC++ <10.0
+
 v0.6.0
 ======
 - New C API (prefixed function names with ``finitediff_``)
