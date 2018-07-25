@@ -45,8 +45,8 @@ The user may also manually generate the corresponding weights. (see
 ``calculate_weights``)
 
 Finitediff can be conditionally compiled to make ``finitediff_interpolate_by_finite_diff``
-multithreaded. Then the number of threads used is set through the environment variable
-``FINITEDIFF_NUM_THREADS`` (or ``OMP_NUM_THREADS``).
+multithreaded (when ``FINITEDIFF_OPENMP`` is defined). Then the number of threads used is
+set through the environment variable ``FINITEDIFF_NUM_THREADS`` (or ``OMP_NUM_THREADS``).
 
 
 Documentation
@@ -154,26 +154,7 @@ See `setup.py <setup.py>`_ for optional (Python) dependencies.
 
 Citing
 ------
-The algortihm is a rewrite of:
-
-http://dx.doi.org/10.1137/S0036144596322507
-
-::
-
-    @article{fornberg_classroom_1998,
-      title={Classroom note: Calculation of weights in finite difference formulas},
-      author={Fornberg, Bengt},
-      journal={SIAM review},
-      volume={40},
-      number={3},
-      pages={685--691},
-      year={1998},
-      publisher={SIAM}
-      doi={10.1137/S0036144596322507}
-    }
-
-
-Which references an article by the same author:
+The algortihm from the following paper:
 
 http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
 

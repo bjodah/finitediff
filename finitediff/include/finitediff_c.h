@@ -1,6 +1,6 @@
 #pragma once
 #ifndef FINITEDIFF_REAL
-#define FINITEDIFF_REAL double
+  #define FINITEDIFF_REAL double
 #endif
 #ifdef FINITEDIFF_WITH_RESTRICT
   #ifdef _MSC_VER

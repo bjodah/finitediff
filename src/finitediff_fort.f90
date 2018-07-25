@@ -37,18 +37,24 @@ contains
     !    c(0:nd,0:m)  -  weights at grid locations x(0:n) for
     !                    derivatives of order 0:m, found in c(0:nd, 0:m)
     !
-    !  Reference:
+    !  References:
     !      Generation of Finite Difference Formulas on Arbitrarily
     !          Spaced Grids, Bengt Fornberg,
-    !          Mathematics of compuation, 51, 184, 1988, 699-706
+    !          Mathematics of compuation, 51, 184, 1988, 699--706,
+    !          doi: 10.1090/S0025-5718-1988-0935077-0
+    !
+    !      Classroom note: Calculation of weights in finite
+    !          difference formulas, Bengt Fornberg,
+    !          SIAM review, 40, 3, 1998, 685--691,
+    !          doi: 10.1137/S0036144596322507
 
     real(dp), intent(in)    :: z
-    integer, intent(in)     :: nd, m
+    integer,  intent(in)    :: nd, m
     real(dp), intent(in)    :: x(0:nd)
-    real(dp), intent(out) :: c(0:nd, 0:m)
+    real(dp), intent(out)   :: c(0:nd, 0:m)
 
     real(dp) :: c1, c2, c3, c4, c5
-    integer :: i, j, k, mn
+    integer  :: i, j, k, mn
 
     c1 = 1
     c4 = x(0) - z
