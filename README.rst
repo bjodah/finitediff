@@ -154,7 +154,7 @@ See `setup.py <setup.py>`_ for optional (Python) dependencies.
 
 Citing
 ------
-The algortihm from the following paper:
+The algortihm is from the following paper:
 
 http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
 
@@ -188,8 +188,4 @@ See `LICENSE <LICENSE>`_ for further details.
 
 Author
 ------
-Björn Ingvar Dahlgren, contact:
- - gmail address: bjodah
- - kth.se address: bda
-
-See file `AUTHORS <AUTHORS>`_ in root for a list of all authors.
+Björn Ingvar Dahlgren (gmail address: bjodah). See file `AUTHORS <AUTHORS>`_ in root for a list of all authors.
