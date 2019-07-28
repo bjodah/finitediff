@@ -1,10 +1,10 @@
 CFLAGS ?= -std=c89 -Wall -Wextra -Werror -pedantic -O0 -g -ggdb -I../finitediff/include -I../finitediff/external/newton_interval/include
-CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../finitediff/include -fno-omit-frame-pointer -D_GLIBCXX_DEBUG
+CXXFLAGS ?= -std=c++11 -Wall -Wextra -Werror -Wpadded -pedantic -I../finitediff/include -fno-omit-frame-pointer
 LDLIBS ?= -lm
 CC ?= gcc
 CXX ?= g++
 CFLAGS += $(EXTRA_COMPILE_ARGS)
-CXXFLAGS += $(EXTRA_COMPILE_ARGS)
+CXXFLAGS += $(EXTRA_COMPILE_ARGS) $(EXTRA_CXX_FLAGS)
 
 .PHONY: test debug clean
 

@@ -1,34 +1,38 @@
 clone:
-  depth: 2
-  recursive: true
-
-build:
-  image: bjodah/bjodahimg18dev:v1.0
-  environment:
-    - ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-6.0/bin/llvm-symbolizer
-    - ASAN_OPTIONS=symbolize=1
-  commands:
-    - git fetch -tq  # used by ``git describe``
-    - bash -c '[[ $(python3 setup.py --version) =~ ^[0-9]+.* ]]'
-    - (cd examples/; make -B CXX=clang++-6.0 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
-    - (cd examples/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O2")
-    - (cd tests/; make -B CXX=clang++-6.0 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
-    - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O2")
-    - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O2 -DFINITEDIFF_OPENMP -fopenmp")
-    - (cd tests/; make -f fortran_tests.mk)
-    - ./scripts/ci.sh finitediff
-    - ./scripts/generate_docs.sh
-    - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
-    - ./scripts/prepare_deploy.sh
-    - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
-
-deploy:
-
-  rsync:
-    host: hera.physchem.kth.se
-    user: finitediff
-    port: 22
-    source: deploy/
-    target: ~
+  default:
+    image: plugins/git
     recursive: true
-    delete: false
+    submodule_override:
+      finitediff/external/newton_interval: git://github.com/bjodah/newton_interval.git
+
+pipeline:
+  build:
+    image: bjodah/bjodahimg18dev:v2.5
+    environment:
+      - ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-8/bin/llvm-symbolizer
+      - ASAN_OPTIONS=symbolize=1
+    commands:
+      - git fetch -tq  # used by ``git describe``
+      - bash -c '[[ $(python3 setup.py --version) =~ ^[0-9]+.* ]]'
+      - (cd examples/; make -B CXX=clang++-8 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+      - (cd examples/; make -B CXX=g++-8 EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG")
+      - (cd tests/; make -B CXX=clang++-8 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+      - (cd tests/; make -B CXX=g++-8 EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
+      - (cd tests/; make -B CXX=g++-8 EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
+      - (cd tests/; make -f fortran_tests.mk)
+      - ./scripts/ci.sh finitediff
+      - ./scripts/generate_docs.sh
+      - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
+      - ./scripts/prepare_deploy.sh
+      - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
+
+  deploy:
+    image: drillster/drone-rsync
+    when:
+      event: [push]
+    hosts: [ "hera.physchem.kth.se" ]
+    port: 22
+    user: finitediff
+    secrets: [ rsync_key ]  # secret only set from event "push" not "pull_request"
+    source: ./deploy/public_html
+    target: ~/
