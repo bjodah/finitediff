@@ -12,10 +12,10 @@ LD_PRELOAD=/usr/lib/llvm-8/lib/clang/8.0.1/lib/linux/libclang_rt.asan-x86_64.so 
 ./scripts/coverage_badge.py htmlcov/ htmlcov/coverage.svg
 
 # Make sure repo is pip installable from git-archive zip
-git archive -o /tmp/archive.zip HEAD
+git-archive-all --prefix='' /tmp/HEAD.zip
 (
     cd /
-    CFLAGS="-fopenmp -DFINITEDIFF_OPENMP" python3 -m pip install --force-reinstall /tmp/archive.zip
+    CFLAGS="-fopenmp -DFINITEDIFF_OPENMP" python3 -m pip install --force-reinstall /tmp/HEAD.zip
     python3 -c '
 from finitediff import get_include as gi
 import os
