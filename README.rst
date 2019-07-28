@@ -1,7 +1,7 @@
 finitediff
 ==========
-.. image:: http://hera.physchem.kth.se:9090/api/badges/bjodah/finitediff/status.svg
-   :target: http://hera.physchem.kth.se:9090/bjodah/finitediff
+.. image:: http://hera.physchem.kth.se:8080/api/badges/bjodah/finitediff/status.svg
+   :target: http://hera.physchem.kth.se:8080/bjodah/finitediff
    :alt: Build status
 .. image:: https://img.shields.io/pypi/v/finitediff.svg
    :target: https://pypi.python.org/pypi/finitediff
@@ -9,7 +9,7 @@ finitediff
 .. image:: https://zenodo.org/badge/14988640.svg
    :target: https://zenodo.org/badge/latestdoi/14988640
    :alt: Zenodo DOI
-.. image:: https://img.shields.io/badge/python-2.7,3.4,3.5-blue.svg
+.. image:: https://img.shields.io/badge/python-2.7,3.6,3.7-blue.svg
    :target: https://www.python.org/
    :alt: Python version
 .. image:: https://img.shields.io/pypi/l/finitediff.svg
