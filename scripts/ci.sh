@@ -1,8 +1,8 @@
 #!/bin/bash -xeu
-PKG_NAME=${1:-${CI_REPO##*/}}
-if [[ "$CI_BRANCH" =~ ^v[0-9]+.[0-9]?* ]]; then
-    eval export ${PKG_NAME^^}_RELEASE_VERSION=\$CI_BRANCH
-    echo ${CI_BRANCH} | tail -c +2 > __conda_version__.txt
+PKG_NAME=${1:-${DRONE_REPO##*/}}
+if [[ "$DRONE_BRANCH" =~ ^v[0-9]+.[0-9]?* ]]; then
+    eval export ${PKG_NAME^^}_RELEASE_VERSION=\$DRONE_BRANCH
+    echo ${DRONE_BRANCH} | tail -c +2 > __conda_version__.txt
 fi
 python3 setup.py sdist
 (cd dist/; python3 -m pip install $PKG_NAME-$(python3 ../setup.py --version).tar.gz)
