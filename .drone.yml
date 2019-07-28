@@ -9,7 +9,8 @@ pipeline:
   build:
     image: bjodah/bjodahimg18dev:v2.5
     environment:
-      - ASAN_OPTIONS=symbolize=1,symbolizer_path=/usr/lib/llvm-8/bin/llvm-symbolizer
+      - ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-8/bin/llvm-symbolizer
+      - ASAN_OPTIONS=symbolize=1
     commands:
       - git fetch -tq  # used by ``git describe``
       - bash -c '[[ $(python3 setup.py --version) =~ ^[0-9]+.* ]]'
