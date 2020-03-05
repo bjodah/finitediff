@@ -67,7 +67,8 @@ else:
                 __version__ = re.sub('v([0-9.]+)-(\d+)-(\w+)', r'\1.post\2+\3', _git_version)  # .dev < '' < .post
 
 
-_src = {ext: _path_under_setup(pkg_name, '_finitediff_c.' + ext) for ext in "c pyx".split()}
+basename = '_finitediff_c'
+_src = {ext: _path_under_setup(pkg_name, "%s.%s" % (basename, ext)) for ext in "c pyx".split()}
 if _HAVE_CYTHON and os.path.exists(_src["pyx"]):
     # Possible that a new release of Python needs a re-rendered Cython source,
     # or that we want to include possible bug-fix to Cython, disable by manually
@@ -78,8 +79,6 @@ if _HAVE_CYTHON and os.path.exists(_src["pyx"]):
 else:
     USE_CYTHON = False
 
-modname = 'finitediff.' + basename
-srcname = os.path.join('finitediff', basename)
 other_sources += [
     os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
 ]
@@ -98,7 +97,8 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
 
     from setuptools.extension import Extension
     ext_modules = [
-        Extension(modname, [_src["pyx" if USE_CYTHON else "c"]], include_dirs=include_dirs)
+        Extension("%s.%s" % (pkg_name, basename),
+                  [_src["pyx" if USE_CYTHON else "c"]], include_dirs=include_dirs)
     ]
     if USE_CYTHON:
         from Cython.Build import cythonize
