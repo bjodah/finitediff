@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # distutils: sources = ['finitediff/external/newton_interval/src/newton_interval.c', 'src/finitediff_c.c']
+# cython: language_level=3
 
 cimport numpy as cnp
 import numpy as np

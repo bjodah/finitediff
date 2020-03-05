@@ -11,6 +11,13 @@ import sys
 import warnings
 
 from setuptools import setup
+try:
+    import cython
+except ImportError:
+    _HAVE_CYTHON = False
+else:
+    _HAVE_CYTHON = True
+    assert cython  # silence pep8
 
 pkg_name = 'finitediff'
 url = 'https://github.com/bjodah/' + pkg_name
@@ -18,7 +25,7 @@ license = 'BSD'
 
 
 def _path_under_setup(*args):
-    return os.path.join(os.path.dirname(__file__), *args)
+    return os.path.join(*args)
 
 
 release_py_path = _path_under_setup(pkg_name, '_release.py')
@@ -60,16 +67,16 @@ else:
                 __version__ = re.sub('v([0-9.]+)-(\d+)-(\w+)', r'\1.post\2+\3', _git_version)  # .dev < '' < .post
 
 
-interface = 'c'
-other_sources = [os.path.join('src', 'finitediff_c.c')]
-
-basename = '_finitediff_'+interface
-ext = '.c'
-if os.path.exists(_path_under_setup('finitediff', basename+ext)):
-    USE_CYTHON = False
-else:
+_src = {ext: _path_under_setup(pkg_name, '_finitediff_c.' + ext) for ext in "c pyx".split()}
+if _HAVE_CYTHON and os.path.exists(_src["pyx"]):
+    # Possible that a new release of Python needs a re-rendered Cython source,
+    # or that we want to include possible bug-fix to Cython, disable by manually
+    # deleting .pyx file from source distribution.
     USE_CYTHON = True
-    ext = '.pyx'
+    if os.path.exists(_src['c']):
+        os.unlink(_src['c'])  # ensure c++ source is re-generated.
+else:
+    USE_CYTHON = False
 
 modname = 'finitediff.' + basename
 srcname = os.path.join('finitediff', basename)
@@ -91,7 +98,7 @@ if len(sys.argv) > 1 and '--help' not in sys.argv[1:] and not any(arg in (
 
     from setuptools.extension import Extension
     ext_modules = [
-        Extension(modname, [srcname+ext], include_dirs=include_dirs)
+        Extension(modname, [_src["pyx" if USE_CYTHON else "c"]], include_dirs=include_dirs)
     ]
     if USE_CYTHON:
         from Cython.Build import cythonize
