@@ -5,7 +5,8 @@ if [[ "$DRONE_BRANCH" =~ ^v[0-9]+.[0-9]?* ]]; then
     echo ${DRONE_BRANCH} | tail -c +2 > __conda_version__.txt
 fi
 python3 setup.py sdist
-(cd dist/; python3 -m pip install $PKG_NAME-$(python3 ../setup.py --version).tar.gz)
+PKG_VERSION=$(python3 setup.py --version).tar.gz)
+(cd dist/; python3 -m pip install $PKG_NAME-$PKG_VERSION
 (cd /; python3 -m pytest --pyargs $PKG_NAME)
 CXX=clang++-8 CC=clang-8 CFLAGS='-fsanitize=address' python3 -m pip install --force-reinstall .[all]
 LD_PRELOAD=/usr/lib/llvm-8/lib/clang/8.0.1/lib/linux/libclang_rt.asan-x86_64.so PYTHONMALLOC=malloc PYTHONPATH=$(pwd) ASAN_OPTIONS=detect_leaks=0,symbolize=1 ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html
