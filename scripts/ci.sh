@@ -8,8 +8,8 @@ python3 setup.py sdist
 PKG_VERSION=$(python3 setup.py --version)
 (cd dist/; python3 -m pip install $PKG_NAME-$PKG_VERSION.tar.gz)
 (cd /; python3 -m pytest --pyargs $PKG_NAME)
-CXX=clang++-8 CC=clang-8 CFLAGS='-fsanitize=address' python3 -m pip install --force-reinstall .[all]
-LD_PRELOAD=/usr/lib/llvm-8/lib/clang/8.0.1/lib/linux/libclang_rt.asan-x86_64.so PYTHONMALLOC=malloc PYTHONPATH=$(pwd) ASAN_OPTIONS=detect_leaks=0,symbolize=1 ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html
+CXX=clang++-10 CC=clang-10 CFLAGS='-fsanitize=address' python3 -m pip install --force-reinstall .[all]
+LD_PRELOAD=/usr/lib/llvm-10/lib/clang/10.0.0/lib/linux/libclang_rt.asan-x86_64.so PYTHONMALLOC=malloc PYTHONPATH=$(pwd) ASAN_OPTIONS=detect_leaks=0,symbolize=1 ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html
 ./scripts/coverage_badge.py htmlcov/ htmlcov/coverage.svg
 
 # Make sure repo is pip installable from git-archive zip
