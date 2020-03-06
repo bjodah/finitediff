@@ -79,7 +79,8 @@ if _HAVE_CYTHON and os.path.exists(_src["pyx"]):
 else:
     USE_CYTHON = False
 
-other_sources += [
+other_sources = [
+    os.path.join('src', 'finitediff_c.c'),
     os.path.join('finitediff', 'external', 'newton_interval', 'src', 'newton_interval.c')
 ]
 
