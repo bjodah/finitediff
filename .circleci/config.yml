@@ -6,11 +6,9 @@ jobs:
       - image: continuumio/miniconda3
     steps:
       - checkout
-      - run: apt-get --quiet update && apt-get --quiet --assume-yes install gcc g++
       - run: conda config --set always_yes yes
       - run: conda update python
       - run: conda install conda-build
       - run: conda config --add channels conda-forge
       - run: conda config --set show_channel_urls true
-      - run: conda build --python 3.6 conda-recipe
-      - run: conda build --python 2.7 conda-recipe
+      - run: conda build --python 3.8 conda-recipe

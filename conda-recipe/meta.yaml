@@ -14,10 +14,11 @@ build:
 
 requirements:
   build:
+    - {{ compiler('c') }}
+  host:
+    - cython
     - python
     - setuptools
-    - pip
-    - cython
     - numpy 1.14.*
   run:
     - python

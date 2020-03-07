@@ -7,22 +7,22 @@ clone:
 
 pipeline:
   build:
-    image: bjodah/bjodahimg18dev:v2.5
+    image: bjodah/bjodahimg20dev:v1.0.3
     environment:
-      - ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-8/bin/llvm-symbolizer
+      - ASAN_SYMBOLIZER_PATH=/usr/lib/llvm-10/bin/llvm-symbolizer
       - ASAN_OPTIONS=symbolize=1
     commands:
       - git fetch -tq  # used by ``git describe``
       - bash -c '[[ $(python3 setup.py --version) =~ ^[0-9]+.* ]]'
-      - (cd examples/; make -B CXX=clang++-8 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
-      - (cd examples/; make -B CXX=g++-8 EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG")
-      - (cd tests/; make -B CXX=clang++-8 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
-      - (cd tests/; make -B CXX=g++-8 EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
-      - (cd tests/; make -B CXX=g++-8 EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
-      - (cd tests/; make -f fortran_tests.mk)
+      - (cd examples/; make -B CXX=clang++-10 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+      - (cd examples/; make -B CXX=g++-10 EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
+      - (cd tests/; make -B CXX=clang++-10 EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+      - (cd tests/; make -B CXX=g++-10 EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
+      - (cd tests/; make -B CXX=g++-10 EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
+      - (cd tests/; make -f fortran_tests.mk CXX=g++-10 FC=gfortran-10)
       - ./scripts/ci.sh finitediff
+      - ./scripts/render_notebooks.sh examples/
       - ./scripts/generate_docs.sh
-      - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
       - ./scripts/prepare_deploy.sh
       - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
 
