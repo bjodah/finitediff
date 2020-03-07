@@ -24,5 +24,3 @@ assert "finitediff_templated.hpp" in os.listdir(gi())
 '
     python3 -m pytest --pyargs finitediff
 )
-
-./scripts/render_notebooks.sh

@@ -21,8 +21,8 @@ pipeline:
       - (cd tests/; make -B CXX=g++-10 EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
       - (cd tests/; make -f fortran_tests.mk CXX=g++-10 FC=gfortran-10)
       - ./scripts/ci.sh finitediff
+      - ./scripts/render_notebooks.sh examples/
       - ./scripts/generate_docs.sh
-      - PATH=/opt/miniconda3/bin:$PATH conda build conda-recipe
       - ./scripts/prepare_deploy.sh
       - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
 
