@@ -1,19 +1,14 @@
 #!/bin/bash -xeu
 # Usage:
 #
-#    $ ./scripts/release.sh v1.2.3 ANACONDA_PATH myserver.example.com GITHUB_USER GITHUB_REPO GIT_REMOTE
+#    $ ./scripts/release.sh v1.2.3
 #
-# e.g.
-#
-#    $ ./scripts/release.sh v0.2.5 /opt/users/miniconda3/bin hera.physchem.kth.se chemreac block_diag_ilu git@github.com:chemreac/block_diag_ilu
 
 if [[ $1 != v* ]]; then
     echo "Argument does not start with 'v'"
     exit 1
 fi
 VERSION=${1#v}
-CONDA_PATH=$2
-SERVER=$3
 find . -type f -iname "*.pyc" -exec rm {} +
 find . -type f -iname "*.o" -exec rm {} +
 find . -type f -iname "*.so" -exec rm {} +
@@ -43,5 +38,5 @@ echo "    name the release \"${PKG}-${VERSION}\", and don't foreget to manually 
 echo "        $(openssl sha256 $(pwd)/dist/${PKG}-${VERSION}.tar.gz)"
 echo "    Then run:"
 echo ""
-echo "        $ ./scripts/post_release.sh $1 $SERVER"
+echo "        $ ./scripts/post_release.sh $1 <myserver.university.edu>"
 echo ""
