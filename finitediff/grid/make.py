@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from .refine import refine_grid
 
 
 def adapted_grid(xstart, xstop, cb, grid_additions=(50, 50), **kwargs):
-    """" Creates an adapted (1D) grid by subsequent subgrid insertions.
+    """ " Creates an adapted (1D) grid by subsequent subgrid insertions.
 
     Parameters
     ----------

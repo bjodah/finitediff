@@ -19,7 +19,7 @@ cd $(dirname $0)/..
 PKG=$(find . -maxdepth 2 -name __init__.py -print0 | xargs -0 -n1 dirname | xargs basename)
 PKG_UPPER=$(echo $PKG | tr '[:lower:]' '[:upper:]')
 ./scripts/run_tests.sh
-env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION python setup.py sdist
+env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION ${PYTHON:-python3} setup.py sdist
 if [[ -e ./scripts/generate_docs.sh ]]; then
     env ${PKG_UPPER}_RELEASE_VERSION=v$VERSION ./scripts/generate_docs.sh
 fi

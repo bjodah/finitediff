@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
 from ..util import interpolate_ahead
 
 
-def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), metric=None,
-                atol=None, rtol=None, extremum_refinement=None, snr=False):
-    """ Refines an existing grid by adding points to it.
+def refine_grid(
+    grid,
+    cb,
+    grid_additions=(50, 50),
+    ntrail=2,
+    blurs=((), ()),
+    metric=None,
+    atol=None,
+    rtol=None,
+    extremum_refinement=None,
+    snr=False,
+):
+    """Refines an existing grid by adding points to it.
 
     Parameters
     ----------
@@ -39,10 +49,10 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
     """
     for na in grid_additions:
         if (na % 2) != 0:
-            raise ValueError('Need even number of grid points for each addition')
-    if extremum_refinement == 'max':
+            raise ValueError("Need even number of grid points for each addition")
+    if extremum_refinement == "max":
         extremum_refinement = (np.argmax, 1, lambda y, i: True)
-    elif extremum_refinement == 'min':
+    elif extremum_refinement == "min":
         extremum_refinement = (np.argmin, 1, lambda y, i: True)
 
     def add_to(adds, grd, res, ys):
@@ -58,14 +68,18 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
         ptr = 1
         yslices = []
         for gi, nloc in enumerate(adds):
-            nextgrid[ptr:ptr+nloc+1] = np.linspace(grd[gi], grd[gi+1], 2+nloc)[1:]
-            nextresults[ptr+nloc] = res[gi+1]
-            nexty[ptr+nloc] = ys[gi+1]
+            nextgrid[ptr : ptr + nloc + 1] = np.linspace(
+                grd[gi], grd[gi + 1], 2 + nloc
+            )[1:]
+            nextresults[ptr + nloc] = res[gi + 1]
+            nexty[ptr + nloc] = ys[gi + 1]
             if nloc > 0:
-                yslices.append(slice(ptr, ptr+nloc))
+                yslices.append(slice(ptr, ptr + nloc))
             ptr += nloc + 1
         newresults = cb(np.concatenate([nextgrid[yslc] for yslc in yslices]))
-        newy = newresults if metric is None else np.array([metric(r) for r in newresults])
+        newy = (
+            newresults if metric is None else np.array([metric(r) for r in newresults])
+        )
         ystart, ystop = 0, 0
         for yslc in yslices:
             ystop += yslc.stop - yslc.start
@@ -76,7 +90,9 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
         return nextgrid, nextresults, nexty
 
     results = cb(grid)
-    y = np.array(results if metric is None else [metric(r) for r in results], dtype=np.float64)
+    y = np.array(
+        results if metric is None else [metric(r) for r in results], dtype=np.float64
+    )
 
     for na in grid_additions:
         if extremum_refinement:
@@ -85,7 +101,7 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
             if predicate_cb(y, argext):
                 additions = np.zeros(grid.size - 1, dtype=int)
                 if argext > 0:  # left of
-                    additions[argext-1] = extremum_n
+                    additions[argext - 1] = extremum_n
                 elif argext < grid.size - 1:  # right of
                     additions[argext] = extremum_n
                 grid, results, y = add_to(additions, grid, results, y)
@@ -93,24 +109,26 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
         additions = np.zeros(grid.size - 1, dtype=int)
         done = True if atol is not None or rtol is not None else False
         slcs, errs = [], []
-        for direction in ('fw', 'bw'):
+        for direction in ("fw", "bw"):
             est, slc = interpolate_ahead(grid, y, ntrail, direction)
             err = np.abs(y[slc] - est)
             if atol is not None:
                 done = done and np.all(err < atol)
             if rtol is not None:
-                done = done and np.all(err/y[slc] < rtol)
+                done = done and np.all(err / y[slc] < rtol)
             slcs.append(slc)
             errs.append(err)
 
         if snr:
-            all_errs = np.array([[.0]*ntrail + errs[0].tolist(), errs[1].tolist() + [.0]*ntrail])
-            min__max = np.amin(all_errs, axis=0)/np.amax(all_errs, axis=0)
+            all_errs = np.array(
+                [[0.0] * ntrail + errs[0].tolist(), errs[1].tolist() + [0.0] * ntrail]
+            )
+            min__max = np.amin(all_errs, axis=0) / np.amax(all_errs, axis=0)
             dgrid = np.diff(grid)
             delta = np.empty_like(grid)
-            delta[0] = dgrid[0]**-2
-            delta[-1] = dgrid[-1]**-2
-            delta[1:-1] = 1/(dgrid[:-1]*dgrid[1:])
+            delta[0] = dgrid[0] ** -2
+            delta[-1] = dgrid[-1] ** -2
+            delta[1:-1] = 1 / (dgrid[:-1] * dgrid[1:])
             lndelta = np.log(delta)
             normlndelta = lndelta - np.max(lndelta)
 
@@ -118,21 +136,27 @@ def refine_grid(grid, cb, grid_additions=(50, 50), ntrail=2, blurs=((), ()), met
                 errs[i] *= (1.0 + 1e-8) - min__max[slcs[i]]
                 errs[i] *= np.exp(normlndelta[slcs[i]])
 
-        for direction, blur, slc, err in zip(('fw', 'bw'), blurs, slcs, errs):
+        for direction, blur, slc, err in zip(("fw", "bw"), blurs, slcs, errs):
             for ib, b in enumerate(blur, 1):
                 blur_slices = (slice(ib, None), slice(None, -ib))
-                err[blur_slices[direction == 'bw']] += b*err[blur_slices[direction == 'fw']]
-            rerr = np.array(np.round(err*na/2/np.sum(err)), dtype=int)
-            delta = np.sum(rerr) - na//2
+                err[blur_slices[direction == "bw"]] += (
+                    b * err[blur_slices[direction == "fw"]]
+                )
+            rerr = np.array(np.round(err * na / 2 / np.sum(err)), dtype=int)
+            delta = np.sum(rerr) - na // 2
             if delta == 0:
                 pass
             else:
                 sorted_indices = np.argsort(rerr)
-                for i in sorted_indices[-abs(delta):]:
+                for i in sorted_indices[-abs(delta) :]:
                     rerr[i] += 1 if delta < 0 else -1
-                if (np.sum(rerr) - na//2):
-                    raise ValueError('Balancing failed.')
-            additions[slice(ntrail-1, None) if direction == 'fw' else slice(None, 1-ntrail)] += rerr
+                if np.sum(rerr) - na // 2:
+                    raise ValueError("Balancing failed.")
+            additions[
+                slice(ntrail - 1, None)
+                if direction == "fw"
+                else slice(None, 1 - ntrail)
+            ] += rerr
         grid, results, y = add_to(additions, grid, results, y)
         if done:
             break
