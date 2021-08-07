@@ -31,22 +31,13 @@ def _path_under_setup(*args):
 release_py_path = _path_under_setup(pkg_name, '_release.py')
 config_py_path = _path_under_setup(pkg_name, '_config.py')
 env = None  # silence pyflakes, 'env' is actually set on the next line
-exec(open(config_py_path).read())
+with open(config_py_path) as ifh:
+    exec(ifh.read())
 for k, v in list(env.items()):
     env[k] = os.environ.get('%s_%s' % (pkg_name.upper(), k), v)
 
 _version_env_var = '%s_RELEASE_VERSION' % pkg_name.upper()
 RELEASE_VERSION = os.environ.get(_version_env_var, '')
-
-# http://conda.pydata.org/docs/build.html#environment-variables-set-during-the-build-process
-CONDA_BUILD = os.environ.get('CONDA_BUILD', '0') == '1'
-if CONDA_BUILD:
-    try:
-        RELEASE_VERSION = 'v' + open(
-            '__conda_version__.txt', 'rt').readline().rstrip()
-    except IOError:
-        pass
-
 
 if len(RELEASE_VERSION) > 1 and RELEASE_VERSION[0] == 'v':
     TAGGED_RELEASE = True
@@ -54,7 +45,8 @@ if len(RELEASE_VERSION) > 1 and RELEASE_VERSION[0] == 'v':
 else:
     TAGGED_RELEASE = False
     # read __version__ attribute from _release.py:
-    exec(io.open(release_py_path, encoding='utf-8').read())
+    with io.open(release_py_path, encoding='utf-8') as ifh:
+        exec(ifh.read())
     if __version__.endswith('git'):
         try:
             _git_version = subprocess.check_output(
@@ -132,11 +124,12 @@ with io.open(_path_under_setup(pkg_name, '__init__.py'), 'rt', encoding='utf-8')
     short_description = f.read().split('"""')[1].split('\n')[1]
 if not 10 < len(short_description) < 255:
     warnings.warn("Short description from __init__.py proably not read correctly.")
-long_description = io.open(_path_under_setup('README.rst'),
-                           encoding='utf-8').read()
+with io.open(_path_under_setup('README.rst'), encoding='utf-8') as ifh:
+    long_description = ifh.read()
 if not len(long_description) > 100:
     warnings.warn("Long description from README.rst probably not read correctly.")
-_author, _author_email = io.open(_path_under_setup('AUTHORS'), 'rt', encoding='utf-8').readline().split('<')
+with io.open(_path_under_setup('AUTHORS'), 'rt', encoding='utf-8') as ifh:
+    _author, _author_email = ifh.readline().split('<')
 
 
 setup_kwargs = dict(
@@ -166,8 +159,8 @@ if __name__ == '__main__':
             # depending on tagged version (set FINITEDIFF_RELEASE_VERSION)
             # this will ensure source distributions contain the correct version
             shutil.move(release_py_path, release_py_path+'__temp__')
-            open(release_py_path, 'wt').write(
-                "__version__ = '{}'\n".format(__version__))
+            with open(release_py_path, 'wt') as ofh:
+                ofh.write("__version__ = '{}'\n".format(__version__))
         shutil.move(config_py_path, config_py_path+'__temp__')
         with open(config_py_path, 'wt') as fh:
             fh.write("env = {}\n".format(pprint.pformat(env)))
