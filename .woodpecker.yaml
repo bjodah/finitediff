@@ -15,7 +15,7 @@
 
 steps:
   - name: build
-    image: cont-reg.bjodah.se:443/bjodah/triceratops-3:17
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
     commands:
       - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
       - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
