@@ -21,13 +21,13 @@ steps:
       - ./scripts/prepare_deploy.sh
       - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
 
-  deploy:
-    image: drillster/drone-rsync
-    when:
-      event: [push]
-    hosts: [ "hera.physchem.kth.se" ]
-    port: 22
-    user: finitediff
-    secrets: [ rsync_key ]  # secret only set from event "push" not "pull_request"
-    source: ./deploy/public_html
-    target: ~/
+ # - name: deploy
+ #   image: drillster/drone-rsync
+ #   when:
+ #     event: [push]
+ #   hosts: [ "hera.physchem.kth.se" ]
+ #   port: 22
+ #   user: finitediff
+ #   secrets: [ rsync_key ]  # secret only set from event "push" not "pull_request"
+ #   source: ./deploy/public_html
+ #   target: ~/
