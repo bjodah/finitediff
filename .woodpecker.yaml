@@ -16,6 +16,13 @@ clone:
 #       depth: 50
 
 steps:
+  - name: pre-numpy2-build
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
+    commands:
+      - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install -U --pre --only-binary ":all:" -i "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" numpy
+      - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install .
+      - cd /; /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pytest --pyargs finitediff
+
   - name: build
     image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
     commands:
