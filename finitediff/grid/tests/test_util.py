@@ -1,3 +1,5 @@
+import pytest
+
 from .. import adapted_grid
 from ..util import locate_discontinuity, pool_discontinuity_approx
 from ._common import g3

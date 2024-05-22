@@ -10,4 +10,4 @@ all: demo
 	./demo
 
 %: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(EXTRA_COMPILE_ARGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(EXTRA_COMPILE_ARGS) -o $@ $< $(CXX_LINKFLAGS)
