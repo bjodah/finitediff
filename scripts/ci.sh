@@ -1,4 +1,8 @@
-#!/bin/bash -xeu
+#!/bin/bash
+set -xeuo pipefail
+
+export PATH="$(compgen -G /opt-2/gcc-??/bin):$PATH"
+
 PKG_NAME=${1:-${CI_REPO_NAME##*/}}
 python3 setup.py sdist
 #PKG_VERSION=$(python3 setup.py --version)
