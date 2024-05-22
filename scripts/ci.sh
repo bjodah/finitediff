@@ -1,9 +1,10 @@
 #!/bin/bash
 set -xeuo pipefail
 
-export PATH="$(compgen -G /opt-2/gcc-??/bin):$PATH"
-
 PKG_NAME=${1:-${CI_REPO_NAME##*/}}
+
+source /opt-3/cpython-v3.11-apt-deb/bin/activate
+
 python3 setup.py sdist
 #PKG_VERSION=$(python3 setup.py --version)
 #(cd dist/; python3 -m pip install $PKG_NAME-$PKG_VERSION.tar.gz)
