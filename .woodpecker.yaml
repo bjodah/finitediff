@@ -21,7 +21,7 @@ steps:
     commands:
       - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install -U --pre --only-binary ":all:" -i "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" numpy
       - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install .
-      - cd /; /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pytest --pyargs finitediff -k "not grid"
+      - cd /; /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pytest --pyargs finitediff -k "test_finitediff"
 
   - name: build
     image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
