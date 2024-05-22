@@ -11,7 +11,7 @@ python3 setup.py sdist
 (cd dist/; python3 -m pip install $PKG_NAME-*.tar.gz)
 (cd /; python3 -m pytest --pyargs $PKG_NAME)
 CXX=clang++ CC=clang CFLAGS='-fsanitize=address' python3 -m pip install --force-reinstall .[all]
-LD_PRELOAD=$(clang --print-file-name=libclang_rt.asan-$(uname -m).so) PYTHONMALLOC=malloc PYTHONPATH=$(pwd) ASAN_OPTIONS=detect_leaks=0,symbolize=1 ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html
+LD_PRELOAD=$(clang --print-file-name=libclang_rt.asan.so) PYTHONMALLOC=malloc PYTHONPATH=$(pwd) ASAN_OPTIONS=detect_leaks=0,symbolize=1 ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html
 ./scripts/coverage_badge.py htmlcov/ htmlcov/coverage.svg
 
 # Make sure repo is pip installable from git-archive zip
