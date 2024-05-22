@@ -1,3 +1,7 @@
+when:
+  - event: [push]
+
+
 clone:
   default:
     image: plugins/git
