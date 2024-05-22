@@ -1,8 +1,9 @@
 #!/bin/bash -xeu
 PKG_NAME=${1:-${CI_REPO_NAME##*/}}
 python3 setup.py sdist
-PKG_VERSION=$(python3 setup.py --version)
-(cd dist/; python3 -m pip install $PKG_NAME-$PKG_VERSION.tar.gz)
+#PKG_VERSION=$(python3 setup.py --version)
+#(cd dist/; python3 -m pip install $PKG_NAME-$PKG_VERSION.tar.gz)
+(cd dist/; python3 -m pip install $PKG_NAME-*.tar.gz)
 (cd /; python3 -m pytest --pyargs $PKG_NAME)
 CXX=clang++ CC=clang CFLAGS='-fsanitize=address' python3 -m pip install --force-reinstall .[all]
 LD_PRELOAD=$(clang --print-file-name=libclang_rt.asan-$(uname -m).so) PYTHONMALLOC=malloc PYTHONPATH=$(pwd) ASAN_OPTIONS=detect_leaks=0,symbolize=1 ./scripts/run_tests.sh --cov $PKG_NAME --cov-report html

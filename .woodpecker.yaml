@@ -5,12 +5,13 @@
 #     submodule_override:
 #       finitediff/external/newton_interval: https://github.com/bjodah/newton_interval.git
 
-clone:
-  - name: git
-    image: woodpeckerci/plugin-git
-    settings:
-      partial: false
-      depth: 50
+
+# clone:
+#   - name: git
+#     image: woodpeckerci/plugin-git
+#     settings:
+#       partial: false
+#       depth: 50
 
 steps:
   - name: build
