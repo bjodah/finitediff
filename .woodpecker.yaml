@@ -2,9 +2,15 @@ when:
   - event: [push]
 
 
+# clone:
+#   default:
+#     image: plugins/git
+#     recursive: true
+
+
 clone:
   - name: git
-    image: woodpeckerci/plugin-git
+    image: plugins/git
 
 # clone:
 #   - name: git
