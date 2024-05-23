@@ -40,7 +40,7 @@ steps:
       - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; ./scripts/render_notebooks.sh examples/"
       - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; ./scripts/generate_docs.sh"
       - ./scripts/prepare_deploy.sh
-      - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
+      - if grep "DO-NOT-MERGE!" -R . --exclude ".woodpecker.yaml"; then exit 1; fi
 
   - name: build-with-clang
     image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
