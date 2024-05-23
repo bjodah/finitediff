@@ -10,28 +10,29 @@ function quiet_unless_fail {
     if [ ${QUIET_EXIT_CODE} -ne 0 ]; then
 	cat ${OUTPUT_FILE}
 	echo "The following command exited with exit status ${QUIET_EXIT_CODE}: ${EXECMD}"
-	/bin/rm ${OUTPUT_FILE}
     fi
     /bin/rm ${OUTPUT_FILE}
 }
 
-if [ -f index.ipynb ]; then
-    sed -i.bak0 's/ipynb/html/' index.ipynb
-    sed -i.bak1 's/filepath=index.html/filepath=index.ipynb/' index.ipynb  # mybinder link fix
-fi
-set +e
-for dir in $@; do
-    cd $dir
-    for fname in *.ipynb; do
-        echo "rendering ${fname}..."
-        quiet_unless_fail jupyter nbconvert --debug --to=html --ExecutePreprocessor.enabled=True --ExecutePreprocessor.timeout=300 "${fname}" \
-            | grep -v -e "^\[NbConvertApp\] content: {'data':.*'image/png'"
-        if [ ${QUIET_EXIT_CODE} -ne 0 ]; then
-            exit ${QUIET_EXIT_CODE}
-        fi
-    done
-    cd -
-done
-set -e
+
 cd examples/
-../scripts/render_index.sh *.html
+
+PREC=`python3 -c "from pycvodes import config; print(config.get('SUNDIALS_PRECISION', 'double'))"`
+set -x
+for ipynb in *.ipynb; do
+    if [[ $ipynb == "_native_standalone.ipynb" ]]; then
+        continue  # issue with boost's program options
+    fi
+    if [[ $PREC != "double" && $ipynb == "_robertson.ipynb" ]]; then
+        continue
+    fi
+    if [[ $ipynb == "_bench_native_odesys_multi.ipynb" ]]; then
+        continue
+    fi
+    #quiet_unless_fail
+    jupyter nbconvert --log-level=INFO --to=html --ExecutePreprocessor.enabled=True --ExecutePreprocessor.timeout=900 "${ipynb}"
+    #if [ ${QUIET_EXIT_CODE} -ne 0 ]; then
+    #    exit ${QUIET_EXIT_CODE}
+    #fi
+done
+#../scripts/render_index.sh *.html

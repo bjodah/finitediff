@@ -3,10 +3,8 @@ when:
 
 
 clone:
-  default:
-    image: plugins/git
-    recursive: true
-
+  - name: git
+    image: woodpeckerci/plugin-git
 
 # clone:
 #   - name: git

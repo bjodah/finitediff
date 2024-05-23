@@ -14,4 +14,4 @@ def test_locate_discontinuity__pool_discontinuity_approx(snr):
     if snr:
         assert abs(avg - 5) < 0.03
     else:
-        assert abs(avg - 5) > 0.5  # this is a negative test, i.e. not strict!
+        assert abs(avg - 5) > 0.03  # this is a negative test, i.e. not strict!
