@@ -8,9 +8,9 @@ when:
 #     recursive: true
 
 
-clone:
-  - name: git
-    image: plugins/git
+# clone:
+#   - name: git
+#     image: plugins/git
 
 # clone:
 #   - name: git
