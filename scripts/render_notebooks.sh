@@ -17,18 +17,8 @@ function quiet_unless_fail {
 
 cd examples/
 
-PREC=`python3 -c "from pycvodes import config; print(config.get('SUNDIALS_PRECISION', 'double'))"`
 set -x
 for ipynb in *.ipynb; do
-    if [[ $ipynb == "_native_standalone.ipynb" ]]; then
-        continue  # issue with boost's program options
-    fi
-    if [[ $PREC != "double" && $ipynb == "_robertson.ipynb" ]]; then
-        continue
-    fi
-    if [[ $ipynb == "_bench_native_odesys_multi.ipynb" ]]; then
-        continue
-    fi
     #quiet_unless_fail
     jupyter nbconvert --log-level=INFO --to=html --ExecutePreprocessor.enabled=True --ExecutePreprocessor.timeout=900 "${ipynb}"
     #if [ ${QUIET_EXIT_CODE} -ne 0 ]; then
