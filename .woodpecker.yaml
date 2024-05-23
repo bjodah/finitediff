@@ -1,11 +1,12 @@
 when:
   - event: [push]
 
-- name: clone
-  image: docker.io/woodpeckerci/plugin-git:2.4.0
-  settings:
-    depth: 0
-    tags: true # only if event = tag
+clone:
+ - name: clone
+   image: docker.io/woodpeckerci/plugin-git:2.4.0
+   settings:
+     depth: 0
+     tags: true # only if event = tag
 
 
 # clone:
