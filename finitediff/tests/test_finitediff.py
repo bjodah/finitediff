@@ -20,13 +20,13 @@ def test_derivatives_at_point_by_finite_diff():
     x = np.array([0.0, 0.5, 1.0, 1.5, 2.0])
 
     def f(x):
-        return 3 + x - x ** 3
+        return 3 + x - x**3
 
     pnt = 1.25
     out = derivatives_at_point_by_finite_diff(x, f(x), pnt, 2)
 
     def Df(x):
-        return 1 - 3 * x ** 2
+        return 1 - 3 * x**2
 
     def D2f(x):
         return -6 * x

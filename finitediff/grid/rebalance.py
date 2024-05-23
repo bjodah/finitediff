@@ -131,7 +131,7 @@ def grid_pruning_mask(grid, err, ndrop=None, protect_sparse=None, pow_err=2, pow
         protect_sparse = math.ceil(grid.size * 0.25)
     dx = _avgdiff(grid)
     protected = np.argsort(dx)[-protect_sparse:]
-    score = err ** pow_err * dx ** pow_dx
+    score = err**pow_err * dx**pow_dx
     importance = np.argsort(score)
     drop = []
     for considered in importance:

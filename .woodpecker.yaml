@@ -1,0 +1,64 @@
+when:
+  - event: [push]
+
+
+# clone:
+#   default:
+#     image: plugins/git
+#     recursive: true
+
+
+clone:
+  - name: git
+    image: plugins/git
+
+# clone:
+#   - name: git
+#     image: woodpeckerci/plugin-git
+#     settings:
+#       partial: false
+#       depth: 50
+
+steps:
+  - name: pre-numpy2-build
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
+    commands:
+      - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install -U --pre --only-binary ":all:" -i "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" numpy
+      - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install .
+      - cp finitediff/tests/test_finitediff.py /tmp
+      - cd /tmp; /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pytest test_finitediff.py
+
+  - name: build-with-clang
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
+    environment:
+      - EXTRA_CXX_FLAGS=-nostdinc++ -isystem /opt-2/libcxx18-debug/include/c++/v1
+      - CXX_LINKFLAGS=-nostdlib++ -Wl,-rpath,/opt-2/libcxx18-debug/lib -L/opt-2/libcxx18-debug/lib -lc++
+    commands:
+      - (cd tests/; make -B CXX=clang++ EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+      - (cd examples/; make -B CXX=clang++ EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+
+  - name: build
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
+    commands:
+      - git fetch -tq
+      - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
+      - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
+      - (cd tests/; make -f fortran_tests.mk CXX=g++ FC=gfortran)
+      - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; ./scripts/ci.sh finitediff"
+      - (cd examples/; make -B CXX=g++ EXTRA_CXX_FLAGS='-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC')
+      - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; ./scripts/render_notebooks.sh examples/"
+      - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; ./scripts/generate_docs.sh"
+      - ./scripts/prepare_deploy.sh
+      - if grep "DO-NOT-MERGE!" -R . --exclude ".woodpecker.yaml"; then exit 1; fi
+
+
+ # - name: deploy
+ #   image: drillster/drone-rsync
+ #   when:
+ #     event: [push]
+ #   hosts: [ "hera.physchem.kth.se" ]
+ #   port: 22
+ #   user: finitediff
+ #   secrets: [ rsync_key ]  # secret only set from event "push" not "pull_request"
+ #   source: ./deploy/public_html
+ #   target: ~/

@@ -153,9 +153,11 @@ def refine_grid(
                 if np.sum(rerr) - na // 2:
                     raise ValueError("Balancing failed.")
             additions[
-                slice(ntrail - 1, None)
-                if direction == "fw"
-                else slice(None, 1 - ntrail)
+                (
+                    slice(ntrail - 1, None)
+                    if direction == "fw"
+                    else slice(None, 1 - ntrail)
+                )
             ] += rerr
         grid, results, y = add_to(additions, grid, results, y)
         if done:
