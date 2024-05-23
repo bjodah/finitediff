@@ -35,11 +35,12 @@ steps:
       - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
       - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-DNDEBUG -O3 -DFINITEDIFF_OPENMP -fopenmp")
       - (cd tests/; make -f fortran_tests.mk CXX=g++ FC=gfortran)
-      - ./scripts/ci.sh finitediff
-      - (cd examples/; make -B CXX=g++ EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
-      - ./scripts/render_notebooks.sh examples/
-      - ./scripts/generate_docs.sh
-      - ./scripts/prepare_deploy.sh
+      - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; \
+      ./scripts/ci.sh finitediff; \
+      (cd examples/; make -B CXX=g++ EXTRA_CXX_FLAGS='-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC'); \
+      ./scripts/render_notebooks.sh examples/; \
+      ./scripts/generate_docs.sh; \
+      ./scripts/prepare_deploy.sh"
       - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
 
   - name: build-with-clang
