@@ -10,7 +10,7 @@ when:
 
 clone:
   - name: git
-    image: woodpeckerci/plugin-git
+    image: plugins/git
 
 # clone:
 #   - name: git
