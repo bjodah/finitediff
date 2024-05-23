@@ -28,6 +28,15 @@ steps:
       - cp finitediff/tests/test_finitediff.py /tmp
       - cd /tmp; /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pytest test_finitediff.py
 
+  - name: build-with-clang
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
+    environment:
+      - EXTRA_CXX_FLAGS=-nostdinc++ -isystem /opt-2/libcxx18-debug/include/c++/v1
+      - CXX_LINKFLAGS=-nostdlib++ -Wl,-rpath,/opt-2/libcxx18-debug/lib -L/opt-2/libcxx18-debug/lib -lc++
+    commands:
+      - (cd tests/; make -B CXX=clang++ EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+      - (cd examples/; make -B CXX=clang++ EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
+
   - name: build
     image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
     commands:
@@ -41,15 +50,6 @@ steps:
       - bash -c "source /opt-3/cpython-v3.11-apt-deb/bin/activate; ./scripts/generate_docs.sh"
       - ./scripts/prepare_deploy.sh
       - if grep "DO-NOT-MERGE!" -R . --exclude ".woodpecker.yaml"; then exit 1; fi
-
-  - name: build-with-clang
-    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
-    environment:
-      - EXTRA_CXX_FLAGS="-nostdinc++ -isystem /opt-2/libcxx18-debug/include/c++/v1"
-      - CXX_LINKFLAGS="-nostdlib++ -Wl,-rpath,/opt-2/libcxx18-debug/lib -L/opt-2/libcxx18-debug/lib -lc++"
-    commands:
-      - (cd tests/; make -B CXX=clang++ EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
-      - (cd examples/; make -B CXX=clang++ EXTRA_COMPILE_ARGS="-fsanitize=address -O0 -g")
 
 
  # - name: deploy
