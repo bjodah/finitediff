@@ -21,7 +21,7 @@ clone:
 
 steps:
   - name: pre-numpy2-build
-    image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
     commands:
       - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install -U --pre --only-binary ":all:" -i "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" numpy
       - /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pip install .
@@ -29,7 +29,7 @@ steps:
       - cd /tmp; /opt-3/cpython-v3.11-apt-deb/bin/python3 -m pytest test_finitediff.py
 
   - name: build
-    image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
     commands:
       - git fetch -tq
       - (cd tests/; make -B CXX=g++ EXTRA_COMPILE_ARGS="-Og" EXTRA_CXX_FLAGS="-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
@@ -43,7 +43,7 @@ steps:
       - if grep "DO-NOT-MERGE!" -R . --exclude ".drone.yml"; then exit 1; fi
 
   - name: build-with-clang
-    image: cont-reg.bjodah.se:443/bjodah/triceratops-4:8
+    image: cont-reg.bjodah.se:443/bjodah/triceratops-5:11
     environment:
       - EXTRA_CXX_FLAGS="-nostdinc++ -isystem /opt-2/libcxx18-debug/include/c++/v1"
       - CXX_LINKFLAGS="-nostdlib++ -Wl,-rpath,/opt-2/libcxx18-debug/lib -L/opt-2/libcxx18-debug/lib -lc++"
