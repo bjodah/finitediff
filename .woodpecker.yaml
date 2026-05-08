@@ -6,14 +6,6 @@ when:
 
 steps:
 
-  # - name: pre-numpy2-build
-  #   image: *ci_image
-  #   commands:
-  #     - /opt-3/cpython-v3.13-apt-deb/bin/python3 -m pip install -U --pre --only-binary ":all:" -i "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" numpy
-  #     - /opt-3/cpython-v3.13-apt-deb/bin/python3 -m pip install .
-  #     - cp finitediff/tests/test_finitediff.py /tmp
-  #     - cd /tmp; /opt-3/cpython-v3.13-apt-deb/bin/python3 -m pytest test_finitediff.py
-
   - name: build-with-clang
     image: *ci_image
     environment:
