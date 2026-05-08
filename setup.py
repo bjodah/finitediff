@@ -176,7 +176,7 @@ setup_kwargs = dict(
     cmdclass=cmdclass,
     ext_modules=ext_modules,
     classifiers=classifiers,
-    setup_requires=["numpy"] + (["cython"] if USE_CYTHON else []),
+    setup_requires=["numpy", "cython"],
     install_requires=["numpy"],
     extras_require={
         "all": ["scipy", "pytest", "sphinx", "sphinx_rtd_theme", "numpydoc"]
