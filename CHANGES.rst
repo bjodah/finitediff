@@ -1,3 +1,11 @@
+v0.6.5
+======
+- drop __future__ imports
+
+v0.6.4
+======
+- updated setup.cfg
+
 v0.6.3
 ======
 - update setup.py to re-run Cython when .pyx available

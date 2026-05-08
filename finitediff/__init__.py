@@ -2,7 +2,6 @@
 """
 Finite difference weights for any derivative order on arbitrarily spaced grids.
 """
-from __future__ import absolute_import, division, print_function
 
 from ._release import __version__
 

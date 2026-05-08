@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function  # Python 3 behaviour in Py2
-
 import numpy as np
 
 from finitediff import derivatives_at_point_by_finite_diff, interpolate_by_finite_diff

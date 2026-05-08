@@ -13,7 +13,6 @@ import sys
 
 import pytest
 
-
 tests = glob.glob(os.path.join(os.path.dirname(__file__), "../*.py"))
 
 
