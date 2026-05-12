@@ -2,7 +2,7 @@
 """
 Finite difference weights for any derivative order on arbitrarily spaced grids.
 """
-
+from pathlib import Path
 from ._release import __version__
 
 from ._finitediff_c import (
@@ -19,6 +19,7 @@ __all__ = [
 
 
 def get_include():
-    from pkg_resources import resource_filename, Requirement
-
-    return resource_filename(Requirement.parse(__name__), "%s/include" % __name__)
+    inc_dir = Path(__file__).parent.resolve() / 'include'
+    if not inc_dir.is_dir():
+        raise ValueError("Could not find include directory (as a dir): %s" % inc_dir)
+    return str(inc_dir)
