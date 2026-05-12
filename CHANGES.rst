@@ -1,3 +1,7 @@
+v0.6.6
+======
+- drop use of pkg_resources
+
 v0.6.5
 ======
 - drop __future__ imports
