@@ -1,5 +1,5 @@
 variables:
-  - &ci_image 'cont-reg.bjodah.se:443/bjodah/triceratops-5:44'
+  - &ci_image 'cont-reg.bjodah.se:443/bjodah/triceratops-5:45'
 
 when:
   - event: [push]
